@@ -1,0 +1,132 @@
+# =====================================
+# GLOBAL / COMMON
+# =====================================
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+*.rej
+*.pid
+*.pid.lock
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# =====================================
+# BACKEND (Node + Express + MongoDB)
+# =====================================
+backend/node_modules/
+backend/dist/
+backend/build/
+backend/coverage/
+backend/tmp/
+backend/logs/
+backend/pids/
+backend/uploads/
+backend/public/uploads/
+backend/lib/
+backend/bin/
+
+# Database dumps or backups
+backend/data/
+backend/dump/
+backend/*.bson
+backend/*.json~
+backend/*.bak
+
+# Keep upload folder structure but not files
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# =====================================
+# FRONTEND (Admin Vue App)
+# =====================================
+admin/node_modules/
+admin/dist/
+admin/.cache/
+admin/.temp/
+admin/.vite
+admin/.vitepress
+admin/.env
+admin/.env.*
+admin/public/uploads/
+admin/coverage/
+admin/.nyc_output/
+admin/.DS_Store
+
+# Keep upload folder structure but not files
+admin/public/uploads/*
+!admin/public/uploads/.gitkeep
+
+# =====================================
+# FRONTEND (User Vue App)
+# =====================================
+user/node_modules/
+user/dist/
+user/.cache/
+user/.temp/
+user/.vite
+user/.vitepress
+user/.env
+user/.env.*
+user/public/uploads/
+user/coverage/
+user/.nyc_output/
+user/.DS_Store
+
+# Keep upload folder structure but not files
+user/public/uploads/*
+!user/public/uploads/.gitkeep
+
+# =====================================
+# TESTING / CI
+# =====================================
+/coverage/
+/.nyc_output/
+/jest-cache/
+/jest/
+/.vitest
+.vitest-temp
+
+# =====================================
+# DOCKER / DEPLOYMENT
+# =====================================
+.docker/
+Dockerfile*
+docker-compose.yml
+docker-compose.override.yml
+*.tar
+*.img
+
+# =====================================
+# EDITORS / OS FILES
+# =====================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.iml
+
+# =====================================
+# ARCHIVES / BUILD ARTIFACTS
+# =====================================
+*.tgz
+*.zip
+*.tar.gz
+*.rar
+*.7z
