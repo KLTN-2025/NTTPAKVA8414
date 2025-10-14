@@ -1,0 +1,6 @@
+{
+    "watch": ["src", "middleware", "models", "routes"],
+    "ext": "js,json",
+    "ignore": ["node_modules", "seeds"],
+    "exec": "node server.js"
+  }
