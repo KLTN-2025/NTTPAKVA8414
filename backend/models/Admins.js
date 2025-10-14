@@ -1,10 +1,18 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 const adminSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, trim: true },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
+        validate: [validator.isEmail, 'Invalid email address']
+    },
     password: { type: String, required: true },
     role: {
       type: String,
@@ -16,7 +24,7 @@ const adminSchema = new mongoose.Schema(
       enum: ["active", "inactive"],
       default: "active",
     },
-    image_url: { type: String, trim: true },
+    image_url: { type: String, trim: true, maxlength: 255 },
   },
   { timestamps: true }
 );
@@ -28,4 +36,4 @@ adminSchema.pre("save", async function (next) {
   next();
 });
 
-export default mongoose.model("Admin", adminSchema);
+module.exports = mongoose.model('Admin', adminSchema);
