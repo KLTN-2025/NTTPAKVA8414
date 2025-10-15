@@ -1,17 +1,17 @@
 <!-- src/views/Home.vue -->
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-green-50 to-white">
+  <div class="w-full min-h-screen bg-gradient-to-b from-green-50 to-white">
     <!-- Header -->
     <header class="w-full bg-white shadow-sm border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <!-- Logo -->
-          <div class="flex items-center gap-2">
+          <router-link to="/" class="flex items-center gap-2">
             <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-xl">🥗</span>
             </div>
             <span class="text-2xl font-bold text-gray-900">DietShop</span>
-          </div>
+          </router-link>
 
           <!-- Navigation -->
           <nav class="hidden md:flex items-center gap-8">
@@ -31,19 +31,21 @@
               <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">3</span>
             </button>
 
-            <!-- Clerk Auth Components -->
+            <!-- UPDATED: Use router-link instead of modal -->
             <SignedOut>
               <div class="flex items-center gap-3">
-                <SignInButton mode="modal">
-                  <button class="px-6 py-2 bg-white text-green-600 border-2 border-green-600 rounded-lg hover:bg-green-50 transition font-semibold">
-                    Sign In
-                  </button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <button class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold">
-                    Sign Up
-                  </button>
-                </SignUpButton>
+                <router-link 
+                  to="/login"
+                  class="px-6 py-2 bg-white text-green-600 border-2 border-green-600 rounded-lg hover:bg-green-50 transition font-semibold"
+                >
+                  Sign In
+                </router-link>
+                <router-link 
+                  to="/register"
+                  class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold"
+                >
+                  Sign Up
+                </router-link>
               </div>
             </SignedOut>
 
@@ -65,17 +67,20 @@
           <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Start your wellness journey today. Sign up to access premium diet meals tailored to your goals.
           </p>
+          <!-- UPDATED: Use router-link -->
           <div class="flex justify-center gap-4">
-            <SignUpButton mode="modal">
-              <button class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-lg">
-                Get Started Free
-              </button>
-            </SignUpButton>
-            <SignInButton mode="modal">
-              <button class="px-8 py-3 bg-white text-green-600 border-2 border-green-600 rounded-lg hover:bg-green-50 transition font-semibold text-lg">
-                Sign In
-              </button>
-            </SignInButton>
+            <router-link 
+              to="/register"
+              class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-lg"
+            >
+              Get Started Free
+            </router-link>
+            <router-link 
+              to="/login"
+              class="px-8 py-3 bg-white text-green-600 border-2 border-green-600 rounded-lg hover:bg-green-50 transition font-semibold text-lg"
+            >
+              Login
+            </router-link>
           </div>
         </SignedOut>
 
@@ -98,7 +103,7 @@
       </div>
     </section>
 
-    <!-- Features -->
+    <!-- Features Section (keep as is) -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="grid md:grid-cols-3 gap-8">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
@@ -130,5 +135,5 @@
 </template>
 
 <script setup>
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/vue'
+import { SignedIn, SignedOut, UserButton } from '@clerk/vue'
 </script>
