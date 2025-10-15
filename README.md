@@ -22,76 +22,50 @@
 |------|----------|--------------|
 | [Node.js](https://nodejs.org/) | ≥ 22.x | Môi trường runtime |
 | [npm](https://www.npmjs.com/) | ≥ 10.x | Package manager |
-<<<<<<< HEAD
 | [MongoDB](https://www.mongodb.com/try/download/community) | ≥ 6.x | Local database (via MongoDB Compass) |
 | [Clerk](https://clerk.com/) | — | Công cụ xác thực người dùng |
 
-## Cài đặt
 
-=======
-| [MongoDB](https://www.mongodb.com/try/download/community) | ≥ 6.x | Local database (used via MongoDB Compass) |
-| [Clerk](https://clerk.com/) | — | Công cụ xác thực người dùng |
 
 ## Cài đặt
->>>>>>> 5baa3026ca7c8aaf95e20f353d98146735495942
 ### Clone repo từ Github:
 ```bash
 git clone https://github.com/KLTN-2025/NTTPAKVA8414
 cd healthycrave
 ```
 
-<<<<<<< HEAD
 ### Cài dependencies:
 ```bash
-# Backend
 cd backend
 npm install
 
-# Frontend user
 cd ../user
 npm install
 
-# Frontend admin
 cd ../admin
 npm install
 ```
 
 ### Chạy project:
 *Backend* (Port 5000, chạy đầu tiên)
-=======
-### Cài đặt dependencies:
-*Backend*
->>>>>>> 5baa3026ca7c8aaf95e20f353d98146735495942
 ```bash
 cd backend
 npm run dev
 ```
 
-<<<<<<< HEAD
-*User frontend* (Port 5173, chạy terminal riêng)
-=======
 *User frontend* (Chạy terminal riêng)
->>>>>>> 5baa3026ca7c8aaf95e20f353d98146735495942
 ```bash
 cd user
 npm run dev
 ```
 
-<<<<<<< HEAD
-*User frontend* (Port 5174, chạy terminal riêng)
-=======
 *User frontend* (Chạy terminal riêng)
->>>>>>> 5baa3026ca7c8aaf95e20f353d98146735495942
 ```bash
 cd admin
 npm run dev
 ```
-<<<<<<< HEAD
-
 
 Mở MongoDB Compass và connect:
 ```bash
-mongodb://localhost:27017/healthycrave
+mongodb://localhost:27017/<dien_ten_db_vao_day>
 ```
-=======
->>>>>>> 5baa3026ca7c8aaf95e20f353d98146735495942
