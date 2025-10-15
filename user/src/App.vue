@@ -6,29 +6,6 @@
 </template>
 
 <script setup>
-import { watch, onMounted } from 'vue'
-import { useUser } from '@clerk/vue'
-import { useAuthSync } from '@/composables/authSync'
-
-const { isLoaded, isSignedIn } = useUser()
-const { syncUser } = useAuthSync()
-
-onMounted(() => {
-  watch(
-    [() => isLoaded.value, () => isSignedIn.value],
-    async ([loaded, signedIn]) => {
-      if (loaded && signedIn) {
-        try {
-          await syncUser()
-          console.log('✅ User synced automatically on app load/login')
-        } catch (err) {
-          console.error('❌ Sync failed:', err)
-        }
-      }
-    },
-    { immediate: true }
-  )
-})
 </script>
 
 <style>

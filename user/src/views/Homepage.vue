@@ -136,4 +136,19 @@
 
 <script setup>
 import { SignedIn, SignedOut, UserButton } from '@clerk/vue'
+
+import { ref, onMounted } from 'vue';
+import { useAuthSync } from '../composables/authSync'
+
+const { fetchProfile } = useAuthSync()
+const profile = ref(null)
+
+onMounted(async () => {
+  try {
+      profile.value = await fetchProfile();
+    }
+  catch (error) {
+    console.error("Failed to fetch and set user profile on mount.");
+  } 
+});
 </script>
