@@ -13,13 +13,6 @@ router.post(
     console.log('--- Webhook Endpoint Hit ---');
 
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
-    if (!WEBHOOK_SECRET) {
-      // This will now log if the secret is missing
-      console.error('❌ FATAL: CLERK_WEBHOOK_SECRET is not set in .env file.');
-      // The original code threw an error, let's return a response instead for now
-      return res.status(500).send('Webhook secret is not configured.');
-    }
-    console.log('✅ Webhook secret found.');
 
     // 2. Get the Svix headers for verification
     const svix_id = req.headers['svix-id'];
@@ -28,7 +21,6 @@ router.post(
 
     // If there are no headers, error out
     if (!svix_id || !svix_timestamp || !svix_signature) {
-      console.error('❌ Error: Missing Svix headers in the request.');
       return res.status(400).json({ error: 'Error occured -- no svix headers' });
     }
 
