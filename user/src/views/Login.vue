@@ -1,4 +1,4 @@
-<!-- src/views/SignIn.vue -->
+<!-- src/views/Login.vue -->
 <template>
   <div class="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center py-12 px-4">
     <div class="max-w-md w-full">
