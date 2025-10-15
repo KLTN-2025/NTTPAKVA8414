@@ -20,10 +20,10 @@ const CustomerSchema = new mongoose.Schema(
     },
     name: {
       type: String,
+      required: true,
       trim: true,
       maxlength: 100,
-      default: 'Customer A'
-    }
+    },
     phone: {
       type: String,
       required: false,
@@ -43,11 +43,20 @@ const CustomerSchema = new mongoose.Schema(
     is_deleted: {
       type: Boolean,
       default: false
+    },
+    last_login: {
+      type: Date,
+      default: Date.now
     }
   },
   { timestamps: true }
 );
 
-CustomerSchema.index({ clerkId: 1, account_status: 1 });
+CustomerSchema.methods.isActive = function() {
+  return this.account_status === 'active';
+};
+CustomerSchema.statics.findByClerkId = function(clerkId) {
+  return this.findOne({ clerkId });
+};
 
 module.exports = mongoose.model('Customer', CustomerSchema);
