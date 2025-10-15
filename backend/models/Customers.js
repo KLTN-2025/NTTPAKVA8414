@@ -1,14 +1,13 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const bcrypt = require('bcrypt');
 
 const CustomerSchema = new mongoose.Schema(
   {
-    name: {
+    clerkId: {
       type: String,
       required: true,
-      trim: true,
-      maxlength: 100
+      unique: true,
+      index: true  
     },
     email: {
       type: String,
@@ -16,18 +15,20 @@ const CustomerSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      validate: [validator.isEmail, 'Invalid email address']
+      validate: [validator.isEmail, 'Invalid email address'],
+      index: true
     },
+    name: {
+      type: String,
+      trim: true,
+      maxlength: 100,
+      default: 'Customer A'
+    }
     phone: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
       maxlength: 50
-    },
-    password: {
-      type: String,
-      required: true,
-      minlength: 6
     },
     account_status: {
       type: String,
@@ -38,26 +39,15 @@ const CustomerSchema = new mongoose.Schema(
       type: String,
       trim: true,
       maxlength: 255
+    },
+    is_deleted: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }
 );
 
-// Hash password
-CustomerSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next(); 
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (err) {
-    next(err);
-  }
-});
-
-// Helper method to compare passwords
-CustomerSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
-};
+CustomerSchema.index({ clerkId: 1, account_status: 1 });
 
 module.exports = mongoose.model('Customer', CustomerSchema);
