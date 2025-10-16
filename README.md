@@ -25,7 +25,6 @@
 | [MongoDB](https://www.mongodb.com/try/download/community) | ≥ 6.x | Local database (via MongoDB Compass) |
 | [Clerk](https://clerk.com/) | — | Công cụ xác thực người dùng |
 
-## Cài đặt
 
 ### Clone repo từ Github:
 ```bash
@@ -35,15 +34,12 @@ cd healthycrave
 
 ### Cài dependencies:
 ```bash
-# Backend
 cd backend
 npm install
 
-# Frontend user
 cd ../user
 npm install
 
-# Frontend admin
 cd ../admin
 npm install
 ```
@@ -68,8 +64,7 @@ cd admin
 npm run dev
 ```
 
-
 Mở MongoDB Compass và connect:
 ```bash
-mongodb://localhost:27017/healthycrave
+mongodb://localhost:27017/<dien_ten_db_vao_day>
 ```
