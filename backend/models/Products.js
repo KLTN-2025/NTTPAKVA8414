@@ -38,17 +38,17 @@ const ProductSchema = new mongoose.Schema(
     cost_price: {
       type: Number,
       required: true,
-      min: [0, 'Giá mua hàng không được âm']
+      min: [0, 'Price can\'t be negative']
     },
     selling_price: {
       type: Number,
       required: true,
-      min: [0, 'Giá bán không được âm']
+      min: [0, 'Price can\'t be negative']
     },
     current_stock: {
       type: Number,
       required: true,
-      min: [0, 'Lượng hàng tồn kho không được âm']
+      min: [0, 'Stock can\'t be negative']
     },
     image_urls: {
       type: [String],
