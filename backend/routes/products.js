@@ -6,6 +6,8 @@ const ProductType = require('../models/ProductTypes')
 const ProductCategory = require('../models/ProductCategories')
 const Brand = require('../models/Brands')
 const Attribute = require('../models/Attributes')
+const Review = require('../models/Reviews')
+const Customer = require('../models/Customers')
 
 /**
  * GET /api/products
@@ -25,7 +27,7 @@ const Attribute = require('../models/Attributes')
  * - sortBy: Sort criterion 
  * - sortOrder: 'asc' or 'desc', default to 'asc'
  */
-router.get('/', async (req, res) => {
+router.get('/search', async (req, res) => {
   try {
     // 1. PAGINATION PARAMETERS
     const page = parseInt(req.query.page) || 1
@@ -132,11 +134,11 @@ router.get('/', async (req, res) => {
       filter.current_stock = { $gt: 0 }
     }
 
-    // Search by name, SKU, or description
+    // Search by slug or SKU
     if (req.query.q) {
       const searchTerm = req.query.q.trim()
       filter.$or = [
-        { name: { $regex: searchTerm, $options: 'i' } },
+        { slug: { $regex: searchTerm, $options: 'i' } },
         { SKU: { $regex: searchTerm, $options: 'i' } },
       ]
     }
@@ -190,7 +192,7 @@ router.get('/', async (req, res) => {
     const products = await Product.find(filter)
       .populate({
         path: 'type_id',
-        select: 'name description category_id',
+        select: 'name category_id',
         populate: {
           path: 'category_id',
           select: 'category_name'
@@ -205,38 +207,34 @@ router.get('/', async (req, res) => {
 
     // 5. FORMAT RESPONSE DATA
     const formattedProducts = products.map(product => {
-      const size = product.size ? parseFloat(product.size.toString()) : null
+      const formattedSize = product.size ? parseFloat(product.size.toString()) : null
       
       return {
         _id: product._id,
         sku: product.SKU,
         name: product.name,
-        description: product.description,
-        size: size,
+        slug: product.slug,
+        size: formattedSize,
         unit: product.unit,
         price: product.selling_price,
         stock: product.current_stock,
         in_stock: product.current_stock > 0,
-        images: product.image_urls,
+        images: product.image_urls[0] || null,
         category: product.type_id?.category_id ? {
-          //_id: product.type_id.category_id._id,
+          _id: product.type_id.category_id._id,
           name: product.type_id.category_id.category_name,
-          //slug: product.type_id.category_id.category_name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and')
         } : null,
         type: product.type_id ? {
-          //_id: product.type_id._id,
+          _id: product.type_id._id,
           name: product.type_id.name,
-          //slug: product.type_id.name.toLowerCase().replace(/\s+/g, '-')
         } : null,
         brand: product.brand_id ? {
-          //_id: product.brand_id._id,
+          _id: product.brand_id._id,
           name: product.brand_id.name,
-          //slug: product.brand_id.name.toLowerCase().replace(/\s+/g, '-')
         } : null,
         attributes: product.attributes ? product.attributes.map(attr => ({
-          //_id: attr._id,
+          _id: attr._id,
           name: attr.description,
-          //slug: attr.description.toLowerCase().replace(/\s+/g, '-')
         })) : [],
       }
     })
@@ -257,19 +255,6 @@ router.get('/', async (req, res) => {
         has_next_page: page < totalPages,
         has_prev_page: page > 1
       },
-      /*filters: {
-        category: req.query.category || null,
-        type: req.query.type || null,
-        brand: req.query.brand || null,
-        attributes: req.query.attributes || null,
-        price_range: {
-          min: req.query.price_min || null,
-          max: req.query.price_max || null
-        },
-        search: req.query.q || null,
-        stock: req.query.stock || 'all',
-        sort: req.query.sort || 'newest'
-      }*/
     })
 
   } catch (error) {
@@ -282,8 +267,146 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.get('/item/:id', async (req, res) => {
 
-})
+
+router.get('/:id', async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    // 1. VALIDATE PRODUCT ID
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID format'
+      });
+    }
+
+    // 2. FETCH PRODUCT WITH POPULATED FIELDS
+    const product = await Product.findById(productId)
+      .populate({
+        path: 'type_id',
+        select: 'name category_id',
+        populate: {
+          path: 'category_id',
+          select: 'category_name'
+        }
+      })
+      .populate('brand_id', 'name')
+      .populate('attributes', 'description')
+      .lean();
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // 3. FETCH AND CALCULATE REVIEWS
+    const reviews = await Review.find({ product_id: productId })
+      .populate('customer_id', 'name')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Calculate average rating and rating breakdown
+    const totalReviews = reviews.length;
+    let averageRating = 0;
+    const ratingBreakdown = {
+      5: 0,
+      4: 0,
+      3: 0,
+      2: 0,
+      1: 0
+    };
+
+    if (totalReviews > 0) {
+      const totalRating = reviews.reduce((sum, review) => {
+        ratingBreakdown[review.rating]++;
+        return sum + review.rating;
+      }, 0);
+      averageRating = parseFloat((totalRating / totalReviews).toFixed(2));
+    }
+
+    // Calculate percentage for each rating
+    const ratingBreakdownWithPercentage = Object.keys(ratingBreakdown).map(rating => ({
+      stars: parseInt(rating),
+      count: ratingBreakdown[rating],
+      percentage: totalReviews > 0 
+        ? parseFloat(((ratingBreakdown[rating] / totalReviews) * 100).toFixed(1))
+        : 0
+    })).sort((a, b) => b.stars - a.stars);
+
+    // 4. FORMAT REVIEWS
+    const formattedReviews = reviews.map(review => ({
+      _id: review._id,
+      rating: review.rating,
+      comment: review.comment,
+      reviewer: {
+        _id: review.customer_id?._id || null,
+        name: review.customer_id?.name || 'Anonymous',
+        //image_url: review.customer_id?.image_url || null
+      },
+      created_at: review.createdAt,
+      updated_at: review.updatedAt
+    }));
+
+    // 5. FORMAT PRODUCT RESPONSE
+    const size = product.size ? parseFloat(product.size.toString()) : null;
+
+    const productDetail = {
+      _id: product._id,
+      sku: product.SKU,
+      name: product.name,
+      description: product.description,
+      size: size,
+      unit: product.unit,
+      price: product.selling_price,
+      stock: product.current_stock,
+      in_stock: product.current_stock > 0,
+      images: product.image_urls,
+      category: product.type_id?.category_id ? {
+        _id: product.type_id.category_id._id,
+        name: product.type_id.category_id.category_name,
+      } : null,
+      
+      type: product.type_id ? {
+        _id: product.type_id._id,
+        name: product.type_id.name,
+      } : null,
+      
+      brand: product.brand_id ? {
+        _id: product.brand_id._id,
+        name: product.brand_id.name,
+      } : null,
+      
+      attributes: product.attributes ? product.attributes.map(attr => ({
+        _id: attr._id,
+        name: attr.description,
+      })) : [],
+      
+      rating: {
+        average: averageRating,
+        total_reviews: totalReviews,
+        breakdown: ratingBreakdownWithPercentage
+      },
+      
+      reviews: formattedReviews,    
+      created_at: product.createdAt,
+      updated_at: product.updatedAt
+    };
+
+    // 6. SEND RESPONSE
+    res.status(200).json({
+      data: productDetail
+    });
+
+  } catch (error) {
+    console.error('Error fetching product detail:', error);
+    res.status(500).json({
+      message: 'Error fetching product detail',
+      error: error.message
+    });
+  }
+});
 
 module.exports = router
