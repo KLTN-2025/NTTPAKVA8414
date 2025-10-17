@@ -1,4 +1,3 @@
-// products.routes.js
 const express = require('express')
 const router = express.Router()
 const Product = require('../models/Products')
@@ -273,15 +272,7 @@ router.get('/:id', async (req, res) => {
   try {
     const productId = req.params.id;
 
-    // 1. VALIDATE PRODUCT ID
-    if (!mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid product ID format'
-      });
-    }
-
-    // 2. FETCH PRODUCT WITH POPULATED FIELDS
+    // 1. FETCH PRODUCT WITH POPULATED FIELDS
     const product = await Product.findById(productId)
       .populate({
         path: 'type_id',
@@ -302,7 +293,7 @@ router.get('/:id', async (req, res) => {
       });
     }
 
-    // 3. FETCH AND CALCULATE REVIEWS
+    // 2. FETCH AND CALCULATE REVIEWS
     const reviews = await Review.find({ product_id: productId })
       .populate('customer_id', 'name')
       .sort({ createdAt: -1 })
@@ -336,7 +327,7 @@ router.get('/:id', async (req, res) => {
         : 0
     })).sort((a, b) => b.stars - a.stars);
 
-    // 4. FORMAT REVIEWS
+    // 3. FORMAT REVIEWS
     const formattedReviews = reviews.map(review => ({
       _id: review._id,
       rating: review.rating,
@@ -350,7 +341,7 @@ router.get('/:id', async (req, res) => {
       updated_at: review.updatedAt
     }));
 
-    // 5. FORMAT PRODUCT RESPONSE
+    // 4. FORMAT PRODUCT RESPONSE
     const size = product.size ? parseFloat(product.size.toString()) : null;
 
     const productDetail = {
@@ -395,7 +386,7 @@ router.get('/:id', async (req, res) => {
       updated_at: product.updatedAt
     };
 
-    // 6. SEND RESPONSE
+    // 5. SEND RESPONSE
     res.status(200).json({
       data: productDetail
     });
