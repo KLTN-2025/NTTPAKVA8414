@@ -9,6 +9,7 @@ const CustomerSchema = new mongoose.Schema(
       unique: true,
       index: true  
     },
+
     email: {
       type: String,
       required: true,
@@ -47,6 +48,11 @@ const CustomerSchema = new mongoose.Schema(
     last_login: {
       type: Date,
       default: Date.now
+    },
+    role: {
+      type: String,
+      enum: ['admin', 'customer'],
+      default: 'customer'
     }
   },
   { timestamps: true }
