@@ -59,6 +59,7 @@ router.post(
             phone: phone_numbers[0]?.phone_number || '',
             image_url: image_url,
             last_login: new Date(),
+            role: private_metadata.role || 'customer',
           });
           break;
         }
@@ -77,6 +78,7 @@ router.post(
                 phone: phone_numbers[0]?.phone_number || '',
                 image_url: image_url,
                 last_login: new Date(),
+                role: private_metadata.role || 'customer',
               },
             }
           );
@@ -91,7 +93,7 @@ router.post(
             {
               $set: {
                 is_deleted: true,
-                account_status: 'inactive', // Also update the status
+                account_status: 'inactive',
               },
             }
           );

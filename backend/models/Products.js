@@ -25,6 +25,10 @@ const ProductSchema = new mongoose.Schema(
       trim: true,
       maxlength: 255
     },
+    description: {
+      type: String,
+      required: true
+    },
     size: {
       type: mongoose.Schema.Types.Decimal128,
       default: null
@@ -53,7 +57,8 @@ const ProductSchema = new mongoose.Schema(
     image_urls: {
       type: [String],
       default: []
-    }
+    },
+    attributes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Attribute' }],
   },
   { timestamps: true }
 );

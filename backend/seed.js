@@ -1,7 +1,6 @@
 // Dữ liệu mẫu cho website
-// Run this file with: node seed.js
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 // ============================================
 // 1. PRODUCT CATEGORIES 
@@ -47,7 +46,7 @@ const productCategories = [
     category_name: 'Beverages',
     description: 'Sugar-free and healthy drink options'
   }
-];
+]
 
 // ============================================
 // 2. PRODUCT TYPES
@@ -100,7 +99,7 @@ const productTypes = [
   { _id: new mongoose.Types.ObjectId(), category_id: productCategories[7]._id, name: 'Green Tea', description: 'Organic green tea' },
   { _id: new mongoose.Types.ObjectId(), category_id: productCategories[7]._id, name: 'Kombucha', description: 'Probiotic fermented tea' },
   { _id: new mongoose.Types.ObjectId(), category_id: productCategories[7]._id, name: 'Coconut Water', description: 'Natural coconut water' }
-];
+]
 
 // ============================================
 // 3. BRANDS
@@ -116,7 +115,7 @@ const brands = [
   { _id: new mongoose.Types.ObjectId(), name: 'NaturePath' },
   { _id: new mongoose.Types.ObjectId(), name: 'HealthFirst' },
   { _id: new mongoose.Types.ObjectId(), name: 'VitaGreen' }
-];
+]
 
 // ============================================
 // 4. ATTRIBUTES
@@ -134,7 +133,7 @@ const attributes = [
   { _id: new mongoose.Types.ObjectId(), description: 'Paleo' },
   { _id: new mongoose.Types.ObjectId(), description: 'Dairy-Free' },
   { _id: new mongoose.Types.ObjectId(), description: 'Low-Sodium' }
-];
+]
 
 // ============================================
 // 5. PRODUCTS 
@@ -147,12 +146,14 @@ const products = [
     brand_id: brands[0]._id,
     SKU: 'OIL-EVOO-500',
     name: 'Extra Virgin Olive Oil',
+    description: 'Premium cold-pressed extra virgin olive oil with rich flavor and high antioxidants',
     size: mongoose.Types.Decimal128.fromString('500'),
     unit: 'ml',
-    cost_price: 8.50,
-    selling_price: 12.99,
+    cost_price: 85000,
+    selling_price: 129900,
     current_stock: 150,
-    image_urls: ['https://example.com/images/olive-oil-500ml.jpg']
+    image_urls: ['https://example.com/images/olive-oil-500ml.jpg'],
+    attributes: [attributes[3]._id, attributes[9]._id]
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -160,12 +161,14 @@ const products = [
     brand_id: brands[4]._id,
     SKU: 'OIL-EVOO-1L-ORG',
     name: 'Organic Extra Virgin Olive Oil',
+    description: 'Certified organic first cold-pressed olive oil from sustainable farms',
     size: mongoose.Types.Decimal128.fromString('1000'),
     unit: 'ml',
-    cost_price: 15.00,
-    selling_price: 22.99,
+    cost_price: 150000,
+    selling_price: 229900,
     current_stock: 85,
-    image_urls: ['https://example.com/images/organic-olive-oil-1l.jpg']
+    image_urls: ['https://example.com/images/organic-olive-oil-1l.jpg'],
+    attributes: [attributes[4]._id, attributes[3]._id, attributes[9]._id]
   },
   
   // Coconut Oils
@@ -175,12 +178,14 @@ const products = [
     brand_id: brands[5]._id,
     SKU: 'OIL-COCO-500-VRG',
     name: 'Virgin Coconut Oil',
+    description: 'Unrefined virgin coconut oil perfect for cooking and baking',
     size: mongoose.Types.Decimal128.fromString('500'),
     unit: 'ml',
-    cost_price: 9.00,
-    selling_price: 14.99,
+    cost_price: 90000,
+    selling_price: 149900,
     current_stock: 120,
-    image_urls: ['https://example.com/images/coconut-oil-virgin.jpg']
+    image_urls: ['https://example.com/images/coconut-oil-virgin.jpg'],
+    attributes: [attributes[2]._id, attributes[3]._id, attributes[6]._id, attributes[9]._id]
   },
   
   // MCT Oil
@@ -190,12 +195,14 @@ const products = [
     brand_id: brands[5]._id,
     SKU: 'OIL-MCT-500',
     name: 'Pure MCT Oil',
+    description: '100% pure medium-chain triglycerides for energy and mental clarity',
     size: mongoose.Types.Decimal128.fromString('500'),
     unit: 'ml',
-    cost_price: 12.00,
-    selling_price: 18.99,
+    cost_price: 120000,
+    selling_price: 189900,
     current_stock: 95,
-    image_urls: ['https://example.com/images/mct-oil.jpg']
+    image_urls: ['https://example.com/images/mct-oil.jpg'],
+    attributes: [attributes[2]._id, attributes[3]._id, attributes[9]._id]
   },
   
   // Leafy Greens
@@ -205,12 +212,14 @@ const products = [
     brand_id: brands[2]._id,
     SKU: 'VEG-SPIN-250-ORG',
     name: 'Organic Baby Spinach',
+    description: 'Tender organic baby spinach leaves, perfect for salads and smoothies',
     size: mongoose.Types.Decimal128.fromString('250'),
     unit: 'g',
-    cost_price: 2.50,
-    selling_price: 4.99,
+    cost_price: 25000,
+    selling_price: 49900,
     current_stock: 200,
-    image_urls: ['https://example.com/images/baby-spinach.jpg']
+    image_urls: ['https://example.com/images/baby-spinach.jpg'],
+    attributes: [attributes[0]._id, attributes[4]._id, attributes[6]._id, attributes[3]._id]
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -218,12 +227,14 @@ const products = [
     brand_id: brands[4]._id,
     SKU: 'VEG-KALE-200-ORG',
     name: 'Organic Curly Kale',
+    description: 'Nutrient-dense organic curly kale packed with vitamins and minerals',
     size: mongoose.Types.Decimal128.fromString('200'),
     unit: 'g',
-    cost_price: 3.00,
-    selling_price: 5.49,
+    cost_price: 30000,
+    selling_price: 54900,
     current_stock: 140,
-    image_urls: ['https://example.com/images/curly-kale.jpg']
+    image_urls: ['https://example.com/images/curly-kale.jpg'],
+    attributes: [attributes[0]._id, attributes[4]._id, attributes[6]._id, attributes[2]._id]
   },
   
   // Cruciferous
@@ -233,12 +244,14 @@ const products = [
     brand_id: brands[2]._id,
     SKU: 'VEG-BROC-500',
     name: 'Fresh Broccoli Florets',
+    description: 'Fresh cut broccoli florets rich in fiber and antioxidants',
     size: mongoose.Types.Decimal128.fromString('500'),
     unit: 'g',
-    cost_price: 2.00,
-    selling_price: 3.99,
+    cost_price: 20000,
+    selling_price: 39900,
     current_stock: 180,
-    image_urls: ['https://example.com/images/broccoli-florets.jpg']
+    image_urls: ['https://example.com/images/broccoli-florets.jpg'],
+    attributes: [attributes[0]._id, attributes[6]._id, attributes[3]._id]
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -246,12 +259,14 @@ const products = [
     brand_id: brands[4]._id,
     SKU: 'VEG-CAUL-600-ORG',
     name: 'Organic Cauliflower',
+    description: 'Fresh organic cauliflower head, versatile low-carb vegetable',
     size: mongoose.Types.Decimal128.fromString('600'),
     unit: 'g',
-    cost_price: 2.80,
-    selling_price: 4.99,
+    cost_price: 28000,
+    selling_price: 49900,
     current_stock: 160,
-    image_urls: ['https://example.com/images/cauliflower.jpg']
+    image_urls: ['https://example.com/images/cauliflower.jpg'],
+    attributes: [attributes[0]._id, attributes[4]._id, attributes[2]._id, attributes[6]._id]
   },
   
   // Berries
@@ -261,12 +276,14 @@ const products = [
     brand_id: brands[2]._id,
     SKU: 'FRT-BLUE-250-ORG',
     name: 'Organic Blueberries',
+    description: 'Sweet organic blueberries loaded with antioxidants and vitamins',
     size: mongoose.Types.Decimal128.fromString('250'),
     unit: 'g',
-    cost_price: 4.50,
-    selling_price: 7.99,
+    cost_price: 45000,
+    selling_price: 79900,
     current_stock: 110,
-    image_urls: ['https://example.com/images/blueberries.jpg']
+    image_urls: ['https://example.com/images/blueberries.jpg'],
+    attributes: [attributes[4]._id, attributes[6]._id, attributes[3]._id]
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -274,12 +291,14 @@ const products = [
     brand_id: brands[4]._id,
     SKU: 'FRT-STRAW-300',
     name: 'Fresh Strawberries',
+    description: 'Juicy fresh strawberries, naturally sweet and vitamin C rich',
     size: mongoose.Types.Decimal128.fromString('300'),
     unit: 'g',
-    cost_price: 3.50,
-    selling_price: 6.49,
+    cost_price: 35000,
+    selling_price: 64900,
     current_stock: 130,
-    image_urls: ['https://example.com/images/strawberries.jpg']
+    image_urls: ['https://example.com/images/strawberries.jpg'],
+    attributes: [attributes[6]._id, attributes[3]._id, attributes[8]._id]
   },
   
   // Chicken
@@ -289,12 +308,14 @@ const products = [
     brand_id: brands[1]._id,
     SKU: 'PROT-CHKB-500',
     name: 'Skinless Chicken Breast',
+    description: 'Lean skinless chicken breast, high in protein and low in fat',
     size: mongoose.Types.Decimal128.fromString('500'),
     unit: 'g',
-    cost_price: 5.00,
-    selling_price: 8.99,
+    cost_price: 50000,
+    selling_price: 89900,
     current_stock: 220,
-    image_urls: ['https://example.com/images/chicken-breast.jpg']
+    image_urls: ['https://example.com/images/chicken-breast.jpg'],
+    attributes: [attributes[1]._id, attributes[0]._id, attributes[8]._id, attributes[3]._id]
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -302,12 +323,14 @@ const products = [
     brand_id: brands[4]._id,
     SKU: 'PROT-CHKB-1KG-ORG',
     name: 'Organic Chicken Breast',
+    description: 'Premium organic chicken breast from free-range farms',
     size: mongoose.Types.Decimal128.fromString('1000'),
     unit: 'g',
-    cost_price: 11.00,
-    selling_price: 16.99,
+    cost_price: 110000,
+    selling_price: 169900,
     current_stock: 95,
-    image_urls: ['https://example.com/images/organic-chicken.jpg']
+    image_urls: ['https://example.com/images/organic-chicken.jpg'],
+    attributes: [attributes[1]._id, attributes[4]._id, attributes[0]._id, attributes[9]._id]
   },
   
   // Fish
@@ -317,12 +340,14 @@ const products = [
     brand_id: brands[1]._id,
     SKU: 'PROT-SALM-400',
     name: 'Atlantic Salmon Fillet',
+    description: 'Fresh Atlantic salmon fillet rich in omega-3 fatty acids',
     size: mongoose.Types.Decimal128.fromString('400'),
     unit: 'g',
-    cost_price: 8.00,
-    selling_price: 13.99,
+    cost_price: 80000,
+    selling_price: 139900,
     current_stock: 80,
-    image_urls: ['https://example.com/images/salmon-fillet.jpg']
+    image_urls: ['https://example.com/images/salmon-fillet.jpg'],
+    attributes: [attributes[1]._id, attributes[0]._id, attributes[2]._id, attributes[9]._id]
   },
   
   // Eggs
@@ -332,12 +357,14 @@ const products = [
     brand_id: brands[4]._id,
     SKU: 'PROT-EGGS-12-FR',
     name: 'Free-Range Eggs (12 pack)',
+    description: 'Farm-fresh free-range eggs from cage-free hens',
     size: mongoose.Types.Decimal128.fromString('12'),
     unit: 'pcs',
-    cost_price: 4.00,
-    selling_price: 6.99,
+    cost_price: 40000,
+    selling_price: 69900,
     current_stock: 300,
-    image_urls: ['https://example.com/images/free-range-eggs.jpg']
+    image_urls: ['https://example.com/images/free-range-eggs.jpg'],
+    attributes: [attributes[1]._id, attributes[0]._id, attributes[2]._id, attributes[3]._id]
   },
   
   // Plant Protein
@@ -347,12 +374,14 @@ const products = [
     brand_id: brands[7]._id,
     SKU: 'PROT-TOFU-400-ORG',
     name: 'Organic Firm Tofu',
+    description: 'Organic firm tofu made from non-GMO soybeans, excellent plant protein',
     size: mongoose.Types.Decimal128.fromString('400'),
     unit: 'g',
-    cost_price: 2.50,
-    selling_price: 4.49,
+    cost_price: 25000,
+    selling_price: 44900,
     current_stock: 175,
-    image_urls: ['https://example.com/images/firm-tofu.jpg']
+    image_urls: ['https://example.com/images/firm-tofu.jpg'],
+    attributes: [attributes[1]._id, attributes[6]._id, attributes[4]._id, attributes[3]._id, attributes[5]._id]
   },
   
   // Quinoa
@@ -362,12 +391,14 @@ const products = [
     brand_id: brands[4]._id,
     SKU: 'GRN-QUIN-500-ORG',
     name: 'Organic Tri-Color Quinoa',
+    description: 'Organic tri-color quinoa blend, complete protein source with all essential amino acids',
     size: mongoose.Types.Decimal128.fromString('500'),
     unit: 'g',
-    cost_price: 4.00,
-    selling_price: 7.49,
+    cost_price: 40000,
+    selling_price: 74900,
     current_stock: 140,
-    image_urls: ['https://example.com/images/tricolor-quinoa.jpg']
+    image_urls: ['https://example.com/images/tricolor-quinoa.jpg'],
+    attributes: [attributes[4]._id, attributes[1]._id, attributes[3]._id, attributes[6]._id]
   },
   
   // Brown Rice
@@ -377,12 +408,14 @@ const products = [
     brand_id: brands[2]._id,
     SKU: 'GRN-RICE-1KG',
     name: 'Whole Grain Brown Rice',
+    description: 'Nutritious whole grain brown rice with natural fiber and minerals',
     size: mongoose.Types.Decimal128.fromString('1000'),
     unit: 'g',
-    cost_price: 3.50,
-    selling_price: 5.99,
+    cost_price: 35000,
+    selling_price: 59900,
     current_stock: 200,
-    image_urls: ['https://example.com/images/brown-rice.jpg']
+    image_urls: ['https://example.com/images/brown-rice.jpg'],
+    attributes: [attributes[6]._id, attributes[3]._id, attributes[5]._id]
   },
   
   // Oats
@@ -392,12 +425,14 @@ const products = [
     brand_id: brands[8]._id,
     SKU: 'GRN-OATS-750-GF',
     name: 'Gluten-Free Steel Cut Oats',
+    description: 'Certified gluten-free steel cut oats for hearty breakfast bowls',
     size: mongoose.Types.Decimal128.fromString('750'),
     unit: 'g',
-    cost_price: 4.50,
-    selling_price: 7.99,
+    cost_price: 45000,
+    selling_price: 79900,
     current_stock: 125,
-    image_urls: ['https://example.com/images/steel-cut-oats.jpg']
+    image_urls: ['https://example.com/images/steel-cut-oats.jpg'],
+    attributes: [attributes[3]._id, attributes[6]._id, attributes[5]._id]
   },
   
   // Greek Yogurt
@@ -407,12 +442,14 @@ const products = [
     brand_id: brands[1]._id,
     SKU: 'DAIRY-GYOG-500-PLN',
     name: 'Plain Greek Yogurt',
+    description: 'Thick and creamy plain Greek yogurt with high protein content',
     size: mongoose.Types.Decimal128.fromString('500'),
     unit: 'g',
-    cost_price: 3.00,
-    selling_price: 5.49,
+    cost_price: 30000,
+    selling_price: 54900,
     current_stock: 180,
-    image_urls: ['https://example.com/images/greek-yogurt.jpg']
+    image_urls: ['https://example.com/images/greek-yogurt.jpg'],
+    attributes: [attributes[1]._id, attributes[0]._id, attributes[3]._id]
   },
   
   // Almond Milk
@@ -422,12 +459,14 @@ const products = [
     brand_id: brands[7]._id,
     SKU: 'DAIRY-ALMK-1L-UNSW',
     name: 'Unsweetened Almond Milk',
+    description: 'Creamy unsweetened almond milk, dairy-free and low in calories',
     size: mongoose.Types.Decimal128.fromString('1000'),
     unit: 'ml',
-    cost_price: 2.50,
-    selling_price: 4.49,
+    cost_price: 25000,
+    selling_price: 44900,
     current_stock: 210,
-    image_urls: ['https://example.com/images/almond-milk.jpg']
+    image_urls: ['https://example.com/images/almond-milk.jpg'],
+    attributes: [attributes[6]._id, attributes[10]._id, attributes[7]._id, attributes[0]._id]
   },
   
   // Cottage Cheese
@@ -437,12 +476,14 @@ const products = [
     brand_id: brands[1]._id,
     SKU: 'DAIRY-COTT-400-LF',
     name: 'Low-Fat Cottage Cheese',
+    description: 'Low-fat cottage cheese with high protein and minimal fat',
     size: mongoose.Types.Decimal128.fromString('400'),
     unit: 'g',
-    cost_price: 2.80,
-    selling_price: 4.99,
+    cost_price: 28000,
+    selling_price: 49900,
     current_stock: 165,
-    image_urls: ['https://example.com/images/cottage-cheese.jpg']
+    image_urls: ['https://example.com/images/cottage-cheese.jpg'],
+    attributes: [attributes[1]._id, attributes[8]._id, attributes[3]._id]
   },
   
   // Nuts
@@ -452,12 +493,14 @@ const products = [
     brand_id: brands[7]._id,
     SKU: 'SNK-ALMD-250-RAW',
     name: 'Raw Almonds',
+    description: 'Premium raw almonds, rich in healthy fats and vitamin E',
     size: mongoose.Types.Decimal128.fromString('250'),
     unit: 'g',
-    cost_price: 5.00,
-    selling_price: 8.49,
+    cost_price: 50000,
+    selling_price: 84900,
     current_stock: 190,
-    image_urls: ['https://example.com/images/raw-almonds.jpg']
+    image_urls: ['https://example.com/images/raw-almonds.jpg'],
+    attributes: [attributes[1]._id, attributes[6]._id, attributes[3]._id, attributes[2]._id]
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -465,12 +508,14 @@ const products = [
     brand_id: brands[7]._id,
     SKU: 'SNK-WLNT-200',
     name: 'Raw Walnuts',
+    description: 'Raw walnuts packed with omega-3s and antioxidants',
     size: mongoose.Types.Decimal128.fromString('200'),
     unit: 'g',
-    cost_price: 6.00,
-    selling_price: 9.99,
+    cost_price: 60000,
+    selling_price: 99900,
     current_stock: 145,
-    image_urls: ['https://example.com/images/raw-walnuts.jpg']
+    image_urls: ['https://example.com/images/raw-walnuts.jpg'],
+    attributes: [attributes[6]._id, attributes[3]._id, attributes[2]._id, attributes[9]._id]
   },
   
   // Protein Bars
@@ -480,12 +525,14 @@ const products = [
     brand_id: brands[6]._id,
     SKU: 'SNK-PBAR-60-CHOC',
     name: 'Chocolate Protein Bar',
+    description: 'Delicious chocolate protein bar with 20g protein and no added sugar',
     size: mongoose.Types.Decimal128.fromString('60'),
     unit: 'g',
-    cost_price: 1.50,
-    selling_price: 2.99,
+    cost_price: 15000,
+    selling_price: 29900,
     current_stock: 350,
-    image_urls: ['https://example.com/images/choc-protein-bar.jpg']
+    image_urls: ['https://example.com/images/choc-protein-bar.jpg'],
+    attributes: [attributes[1]._id, attributes[7]._id, attributes[3]._id]
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -493,12 +540,14 @@ const products = [
     brand_id: brands[6]._id,
     SKU: 'SNK-PBAR-60-PB',
     name: 'Peanut Butter Protein Bar',
+    description: 'Creamy peanut butter protein bar with natural ingredients',
     size: mongoose.Types.Decimal128.fromString('60'),
     unit: 'g',
-    cost_price: 1.50,
-    selling_price: 2.99,
+    cost_price: 15000,
+    selling_price: 29900,
     current_stock: 320,
-    image_urls: ['https://example.com/images/pb-protein-bar.jpg']
+    image_urls: ['https://example.com/images/pb-protein-bar.jpg'],
+    attributes: [attributes[1]._id, attributes[7]._id, attributes[3]._id]
   },
   
   // Veggie Chips
@@ -508,12 +557,14 @@ const products = [
     brand_id: brands[3]._id,
     SKU: 'SNK-KCHP-100',
     name: 'Baked Kale Chips',
+    description: 'Crispy baked kale chips, a healthy alternative to potato chips',
     size: mongoose.Types.Decimal128.fromString('100'),
     unit: 'g',
-    cost_price: 3.00,
-    selling_price: 5.49,
+    cost_price: 30000,
+    selling_price: 54900,
     current_stock: 155,
-    image_urls: ['https://example.com/images/kale-chips.jpg']
+    image_urls: ['https://example.com/images/kale-chips.jpg'],
+    attributes: [attributes[6]._id, attributes[3]._id, attributes[8]._id, attributes[0]._id]
   },
   
   // Dark Chocolate
@@ -523,12 +574,14 @@ const products = [
     brand_id: brands[3]._id,
     SKU: 'SNK-DCHOC-85-SF',
     name: 'Sugar-Free Dark Chocolate 85%',
+    description: 'Intense 85% dark chocolate sweetened with natural alternatives',
     size: mongoose.Types.Decimal128.fromString('100'),
     unit: 'g',
-    cost_price: 3.50,
-    selling_price: 6.49,
+    cost_price: 35000,
+    selling_price: 64900,
     current_stock: 175,
-    image_urls: ['https://example.com/images/dark-chocolate-85.jpg']
+    image_urls: ['https://example.com/images/dark-chocolate-85.jpg'],
+    attributes: [attributes[7]._id, attributes[2]._id, attributes[6]._id]
   },
   
   // Protein Shakes
@@ -538,12 +591,14 @@ const products = [
     brand_id: brands[6]._id,
     SKU: 'BEV-PSHK-330-VAN',
     name: 'Vanilla Protein Shake',
+    description: 'Ready-to-drink vanilla protein shake with 25g protein per serving',
     size: mongoose.Types.Decimal128.fromString('330'),
     unit: 'ml',
-    cost_price: 2.50,
-    selling_price: 4.49,
+    cost_price: 25000,
+    selling_price: 44900,
     current_stock: 240,
-    image_urls: ['https://example.com/images/vanilla-shake.jpg']
+    image_urls: ['https://example.com/images/vanilla-shake.jpg'],
+    attributes: [attributes[1]._id, attributes[7]._id, attributes[3]._id, attributes[8]._id]
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -551,12 +606,14 @@ const products = [
     brand_id: brands[6]._id,
     SKU: 'BEV-PSHK-330-CHOC',
     name: 'Chocolate Protein Shake',
+    description: 'Rich chocolate protein shake, convenient post-workout nutrition',
     size: mongoose.Types.Decimal128.fromString('330'),
     unit: 'ml',
-    cost_price: 2.50,
-    selling_price: 4.49,
+    cost_price: 25000,
+    selling_price: 44900,
     current_stock: 260,
-    image_urls: ['https://example.com/images/chocolate-shake.jpg']
+    image_urls: ['https://example.com/images/chocolate-shake.jpg'],
+    attributes: [attributes[1]._id, attributes[7]._id, attributes[3]._id, attributes[8]._id]
   },
   
   // Green Tea
@@ -566,12 +623,14 @@ const products = [
     brand_id: brands[9]._id,
     SKU: 'BEV-GTEA-100-ORG',
     name: 'Organic Green Tea (100 bags)',
+    description: 'Premium organic green tea bags with natural antioxidants',
     size: mongoose.Types.Decimal128.fromString('100'),
     unit: 'bags',
-    cost_price: 6.00,
-    selling_price: 9.99,
+    cost_price: 60000,
+    selling_price: 99900,
     current_stock: 135,
-    image_urls: ['https://example.com/images/green-tea.jpg']
+    image_urls: ['https://example.com/images/green-tea.jpg'],
+    attributes: [attributes[4]._id, attributes[6]._id, attributes[7]._id, attributes[3]._id]
   },
   
   // Kombucha
@@ -581,12 +640,14 @@ const products = [
     brand_id: brands[9]._id,
     SKU: 'BEV-KOMB-500-GNGR',
     name: 'Ginger Kombucha',
+    description: 'Probiotic-rich ginger kombucha for gut health and digestion',
     size: mongoose.Types.Decimal128.fromString('500'),
     unit: 'ml',
-    cost_price: 3.00,
-    selling_price: 5.49,
+    cost_price: 30000,
+    selling_price: 54900,
     current_stock: 110,
-    image_urls: ['https://example.com/images/ginger-kombucha.jpg']
+    image_urls: ['https://example.com/images/ginger-kombucha.jpg'],
+    attributes: [attributes[6]._id, attributes[4]._id, attributes[10]._id]
   },
   
   // Coconut Water
@@ -596,267 +657,81 @@ const products = [
     brand_id: brands[7]._id,
     SKU: 'BEV-COCW-1L',
     name: '100% Pure Coconut Water',
+    description: 'Natural hydrating coconut water with electrolytes, no added sugar',
     size: mongoose.Types.Decimal128.fromString('1000'),
     unit: 'ml',
-    cost_price: 3.50,
-    selling_price: 5.99,
+    cost_price: 35000,
+    selling_price: 59900,
     current_stock: 185,
-    image_urls: ['https://example.com/images/coconut-water.jpg']
+    image_urls: ['https://example.com/images/coconut-water.jpg'],
+    attributes: [attributes[6]._id, attributes[7]._id, attributes[3]._id, attributes[10]._id]
   }
-];
+]
 
-// ============================================
-// 6. PRODUCT ATTRIBUTES (Relationships)
-// ============================================
-const productAttributes = [
-  // Olive Oils - attributes
-  { product_id: products[0]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[0]._id, attribute_id: attributes[9]._id }, // Paleo
-  { product_id: products[1]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[1]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[1]._id, attribute_id: attributes[9]._id }, // Paleo
-  
-  // Coconut Oil
-  { product_id: products[2]._id, attribute_id: attributes[2]._id }, // Keto-Friendly
-  { product_id: products[2]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[2]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[2]._id, attribute_id: attributes[9]._id }, // Paleo
-  
-  // MCT Oil
-  { product_id: products[3]._id, attribute_id: attributes[2]._id }, // Keto-Friendly
-  { product_id: products[3]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[3]._id, attribute_id: attributes[9]._id }, // Paleo
-  
-  // Spinach
-  { product_id: products[4]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  { product_id: products[4]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[4]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[4]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Kale
-  { product_id: products[5]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  { product_id: products[5]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[5]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[5]._id, attribute_id: attributes[2]._id }, // Keto-Friendly
-  
-  // Broccoli
-  { product_id: products[6]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  { product_id: products[6]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[6]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Cauliflower
-  { product_id: products[7]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  { product_id: products[7]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[7]._id, attribute_id: attributes[2]._id }, // Keto-Friendly
-  { product_id: products[7]._id, attribute_id: attributes[6]._id }, // Vegan
-  
-  // Blueberries
-  { product_id: products[8]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[8]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[8]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Strawberries
-  { product_id: products[9]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[9]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[9]._id, attribute_id: attributes[8]._id }, // Low-Fat
-  
-  // Chicken Breast
-  { product_id: products[10]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[10]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  { product_id: products[10]._id, attribute_id: attributes[8]._id }, // Low-Fat
-  { product_id: products[10]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Organic Chicken
-  { product_id: products[11]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[11]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[11]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  { product_id: products[11]._id, attribute_id: attributes[9]._id }, // Paleo
-  
-  // Salmon
-  { product_id: products[12]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[12]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  { product_id: products[12]._id, attribute_id: attributes[2]._id }, // Keto-Friendly
-  { product_id: products[12]._id, attribute_id: attributes[9]._id }, // Paleo
-  
-  // Free-Range Eggs
-  { product_id: products[13]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[13]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  { product_id: products[13]._id, attribute_id: attributes[2]._id }, // Keto-Friendly
-  { product_id: products[13]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Tofu
-  { product_id: products[14]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[14]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[14]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[14]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[14]._id, attribute_id: attributes[5]._id }, // Non-GMO
-  
-  // Quinoa
-  { product_id: products[15]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[15]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[15]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[15]._id, attribute_id: attributes[6]._id }, // Vegan
-  
-  // Brown Rice
-  { product_id: products[16]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[16]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[16]._id, attribute_id: attributes[5]._id }, // Non-GMO
-  
-  // Steel Cut Oats
-  { product_id: products[17]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[17]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[17]._id, attribute_id: attributes[5]._id }, // Non-GMO
-  
-  // Greek Yogurt
-  { product_id: products[18]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[18]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  { product_id: products[18]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Almond Milk
-  { product_id: products[19]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[19]._id, attribute_id: attributes[10]._id }, // Dairy-Free
-  { product_id: products[19]._id, attribute_id: attributes[7]._id }, // Sugar-Free
-  { product_id: products[19]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  
-  // Cottage Cheese
-  { product_id: products[20]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[20]._id, attribute_id: attributes[8]._id }, // Low-Fat
-  { product_id: products[20]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Raw Almonds
-  { product_id: products[21]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[21]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[21]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[21]._id, attribute_id: attributes[2]._id }, // Keto-Friendly
-  
-  // Raw Walnuts
-  { product_id: products[22]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[22]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[22]._id, attribute_id: attributes[2]._id }, // Keto-Friendly
-  { product_id: products[22]._id, attribute_id: attributes[9]._id }, // Paleo
-  
-  // Chocolate Protein Bar
-  { product_id: products[23]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[23]._id, attribute_id: attributes[7]._id }, // Sugar-Free
-  { product_id: products[23]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Peanut Butter Protein Bar
-  { product_id: products[24]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[24]._id, attribute_id: attributes[7]._id }, // Sugar-Free
-  { product_id: products[24]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Kale Chips
-  { product_id: products[25]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[25]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[25]._id, attribute_id: attributes[8]._id }, // Low-Fat
-  { product_id: products[25]._id, attribute_id: attributes[0]._id }, // Low-Carb
-  
-  // Dark Chocolate
-  { product_id: products[26]._id, attribute_id: attributes[7]._id }, // Sugar-Free
-  { product_id: products[26]._id, attribute_id: attributes[2]._id }, // Keto-Friendly
-  { product_id: products[26]._id, attribute_id: attributes[6]._id }, // Vegan
-  
-  // Vanilla Protein Shake
-  { product_id: products[27]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[27]._id, attribute_id: attributes[7]._id }, // Sugar-Free
-  { product_id: products[27]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[27]._id, attribute_id: attributes[8]._id }, // Low-Fat
-  
-  // Chocolate Protein Shake
-  { product_id: products[28]._id, attribute_id: attributes[1]._id }, // High-Protein
-  { product_id: products[28]._id, attribute_id: attributes[7]._id }, // Sugar-Free
-  { product_id: products[28]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[28]._id, attribute_id: attributes[8]._id }, // Low-Fat
-  
-  // Green Tea
-  { product_id: products[29]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[29]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[29]._id, attribute_id: attributes[7]._id }, // Sugar-Free
-  { product_id: products[29]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  
-  // Kombucha
-  { product_id: products[30]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[30]._id, attribute_id: attributes[4]._id }, // Organic
-  { product_id: products[30]._id, attribute_id: attributes[10]._id }, // Dairy-Free
-  
-  // Coconut Water
-  { product_id: products[31]._id, attribute_id: attributes[6]._id }, // Vegan
-  { product_id: products[31]._id, attribute_id: attributes[7]._id }, // Sugar-Free
-  { product_id: products[31]._id, attribute_id: attributes[3]._id }, // Gluten-Free
-  { product_id: products[31]._id, attribute_id: attributes[10]._id }  // Dairy-Free
-];
 
-// ============================================
-// SEEDING FUNCTION
-// ============================================
+//Seeding method
 async function seedDatabase() {
   try {
     // Connect to MongoDB
     await mongoose.connect('mongodb://localhost:27017/HealthyCrave', {
       useNewUrlParser: true,
       useUnifiedTopology: true
-    });
+    })
     
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB')
     
-    const ProductCategory = require('./models/ProductCategories');
-    const ProductType = require('./models/ProductTypes');
-    const Brand = require('./models/Brands');
-    const Attribute = require('./models/Attributes');
-    const Product = require('./models/Products');
-    const ProductAttribute = require('./models/ProductAttributes');
+    const ProductCategory = require('./models/ProductCategories')
+    const ProductType = require('./models/ProductTypes')
+    const Brand = require('./models/Brands')
+    const Attribute = require('./models/Attributes')
+    const Product = require('./models/Products')
     
-    console.log('Clearing existing data...');
-    await ProductAttribute.deleteMany({});
-    await Product.deleteMany({});
-    await ProductType.deleteMany({});
-    await ProductCategory.deleteMany({});
-    await Brand.deleteMany({});
-    await Attribute.deleteMany({});
+    console.log('Clearing existing data...')
+    await Product.deleteMany({})
+    await ProductType.deleteMany({})
+    await ProductCategory.deleteMany({})
+    await Brand.deleteMany({})
+    await Attribute.deleteMany({})
     
-    console.log('Seeding ProductCategories...');
-    await ProductCategory.insertMany(productCategories);
-    console.log(`✓ Inserted ${productCategories.length} categories`);
+    console.log('Seeding ProductCategories...')
+    await ProductCategory.insertMany(productCategories)
+    console.log(`✓ Inserted ${productCategories.length} categories`)
     
-    console.log('Seeding ProductTypes...');
-    await ProductType.insertMany(productTypes);
-    console.log(`✓ Inserted ${productTypes.length} product types`);
+    console.log('Seeding ProductTypes...')
+    await ProductType.insertMany(productTypes)
+    console.log(`✓ Inserted ${productTypes.length} product types`)
     
-    console.log('Seeding Brands...');
-    await Brand.insertMany(brands);
-    console.log(`✓ Inserted ${brands.length} brands`);
+    console.log('Seeding Brands...')
+    await Brand.insertMany(brands)
+    console.log(`✓ Inserted ${brands.length} brands`)
     
-    console.log('Seeding Attributes...');
-    await Attribute.insertMany(attributes);
-    console.log(`✓ Inserted ${attributes.length} attributes`);
+    console.log('Seeding Attributes...')
+    await Attribute.insertMany(attributes)
+    console.log(`✓ Inserted ${attributes.length} attributes`)
     
-    console.log('Seeding Products...');
-    await Product.insertMany(products);
-    console.log(`✓ Inserted ${products.length} products`);
+    console.log('Seeding Products...')
+    await Product.insertMany(products)
+    console.log(`✓ Inserted ${products.length} products`)
+
     
-    console.log('Seeding ProductAttributes...');
-    await ProductAttribute.insertMany(productAttributes);
-    console.log(`✓ Inserted ${productAttributes.length} product-attribute relationships`);
-    
-    console.log('\n✅ Database seeded successfully!');
-    console.log('\nSummary:');
-    console.log(`- ${productCategories.length} Product Categories`);
-    console.log(`- ${productTypes.length} Product Types`);
-    console.log(`- ${brands.length} Brands`);
-    console.log(`- ${attributes.length} Attributes`);
-    console.log(`- ${products.length} Products`);
-    console.log(`- ${productAttributes.length} Product-Attribute Relationships`);
+    console.log('\n✅ Database seeded successfully!')
+    console.log('\nSummary:')
+    console.log(`- ${productCategories.length} Product Categories`)
+    console.log(`- ${productTypes.length} Product Types`)
+    console.log(`- ${brands.length} Brands`)
+    console.log(`- ${attributes.length} Attributes`)
+    console.log(`- ${products.length} Products`)
     
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error('Error seeding database:', error)
   } finally {
-    await mongoose.connection.close();
-    console.log('\nDatabase connection closed');
+    await mongoose.connection.close()
+    console.log('\nDatabase connection closed')
   }
 }
 
 // Run the seeding function
-seedDatabase();
+seedDatabase()
 
 module.exports = {
   productCategories,
@@ -864,5 +739,4 @@ module.exports = {
   brands,
   attributes,
   products,
-  productAttributes
-};
+}
