@@ -3,7 +3,6 @@ import ProductTypes from "./ProductType.js";
 import Brands from "./Brands.js";
 import Attributes from "./Attributes.js";
 import Products from "./Products.js";
-import ProductAttributes from "./ProductAttributes.js";
 import Suppliers from "./Suppliers.js";
 import SupplyOrders from "./SupplyOrders.js";
 import SupplyOrderItems from "./SupplyOrderItems.js";
@@ -19,7 +18,6 @@ export {
   Brands,
   Attributes,
   Products,
-  ProductAttributes,
   Suppliers,
   SupplyOrders,
   SupplyOrderItems,
