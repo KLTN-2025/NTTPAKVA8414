@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.header {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  z-index: 50;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  position: relative;
+}
+
+/* Left Menu */
+.menu ul {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  font-weight: 500;
+  color: #374151;
+  font-size: 14px;
+}
+
+.menu ul li a {
+  text-decoration: none;
+  transition: color 0.3s, transform 0.2s;
+}
+
+.menu ul li a:hover {
+  color: #16a34a;
+  transform: translateY(-2px);
+}
+
+/* Center Logo */
+.logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px; /* to hơn */
+  font-weight: 700;
+  color: #16a34a;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* Right Icons */
+.icons {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  color: #1f2937;
+}
+
+/* Hotline */
+.hotline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 14px;
+  font-weight: 500;
+  color: #16a34a;
+  margin-right: 1rem;
+}
+
+.hotline i {
+  font-size: 1px;
+}
+
+/* Buttons Icons */
+.icon {
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.2s;
+}
+
+.icon:hover {
+  color: #16a34a;
+  transform: scale(1.1);
+}
+
+.icon.cart {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  background-color: #16a34a;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem 0;
+}
+
+.mobile-menu ul {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  list-style: none;
+  padding: 0 1.5rem;
+}
+
+.mobile-menu ul li a {
+  text-decoration: none;
+  color: #374151;
+  font-weight: 500;
+}
+
+.mobile-menu ul li a:hover {
+  color: #16a34a;
+}
+
+/* Slide transition */
+.slide-enter-active, .slide-leave-active {
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.slide-enter-from, .slide-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+.slide-enter-to, .slide-leave-from {
+  max-height: 300px;
+  opacity: 1;
+}
