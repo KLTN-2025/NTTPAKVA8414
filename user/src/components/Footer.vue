@@ -23,8 +23,6 @@
         <ul class="footer-links">
           <li><a href="#">Home</a></li>
           <li><a href="#">Shop</a></li>
-          <li><a href="#">Pages</a></li>
-          <li><a href="#">Blog</a></li>
           <li><a href="#">About Us</a></li>
           <li><a href="#">Terms & Conditions</a></li>
         </ul>
@@ -34,10 +32,10 @@
       <div class="footer-col">
         <h4 class="footer-title">Shop Categories</h4>
         <ul class="footer-links">
-          <li><a href="#">Smoothies</a></li>
-          <li><a href="#">Salads</a></li>
+          <li><a href="#">Vegetables</a></li>
+          <li><a href="#">Fruits</a></li>
           <li><a href="#">Snacks</a></li>
-          <li><a href="#">Supplements</a></li>
+          <li><a href="#">Oils & Fats</a></li>
           <li><a href="#">Beverages</a></li>
         </ul>
       </div>
@@ -62,6 +60,7 @@
   </footer>
 </template>
 
-<script setup></script>
+<script setup>
+</script>
 
 <style src="./Footer.css"></style>

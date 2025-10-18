@@ -50,7 +50,7 @@ router.post(
       switch (eventType) {
         // --- USER CREATED ---
         case 'user.created': {
-          const { id, email_addresses, first_name, last_name, image_url, phone_numbers } = evt.data;
+          const { id, email_addresses, first_name, last_name, image_url, phone_numbers, private_metadata } = evt.data;
 
           await Customer.create({
             clerkId: id,
@@ -67,7 +67,7 @@ router.post(
         // --- USER UPDATED ---
         case 'user.updated': {
           console.log('Firing user.updated')
-          const { id, email_addresses, first_name, last_name, image_url, phone_numbers } = evt.data;
+          const { id, email_addresses, first_name, last_name, image_url, phone_numbers, private_metadata } = evt.data;
 
           await Customer.findOneAndUpdate(
             { clerkId: id },

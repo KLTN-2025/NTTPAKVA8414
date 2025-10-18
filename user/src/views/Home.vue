@@ -4,7 +4,7 @@
     <div class="home">
       <!-- Banner Quảng Cáo -->
       <section class="banner-section">
-        <img src="/src/assets/images/Banner4.png" alt="Banner" class="banner-img" />
+        <img src="../assets/images/Banner4.png" alt="Banner" class="banner-img" />
         <button class="banner-btn">Shop Now</button>
       </section>
 
@@ -40,7 +40,7 @@
           <div class="product-card">
             <div class="sale-tag">-10%</div>
             <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="/src/assets/images/Corn.png" alt="Product 1" />
+            <img src="../assets/images/Corn.png" alt="Product 1" />
             <div class="product-info">
               <div class="name-price">
                 <h3>Corn</h3>
@@ -53,7 +53,7 @@
           <div class="product-card">
             <div class="sale-tag">-10%</div>
             <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="/src/assets/images/apple.png" alt="Product 2" />
+            <img src="../assets/images/apple.png" alt="Product 2" />
             <div class="product-info">
               <div class="name-price">
                 <h3>Apple</h3>
@@ -66,7 +66,7 @@
           <div class="product-card">
             <div class="sale-tag">-10%</div>
             <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="/src/assets/images/ChaniseCabbage.png" alt="Product 3" />
+            <img src="../assets/images/ChaniseCabbage.png" alt="Product 3" />
             <div class="product-info">
               <div class="name-price">
                 <h3>Chanise Cabbage</h3>
@@ -79,7 +79,7 @@
           <div class="product-card">
             <div class="sale-tag">-10%</div>
             <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="/src/assets/images/GreenChili.png" alt="Product 4" />
+            <img src="../assets/images/GreenChili.png" alt="Product 4" />
             <div class="product-info">
               <div class="name-price">
                 <h3>Green Chili</h3>
@@ -92,7 +92,7 @@
           <div class="product-card">
             <div class="sale-tag">-10%</div>
             <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="/src/assets/images/GreenLettuce.png" alt="Product 5" />
+            <img src="../assets/images/GreenLettuce.png" alt="Product 5" />
             <div class="product-info">
               <div class="name-price">
                 <h3>Green Lettuce</h3>
@@ -107,15 +107,15 @@
       <!-- Special Offers -->
       <section class="special-offers">
         <div class="offer-banner">
-          <img src="/src/assets/images/Offer1.png" alt="Special Offer 1" />
+          <img src="../assets/images/Offer1.png" alt="Special Offer 1" />
           <button class="offer-btn">Shop Now</button>
         </div>
         <div class="offer-banner">
-          <img src="/src/assets/images/Offer2.png" alt="Special Offer 2" />
+          <img src="../assets/images/Offer2.png" alt="Special Offer 2" />
           <button class="offer-btn">Shop Now</button>
         </div>
         <div class="offer-banner">
-          <img src="/src/assets/images/Offer3.png" alt="Special Offer 3" />
+          <img src="../assets/images/Offer3.png" alt="Special Offer 3" />
           <button class="offer-btn">Shop Now</button>
         </div>
       </section>
@@ -128,7 +128,7 @@
         <div class="review-card">
           <p class="review-text">"Great products! Healthy and tasty. Highly recommended."</p>
           <div class="review-footer">
-            <img src="/src/assets/images/avatar.png" alt="Customer 1" class="avatar" />
+            <img src="../assets/images/avatar.png" alt="Customer 1" class="avatar" />
             <div class="review-info">
               <h4>Jane Doe</h4>
               <div class="review-rating">
@@ -145,7 +145,7 @@
         <div class="review-card">
           <p class="review-text">"Excellent service and fast delivery. Loved the taste."</p>
           <div class="review-footer">
-            <img src="/src/assets/images/avatar.png" alt="Customer 2" class="avatar" />
+            <img src="../assets/images/avatar.png" alt="Customer 2" class="avatar" />
             <div class="review-info">
               <h4>John Smith</h4>
               <div class="review-rating">
@@ -162,7 +162,7 @@
         <div class="review-card">
           <p class="review-text">"Loved the packaging and freshness. Will order again!"</p>
           <div class="review-footer">
-            <img src="/src/assets/images/avatar.png" alt="Customer 3" class="avatar" />
+            <img src="../assets/images/avatar.png" alt="Customer 3" class="avatar" />
             <div class="review-info">
               <h4>Mary Johnson</h4>
               <div class="review-rating">
@@ -179,12 +179,5 @@
     </section>
   </div>
 </template>
-
-<script>
-export default {
-  // eslint-disable-next-line vue/multi-word-component-names
-  name: 'Home',
-}
-</script>
 
 <style src="./Home.css"></style>
