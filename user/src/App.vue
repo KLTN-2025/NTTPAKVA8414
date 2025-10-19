@@ -1,10 +1,10 @@
 <!-- src/App.vue -->
 <template>
-  <div id="app" class="w-full min-h-screen">
+  <div id="app" class="w-screen min-h-screen">
     <Navbar/>
-    <main id="main-content">
+    <div id="main-content" class="flex justify-center">
       <router-view />
-    </main>
+    </div>
     <Footer/>
   </div>
 </template>

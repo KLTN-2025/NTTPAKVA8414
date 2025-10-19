@@ -18,6 +18,11 @@ const routes = [
     component: () => import('../views/Register.vue'),
   },
   {
+    path: '/product/:id',
+    name: 'Product Details',
+    component: () => import('../views/ProductDetails.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/',
   },

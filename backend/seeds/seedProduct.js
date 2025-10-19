@@ -152,7 +152,7 @@ const products = [
     cost_price: 85000,
     selling_price: 129900,
     current_stock: 150,
-    image_urls: ['https://example.com/images/olive-oil-500ml.jpg'],
+    image_urls: ['https://plus.unsplash.com/premium_photo-1668772053691-6efcb5365332?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[3]._id, attributes[9]._id]
   },
   {
@@ -167,7 +167,7 @@ const products = [
     cost_price: 150000,
     selling_price: 229900,
     current_stock: 85,
-    image_urls: ['https://example.com/images/organic-olive-oil-1l.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[4]._id, attributes[3]._id, attributes[9]._id]
   },
   
@@ -184,7 +184,7 @@ const products = [
     cost_price: 90000,
     selling_price: 149900,
     current_stock: 120,
-    image_urls: ['https://example.com/images/coconut-oil-virgin.jpg'],
+    image_urls: ['https://producersmarket.com/blog/wp-content/uploads/2020/05/Types-Of-Coconut-Oil-And-Their-Uses--1024x1024.jpg'],
     attributes: [attributes[2]._id, attributes[3]._id, attributes[6]._id, attributes[9]._id]
   },
   
@@ -201,7 +201,7 @@ const products = [
     cost_price: 120000,
     selling_price: 189900,
     current_stock: 95,
-    image_urls: ['https://example.com/images/mct-oil.jpg'],
+    image_urls: ['https://cdn.xaxi.vn/tpcn/img/nature-s-way-organic-mct-oil-30-fl-oz-887-ml-77645.jpg'],
     attributes: [attributes[2]._id, attributes[3]._id, attributes[9]._id]
   },
   
@@ -218,7 +218,7 @@ const products = [
     cost_price: 25000,
     selling_price: 49900,
     current_stock: 200,
-    image_urls: ['https://example.com/images/baby-spinach.jpg'],
+    image_urls: ['https://www.lottemart.vn/media/catalog/product/cache/0x0/9/3/9350336000092-1-1.jpg.webp'],
     attributes: [attributes[0]._id, attributes[4]._id, attributes[6]._id, attributes[3]._id]
   },
   {
@@ -233,7 +233,7 @@ const products = [
     cost_price: 30000,
     selling_price: 54900,
     current_stock: 140,
-    image_urls: ['https://example.com/images/curly-kale.jpg'],
+    image_urls: ['https://www.rte.ie/images/000a7649-700.jpg'],
     attributes: [attributes[0]._id, attributes[4]._id, attributes[6]._id, attributes[2]._id]
   },
   
@@ -250,7 +250,7 @@ const products = [
     cost_price: 20000,
     selling_price: 39900,
     current_stock: 180,
-    image_urls: ['https://example.com/images/broccoli-florets.jpg'],
+    image_urls: ['https://www.earthboundfarm.com/wp-content/uploads/2024/04/EBF-Broccoli-Florets-32ozv2.png'],
     attributes: [attributes[0]._id, attributes[6]._id, attributes[3]._id]
   },
   {
@@ -265,7 +265,7 @@ const products = [
     cost_price: 28000,
     selling_price: 49900,
     current_stock: 160,
-    image_urls: ['https://example.com/images/cauliflower.jpg'],
+    image_urls: ['https://www.eatright.org/-/media/images/eatright-articles/cauliflower.jpg?h=520&w=780&rev=191288b7b711444f8664c03e0f71de4c&hash=37C2D644029F833F13CEEB84A9745903'],
     attributes: [attributes[0]._id, attributes[4]._id, attributes[2]._id, attributes[6]._id]
   },
   
@@ -282,7 +282,7 @@ const products = [
     cost_price: 45000,
     selling_price: 79900,
     current_stock: 110,
-    image_urls: ['https://example.com/images/blueberries.jpg'],
+    image_urls: ['https://thumb.photo-ac.com/a6/a6745379604484254508acfa9ef7eaff_t.jpeg'],
     attributes: [attributes[4]._id, attributes[6]._id, attributes[3]._id]
   },
   {
@@ -297,7 +297,7 @@ const products = [
     cost_price: 35000,
     selling_price: 64900,
     current_stock: 130,
-    image_urls: ['https://example.com/images/strawberries.jpg'],
+    image_urls: ['https://media.post.rvohealth.io/wp-content/uploads/2020/09/strawberries-732x549-thumbnail.jpg'],
     attributes: [attributes[6]._id, attributes[3]._id, attributes[8]._id]
   },
   
@@ -314,7 +314,7 @@ const products = [
     cost_price: 50000,
     selling_price: 89900,
     current_stock: 220,
-    image_urls: ['https://example.com/images/chicken-breast.jpg'],
+    image_urls: ['https://media.istockphoto.com/id/492787098/photo/chicken-breasts-on-cutting-board.jpg?s=612x612&w=0&k=20&c=l1O94YCSRMUgj58WVPpOQFzuzRVwFHDeL6GF6dXFsFg='],
     attributes: [attributes[1]._id, attributes[0]._id, attributes[8]._id, attributes[3]._id]
   },
   {
@@ -329,7 +329,7 @@ const products = [
     cost_price: 110000,
     selling_price: 169900,
     current_stock: 95,
-    image_urls: ['https://example.com/images/organic-chicken.jpg'],
+    image_urls: ['https://media.istockphoto.com/id/492787098/photo/chicken-breasts-on-cutting-board.jpg?s=612x612&w=0&k=20&c=l1O94YCSRMUgj58WVPpOQFzuzRVwFHDeL6GF6dXFsFg='],
     attributes: [attributes[1]._id, attributes[4]._id, attributes[0]._id, attributes[9]._id]
   },
   
@@ -346,7 +346,7 @@ const products = [
     cost_price: 80000,
     selling_price: 139900,
     current_stock: 80,
-    image_urls: ['https://example.com/images/salmon-fillet.jpg'],
+    image_urls: ['https://images.squarespace-cdn.com/content/v1/5d88ca022c11de1fd1d94810/1611176619595-J6ZH74FNWZ4ICJCY98O5/Salmon+Fillet+with+Ice+and+Lime.jpg?format=600w'],
     attributes: [attributes[1]._id, attributes[0]._id, attributes[2]._id, attributes[9]._id]
   },
   
@@ -363,7 +363,7 @@ const products = [
     cost_price: 40000,
     selling_price: 69900,
     current_stock: 300,
-    image_urls: ['https://example.com/images/free-range-eggs.jpg'],
+    image_urls: ['https://media.post.rvohealth.io/wp-content/uploads/2020/09/health-benefits-of-eggs-732x549-thumbnail-732x549.jpg'],
     attributes: [attributes[1]._id, attributes[0]._id, attributes[2]._id, attributes[3]._id]
   },
   
@@ -380,7 +380,7 @@ const products = [
     cost_price: 25000,
     selling_price: 44900,
     current_stock: 175,
-    image_urls: ['https://example.com/images/firm-tofu.jpg'],
+    image_urls: ['https://www.foodinjapan.org/wp-content/uploads/2023/02/25378446_m-1.jpg'],
     attributes: [attributes[1]._id, attributes[6]._id, attributes[4]._id, attributes[3]._id, attributes[5]._id]
   },
   
@@ -397,7 +397,7 @@ const products = [
     cost_price: 40000,
     selling_price: 74900,
     current_stock: 140,
-    image_urls: ['https://example.com/images/tricolor-quinoa.jpg'],
+    image_urls: ['https://jenniferskitchen.com/wp-content/uploads/quinoa-colors-2-1024x819.jpg'],
     attributes: [attributes[4]._id, attributes[1]._id, attributes[3]._id, attributes[6]._id]
   },
   
@@ -414,7 +414,7 @@ const products = [
     cost_price: 35000,
     selling_price: 59900,
     current_stock: 200,
-    image_urls: ['https://example.com/images/brown-rice.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1613728913341-8f29b02b8253?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[6]._id, attributes[3]._id, attributes[5]._id]
   },
   
@@ -431,7 +431,7 @@ const products = [
     cost_price: 45000,
     selling_price: 79900,
     current_stock: 125,
-    image_urls: ['https://example.com/images/steel-cut-oats.jpg'],
+    image_urls: ['https://nadiashealthykitchen.com/wp-content/uploads/2024/08/scrambled-oats-recipe_square-min.jpg'],
     attributes: [attributes[3]._id, attributes[6]._id, attributes[5]._id]
   },
   
@@ -448,7 +448,7 @@ const products = [
     cost_price: 30000,
     selling_price: 54900,
     current_stock: 180,
-    image_urls: ['https://example.com/images/greek-yogurt.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1564149503905-7fef56abc1f2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[1]._id, attributes[0]._id, attributes[3]._id]
   },
   
@@ -465,7 +465,7 @@ const products = [
     cost_price: 25000,
     selling_price: 44900,
     current_stock: 210,
-    image_urls: ['https://example.com/images/almond-milk.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1601436423474-51738541c1b1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[6]._id, attributes[10]._id, attributes[7]._id, attributes[0]._id]
   },
   
@@ -482,7 +482,7 @@ const products = [
     cost_price: 28000,
     selling_price: 49900,
     current_stock: 165,
-    image_urls: ['https://example.com/images/cottage-cheese.jpg'],
+    image_urls: ['https://homesteadingfamily.com/wp-content/uploads/2025/03/Cottage-Cheese_HF-683x1024.jpg'],
     attributes: [attributes[1]._id, attributes[8]._id, attributes[3]._id]
   },
   
@@ -499,7 +499,7 @@ const products = [
     cost_price: 50000,
     selling_price: 84900,
     current_stock: 190,
-    image_urls: ['https://example.com/images/raw-almonds.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1600188999986-331bec5f9a8d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[1]._id, attributes[6]._id, attributes[3]._id, attributes[2]._id]
   },
   {
@@ -514,7 +514,7 @@ const products = [
     cost_price: 60000,
     selling_price: 99900,
     current_stock: 145,
-    image_urls: ['https://example.com/images/raw-walnuts.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1597919926163-9419065218b4?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[6]._id, attributes[3]._id, attributes[2]._id, attributes[9]._id]
   },
   
@@ -531,7 +531,7 @@ const products = [
     cost_price: 15000,
     selling_price: 29900,
     current_stock: 350,
-    image_urls: ['https://example.com/images/choc-protein-bar.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1622484212850-eb596d769edc?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[1]._id, attributes[7]._id, attributes[3]._id]
   },
   {
@@ -546,7 +546,7 @@ const products = [
     cost_price: 15000,
     selling_price: 29900,
     current_stock: 320,
-    image_urls: ['https://example.com/images/pb-protein-bar.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1554886729-fe8d4499a108?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[1]._id, attributes[7]._id, attributes[3]._id]
   },
   
@@ -563,7 +563,7 @@ const products = [
     cost_price: 30000,
     selling_price: 54900,
     current_stock: 155,
-    image_urls: ['https://example.com/images/kale-chips.jpg'],
+    image_urls: ['https://medinsteadofmeds.com/wp-content/uploads/2018/04/Kale_Chips-768x1024.jpg'],
     attributes: [attributes[6]._id, attributes[3]._id, attributes[8]._id, attributes[0]._id]
   },
   
@@ -580,7 +580,7 @@ const products = [
     cost_price: 35000,
     selling_price: 64900,
     current_stock: 175,
-    image_urls: ['https://example.com/images/dark-chocolate-85.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1523035274455-b2e5c6d5c2e0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[7]._id, attributes[2]._id, attributes[6]._id]
   },
   
@@ -597,7 +597,7 @@ const products = [
     cost_price: 25000,
     selling_price: 44900,
     current_stock: 240,
-    image_urls: ['https://example.com/images/vanilla-shake.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1542444592-0d5997f202eb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[1]._id, attributes[7]._id, attributes[3]._id, attributes[8]._id]
   },
   {
@@ -612,7 +612,7 @@ const products = [
     cost_price: 25000,
     selling_price: 44900,
     current_stock: 260,
-    image_urls: ['https://example.com/images/chocolate-shake.jpg'],
+    image_urls: ['https://greenheartlove.com/wp-content/uploads/2024/02/chocolate-milk-shake-8.jpg'],
     attributes: [attributes[1]._id, attributes[7]._id, attributes[3]._id, attributes[8]._id]
   },
   
@@ -629,7 +629,7 @@ const products = [
     cost_price: 60000,
     selling_price: 99900,
     current_stock: 135,
-    image_urls: ['https://example.com/images/green-tea.jpg'],
+    image_urls: ['https://img.freepik.com/free-vector/tea-ad-with-watercolor-decoration_52683-30486.jpg?semt=ais_hybrid&w=600&q=80'],
     attributes: [attributes[4]._id, attributes[6]._id, attributes[7]._id, attributes[3]._id]
   },
   
@@ -646,7 +646,7 @@ const products = [
     cost_price: 30000,
     selling_price: 54900,
     current_stock: 110,
-    image_urls: ['https://example.com/images/ginger-kombucha.jpg'],
+    image_urls: ['https://brewbuch.com/wp-content/uploads/2019/11/lemon-ginger-kombucha-1.jpg'],
     attributes: [attributes[6]._id, attributes[4]._id, attributes[10]._id]
   },
   
@@ -663,7 +663,7 @@ const products = [
     cost_price: 35000,
     selling_price: 59900,
     current_stock: 185,
-    image_urls: ['https://example.com/images/coconut-water.jpg'],
+    image_urls: ['https://images.unsplash.com/photo-1588413336009-1f4219f2d5dd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=600'],
     attributes: [attributes[6]._id, attributes[7]._id, attributes[3]._id, attributes[10]._id]
   }
 ]
@@ -680,11 +680,11 @@ async function seedDatabase() {
     
     console.log('Connected to MongoDB')
     
-    const ProductCategory = require('./models/ProductCategories')
-    const ProductType = require('./models/ProductTypes')
-    const Brand = require('./models/Brands')
-    const Attribute = require('./models/Attributes')
-    const Product = require('./models/Products')
+    const ProductCategory = require('../models/ProductCategories')
+    const ProductType = require('../models/ProductTypes')
+    const Brand = require('../models/Brands')
+    const Attribute = require('../models/Attributes')
+    const Product = require('../models/Products')
     
     console.log('Clearing existing data...')
     await Product.deleteMany({})

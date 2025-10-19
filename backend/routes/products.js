@@ -1,4 +1,5 @@
 const express = require('express')
+const mongoose = require('mongoose')
 const router = express.Router()
 const Product = require('../models/Products')
 const ProductType = require('../models/ProductTypes')
@@ -293,55 +294,7 @@ router.get('/:id', async (req, res) => {
       });
     }
 
-    // 2. FETCH AND CALCULATE REVIEWS
-    const reviews = await Review.find({ product_id: productId })
-      .populate('customer_id', 'name')
-      .sort({ createdAt: -1 })
-      .lean();
-
-    // Calculate average rating and rating breakdown
-    const totalReviews = reviews.length;
-    let averageRating = 0;
-    const ratingBreakdown = {
-      5: 0,
-      4: 0,
-      3: 0,
-      2: 0,
-      1: 0
-    };
-
-    if (totalReviews > 0) {
-      const totalRating = reviews.reduce((sum, review) => {
-        ratingBreakdown[review.rating]++;
-        return sum + review.rating;
-      }, 0);
-      averageRating = parseFloat((totalRating / totalReviews).toFixed(2));
-    }
-
-    // Calculate percentage for each rating
-    const ratingBreakdownWithPercentage = Object.keys(ratingBreakdown).map(rating => ({
-      stars: parseInt(rating),
-      count: ratingBreakdown[rating],
-      percentage: totalReviews > 0 
-        ? parseFloat(((ratingBreakdown[rating] / totalReviews) * 100).toFixed(1))
-        : 0
-    })).sort((a, b) => b.stars - a.stars);
-
-    // 3. FORMAT REVIEWS
-    const formattedReviews = reviews.map(review => ({
-      _id: review._id,
-      rating: review.rating,
-      comment: review.comment,
-      reviewer: {
-        _id: review.customer_id?._id || null,
-        name: review.customer_id?.name || 'Anonymous',
-        //image_url: review.customer_id?.image_url || null
-      },
-      created_at: review.createdAt,
-      updated_at: review.updatedAt
-    }));
-
-    // 4. FORMAT PRODUCT RESPONSE
+    // 2. FORMAT PRODUCT RESPONSE
     const size = product.size ? parseFloat(product.size.toString()) : null;
 
     const productDetail = {
@@ -374,20 +327,11 @@ router.get('/:id', async (req, res) => {
         _id: attr._id,
         name: attr.description,
       })) : [],
-      
-      rating: {
-        average: averageRating,
-        total_reviews: totalReviews,
-        breakdown: ratingBreakdownWithPercentage
-      },
-      
-      reviews: formattedReviews,    
-      created_at: product.createdAt,
-      updated_at: product.updatedAt
     };
 
     // 5. SEND RESPONSE
     res.status(200).json({
+      success: true,
       data: productDetail
     });
 
@@ -397,6 +341,124 @@ router.get('/:id', async (req, res) => {
       message: 'Error fetching product detail',
       error: error.message
     });
+  }
+});
+
+router.get('/:id/reviews', async (req, res) => {
+  try {
+    console.log('Route called');
+    const { id } = req.params;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit) || 5);
+    const skip = (page - 1) * limit;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid product id' });
+    }
+    const pid = new mongoose.Types.ObjectId(id);
+
+    const agg = await Review.aggregate([
+      { $match: { product_id: pid } },
+
+      { $facet: {
+        // overall stats (avg rating and total count)
+        stats: [
+          {
+            $group: {
+              _id: null,
+              avgRating: { $avg: '$rating' },
+              totalReviews: { $sum: 1 }
+            }
+          }
+        ],
+
+        // breakdown by rating value (1..5)
+        breakdown: [
+          {
+            $group: {
+              _id: '$rating',
+              count: { $sum: 1 }
+            }
+          },
+          { $project: { _id: 0, rating: '$_id', count: 1 } },
+          { $sort: { rating: -1 } } 
+        ],
+
+        // paginated recent reviews
+        reviews: [
+          { $sort: { createdAt: -1 } },
+          { $skip: skip },
+          { $limit: limit },
+
+          // optional: populate basic customer fields
+          {
+            $lookup: {
+              from: 'Customer',           // adjust if your collection name differs
+              localField: 'customer_id',
+              foreignField: '_id',
+              as: 'customer'
+            }
+          },
+          { $unwind: { path: '$customer', preserveNullAndEmptyArrays: true } },
+
+          // pick fields to return
+          {
+            $project: {
+              _id: 1,
+              rating: 1,
+              comment: 1,
+              createdAt: 1,
+              'customer._id': 1,
+              'customer.name': 1,
+            }
+          }
+        ]
+      }},
+
+      {
+        $project: {
+          stats: { $arrayElemAt: ['$stats', 0] },
+          breakdown: 1,
+          reviews: 1
+        }
+      }
+    ]);
+
+    const doc = (agg && agg[0]) || {};
+    const stats = doc.stats || { avgRating: null, totalReviews: 0 };
+    const breakdownArray = doc.breakdown || [];
+    const reviews = doc.reviews || [];
+
+    // ensure breakdown contains 1..5 with zeros for missing
+    const breakdown = { 
+      '5': 0, 
+      '4': 0, 
+      '3': 0, 
+      '2': 0, 
+      '1': 0 };
+    breakdownArray.forEach(item => {
+      const key = String(item.rating);
+      if (breakdown.hasOwnProperty(key)) breakdown[key] = item.count;
+    });
+
+    const totalReviews = stats.totalReviews || 0;
+    const totalPages = Math.max(1, Math.ceil(totalReviews / limit));
+
+    return res.status(200).json({ 
+        success: true,
+        productId: id,
+        avgRating: stats.avgRating === null ? 0 : Math.round(stats.avgRating * 10) / 10,
+        totalReviews,
+        breakdown,
+        page,
+        limit,
+        totalPages,
+        reviews               
+  });
+
+  } catch (err) {
+    console.error('GET /products/:id/reviews error', err);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
