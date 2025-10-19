@@ -2,134 +2,182 @@
 
 .footer {
   width: 100%;
-  background-color: #111827;
+  background-color: #0f172a; /* tone navy hiện đại */
   color: #f9fafb;
   font-family: 'Inter', sans-serif;
-  padding: 0 2rem; /* padding đồng bộ với Home */
+  padding: 4rem 9rem 2.5rem;
+  position: relative;
+  overflow: hidden;
   box-sizing: border-box;
 }
 
+/* Hiệu ứng nền nhẹ */
+.footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 25% 30%, rgba(22, 163, 74, 0.06), transparent 75%);
+  pointer-events: none;
+}
+
 .footer .container {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 3rem;
+  justify-content: space-between;
   align-items: flex-start;
 }
 
-/* Các cột */
+/* ===== Cột ===== */
 .footer-col {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  align-items: flex-start;
+  gap: 0.7rem;
+  min-width: 220px;
 }
 
-/* Cột 1 rộng hơn */
+/* Cột đầu rộng hơn */
 .footer-col:nth-child(1) {
-  flex: 1.5 1 0;
-  justify-content: flex-start;
+  flex: 1.8 1 0;
 }
-
-/* Cột 2-4 */
-.footer-col:nth-child(2),
-.footer-col:nth-child(3),
-.footer-col:nth-child(4) {
+.footer-col:nth-child(n+2) {
   flex: 1 1 0;
 }
 
-/* Logo & Slogan */
+/* ===== Logo & slogan ===== */
 .footer-logo {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 700;
   color: #16a34a;
-  margin-bottom: 0.3rem;
+  letter-spacing: 0.4px;
+  margin-bottom: 0.8rem;
 }
 
 .footer-slogan {
-  font-size: 12px;
-  color: #d1d5db;
-  line-height: 1.4;
-  max-width: 320px;
-  margin-bottom: 0.5rem;
+  font-size: 15px;
+  font-weight: 400;
+  color: #e2e8f0;
+  line-height: 1.75;
+  letter-spacing: 0.2px;
+  max-width: 380px;
+  opacity: 0.9;
 }
 
-/* Social Icons */
+/* ===== Social ===== */
 .footer-social {
   display: flex;
   gap: 1rem;
-  margin-top: 0.3rem;
+  margin-top: 1rem;
 }
 
 .footer-social a {
-  font-size: 20px;
-  color: #d1d5db;
-  transition: color 0.3s, transform 0.3s;
+  font-size: 18px;
+  color: #cbd5e1;
+  transition: all 0.3s ease;
+  border: 1px solid #334155;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
 .footer-social a:hover {
   color: #16a34a;
-  transform: scale(1.2);
+  border-color: #16a34a;
+  transform: translateY(-3px);
 }
 
-/* Titles */
+/* ===== Title ===== */
 .footer-title {
+  display: inline-block;
   font-weight: 600;
-  margin-bottom: 0.5rem;
-  font-size: 14px;
-  color: #f9fafb;
+  font-size: 17px;
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  position: relative;
+  padding-bottom: 4px;
 }
 
-/* Links */
-.footer-links,
+.footer-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%; /* độ dài khớp với text */
+  background-color: #16a34a;
+  border-radius: 1px;
+}
+
+/* ===== Links ===== */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li a {
+  text-decoration: none;
+  color: #cbd5e1;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: 0.2px;
+  transition: all 0.25s ease;
+  display: inline-block;
+}
+
+.footer-links li a:hover {
+  color: #16a34a;
+  transform: translateX(5px);
+}
+
+/* ===== Contact ===== */
 .footer-contact {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.footer-links li,
 .footer-contact li {
-  margin-bottom: 0.3rem;
-}
-
-.footer-links a {
-  text-decoration: none;
-  color: #d1d5db;
-  font-size: 12px;
-  transition: color 0.2s, transform 0.2s;
-}
-
-.footer-links a:hover {
-  color: #16a34a;
-  transform: translateX(2px);
-}
-
-/* Contact Info: cột 4 */
-.footer-col:nth-child(4) .footer-contact li {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 12px;
-  color: #d1d5db;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 14px;
+  color: #cbd5e1;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
 }
 
-/* Footer Bottom */
+.footer-contact i {
+  color: #16a34a;
+  margin-top: 2px;
+  font-size: 15px;
+}
+
+/* ===== Footer bottom ===== */
 .footer-bottom {
-  margin-top: 2rem;
+  margin-top: 3.5rem;
   text-align: center;
-  font-size: 12px;
-  color: #9ca3af;
-  border-top: 1px solid #374151;
-  padding: 1rem 0;
-  letter-spacing: 0.5px;
+  font-size: 13px;
+  color: #94a3b8;
+  border-top: 1px solid #334155;
+  padding-top: 1.4rem;
+  letter-spacing: 0.3px;
 }
 
-/* Responsive */
+/* ===== Responsive ===== */
 @media (max-width: 1024px) {
+  .footer {
+    padding: 3rem 4rem 2rem;
+  }
   .footer .container {
-    flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 2rem;
   }
   .footer-col {
     flex: 1 1 45%;
@@ -137,11 +185,25 @@
 }
 
 @media (max-width: 768px) {
+  .footer {
+    padding: 2.5rem 2rem 1.5rem;
+  }
   .footer .container {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2.5rem;
   }
-  .footer-col {
-    min-width: 100%;
+  .footer-logo {
+    font-size: 26px;
+  }
+  .footer-slogan {
+    font-size: 14.5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-social a {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
   }
 }
