@@ -48,7 +48,8 @@ npm install
 *Backend* (Port 5000, chạy đầu tiên)
 ```bash
 cd backend
-node seed.js 
+node scripts/seedProduct.js 
+node computeRecommendation.js
 node server.js
 ```
 

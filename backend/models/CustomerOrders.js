@@ -1,5 +1,5 @@
 // models/CustomerOrders.js
-import mongoose from 'mongoose';
+const mongoose = require('mongoose')
 
 const customerOrderSchema = new mongoose.Schema({
   customer_id: {
@@ -46,4 +46,4 @@ const customerOrderSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-export default mongoose.model('CustomerOrder', customerOrderSchema);
+module.exports = mongoose.model('CustomerOrder', customerOrderSchema);

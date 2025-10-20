@@ -346,7 +346,6 @@ router.get('/:id', async (req, res) => {
 
 router.get('/:id/reviews', async (req, res) => {
   try {
-    console.log('Route called');
     const { id } = req.params;
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.max(1, parseInt(req.query.limit) || 5);
@@ -390,10 +389,9 @@ router.get('/:id/reviews', async (req, res) => {
           { $skip: skip },
           { $limit: limit },
 
-          // optional: populate basic customer fields
           {
             $lookup: {
-              from: 'Customer',           // adjust if your collection name differs
+              from: 'Customer',           
               localField: 'customer_id',
               foreignField: '_id',
               as: 'customer'
@@ -401,7 +399,6 @@ router.get('/:id/reviews', async (req, res) => {
           },
           { $unwind: { path: '$customer', preserveNullAndEmptyArrays: true } },
 
-          // pick fields to return
           {
             $project: {
               _id: 1,

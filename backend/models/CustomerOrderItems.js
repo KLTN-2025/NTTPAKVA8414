@@ -1,5 +1,5 @@
 // models/CustomerOrderItems.js
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const customerOrderItemSchema = new mongoose.Schema({
   order_id: {
@@ -35,4 +35,4 @@ const customerOrderItemSchema = new mongoose.Schema({
 // Ensure each product appears only once per order
 customerOrderItemSchema.index({ order_id: 1, product_id: 1 }, { unique: true });
 
-export default mongoose.model('CustomerOrderItem', customerOrderItemSchema);
+module.exports = mongoose.model('CustomerOrderItem', customerOrderItemSchema);
