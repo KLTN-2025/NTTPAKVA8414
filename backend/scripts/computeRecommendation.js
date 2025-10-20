@@ -99,7 +99,7 @@ class RecommendationComputer {
         if (orderDate < thirtyDaysAgo) {
           const daysOld = (now - orderDate) / (24 * 60 * 60 * 1000);
           // Exponential decay
-          R = Math.exp(-0.01 * (daysOld - 30));
+          R = Math.exp(-0.046 * (daysOld - 30));
         }
 
         // For each pair of products in the order
