@@ -1,420 +1,411 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* --- Container chính của trang Home --- */
-.home {
-  padding: 0 2rem;
+:root {
+  /* --- 1. Bảng màu (Colors) --- */
+  --color-primary: #16a34a;
+  --color-primary-dark: #15803d;
+  
+  --color-text-heading: #111827;
+  --color-text-muted: #4b5563;
+  --color-text-muted-light: #9ca3af;
+  --color-text-light: #ffffff;
+  
+  --color-bg-light: #ffffff;
+  --color-bg-subtle: #f9fafb;
+  --color-bg-muted: #e5e7eb;
+  
+  --color-accent-red: #ef4444;
+  --color-accent-yellow: #facc15;
+
+  /* --- 2. Font & Typography --- */
+  --font-family-primary: 'Inter', sans-serif;
+  --font-size-sm: 0.8125rem; /* 13px */
+  --font-size-md: 0.9375rem; /* 15px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-h2: 1.625rem;  /* 26px */
+  --font-size-icon: 1.875rem; /* 30px */
+
+  /* --- 3. Spacing (Abstractions) --- */
+  --spacing-xxs: 0.2rem;
+  --spacing-xs: 0.3rem;
+  --spacing-sm: 0.6rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  --spacing-xxxl: 4rem;
+
+  /* --- 4. Bo góc & Đổ bóng (Borders & Shadows) --- */
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-xxl: 14px;
+  --radius-pill: 25px;
+  --radius-full: 50%;
+  
+  --shadow-light: rgba(0, 0, 0, 0.06);
+  --shadow-strong: rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 4px 12px var(--shadow-light);
+  --shadow-card-hover: 0 8px 20px var(--shadow-strong);
+  --shadow-btn: 0 6px 16px rgba(0, 0, 0, 0.15);
+
+  /* --- 5. Transitions --- */
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+}
+
+/* --- Global Resets --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+h2, h3, h4, p {
+  margin: 0;
+}
+
+/* --- Tổng thể trang --- */
+.home-page {
+  font-family: var(--font-family-primary);
+  color: var(--color-text-heading);
+  padding: 0 var(--spacing-xl);
   max-width: 1200px;
   margin: 0 auto;
-  box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  background-color: var(--color-bg-light);
 }
 
-/* --- Banner Section --- */
+/* --- Banner chính --- */
 .banner-section {
   position: relative;
-  width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-xxl);
+  border-radius: var(--radius-xxl);
+  overflow: hidden;
+  box-shadow: 0 8px 20px var(--shadow-light);
 }
 
-.banner-section .banner-img {
+.banner-img {
   width: 100%;
-  border-radius: 8px;
   display: block;
+  border-radius: inherit;
+  object-fit: cover;
 }
 
 .banner-btn {
   position: absolute;
-  bottom: 30px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #16a34a;
-  color: #fff;
-  padding: 0.7rem 1.5rem;
-  font-weight: 600;
-  font-size: 14px;
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  padding: 0.9rem var(--spacing-xl);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-btn);
+  transition: transform var(--transition-medium), background-color var(--transition-medium);
 }
 
 .banner-btn:hover {
+  /* Sửa lỗi: Phải bao gồm cả translateX và scale */
   transform: translateX(-50%) scale(1.05);
-  background-color: #15803d;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  background-color: var(--color-primary-dark);
 }
 
-/* --- Banner Icons Section --- */
+/* --- Banner icons --- */
 .banner-icons-section {
   display: flex;
   justify-content: space-between;
-  gap: 0.8rem;
   flex-wrap: wrap;
-  margin-bottom: 2rem;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xxxl);
 }
 
-.banner-icons-section .icon-item {
+.icon-item {
   flex: 1 1 22%;
-  background: #f9fafb; 
-  border-radius: 10px;
-  padding: 1rem 0.8rem;
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-xl);
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: var(--spacing-lg) var(--spacing-md);
+  box-shadow: 0 2px 6px var(--shadow-light);
+  transition: transform var(--transition-medium), box-shadow var(--transition-medium);
 }
 
-.banner-icons-section .icon-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+.icon-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px var(--shadow-strong);
 }
 
-.banner-icons-section .icon-item i {
-  font-size: 28px;
-  color: #16a34a;
-  margin-bottom: 0.5rem;
-  transition: transform 0.3s ease, color 0.3s ease;
+.icon-item i {
+  font-size: var(--font-size-icon);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
 }
 
-.banner-icons-section .icon-item:hover i {
-  color: #15803d;
-  transform: scale(1.15);
-}
-
-.banner-icons-section .icon-item h4 {
-  font-size: 14px;
+.icon-item h4 {
+  font-size: var(--font-size-base);
   font-weight: 600;
-  margin-bottom: 0.2rem;
-  color: #111827;
+  margin-bottom: var(--spacing-xs);
 }
 
-.banner-icons-section .icon-item p {
-  font-size: 12px;
-  color: #4b5563;
-  line-height: 1.4;
+.icon-item p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* --- Tiêu đề section --- */
+section h2 {
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-text-heading);
 }
 
 /* --- Featured Products --- */
 .featured-products {
-  margin: 3rem 0;
-}
-
-.featured-products h2 {
-  font-size: 22px;
-  margin-bottom: 1.5rem;
-  font-weight: 700;
-  text-align: center;
+  margin: var(--spacing-xxxl) 0;
 }
 
 .products-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: space-between;
+  gap: var(--spacing-lg);
+  justify-content: center;
 }
 
 /* --- Product Card --- */
 .product-card {
   position: relative;
   flex: 1 1 18%;
-  background: #fff;
-  border-radius: 10px;
-  padding: 0.8rem;
-  text-align: left;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  background: var(--color-bg-light);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-medium), box-shadow var(--transition-medium);
 }
 
 .product-card:hover {
-  box-shadow: 0 10px 20px rgba(17, 232, 57, 0.2);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-card-hover);
 }
 
-/* Sale Tag */
 .sale-tag {
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: #ef4444;
-  color: #fff;
-  font-size: 11px;
+  background-color: var(--color-accent-red);
+  color: var(--color-text-light);
+  font-size: 12px;
   font-weight: 600;
-  padding: 0.2rem 0.5rem;
-  border-radius: 5px;
-  text-transform: uppercase;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
 }
 
-/* Favorite Icon */
 .favorite-icon {
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 18px;
-  color: #ef4444;
+  color: var(--color-accent-red);
   cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.favorite-icon:hover {
-  color: #dc2626;
-  transform: scale(1.2);
-}
-
-/* Product Image */
 .product-card img {
   width: 100%;
-  border-radius: 6px;
-  object-fit: cover;
-  margin: 1rem 0;
+  border-radius: var(--radius-lg);
+  margin: var(--spacing-md) 0;
 }
 
-/* Product Info Bottom */
 .product-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* Name & Price */
-.name-price {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
 .name-price h3 {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
-  margin-bottom: 0.2rem;
+  margin-bottom: var(--spacing-xxs);
 }
 
-.name-price .price {
-  font-size: 12px;
-  font-weight: 500;
-  color: #16a34a;
+.price {
+  font-size: 14px;
+  color: var(--color-primary);
 }
 
-.name-price .old-price {
-  font-size: 11px;
+.old-price {
   text-decoration: line-through;
-  color: #6b7280;
-  margin-right: 0.2rem;
+  color: var(--color-text-muted-light);
+  font-size: 12px;
+  margin-right: 0.4rem;
 }
 
-/* Add to Cart Icon */
 .add-cart-wrapper {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: #d1d5db;
+  width: 38px;
+  height: 38px;
+  background-color: var(--color-bg-muted);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.add-cart-wrapper i {
-  color: #fff;
-  font-size: 16px;
+  transition: background-color var(--transition-medium), transform var(--transition-medium), color var(--transition-medium);
 }
 
 .add-cart-wrapper:hover {
-  background-color: #16a34a;
+  background-color: var(--color-primary);
   transform: scale(1.1);
+  color: var(--color-text-light);
 }
 
 /* --- Special Offers --- */
 .special-offers {
+  padding: var(--spacing-xxxl) 0;
+  text-align: center;
+}
+
+.special-offers h2 {
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  margin-bottom: var(--spacing-xl);
+  color: var(--color-text-heading);
+}
+
+.offers-container {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 3rem 0;
-  flex-wrap: wrap;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 20px;
 }
 
 .offer-banner {
   position: relative;
-  flex: 1 1 32%;
-  border-radius: 10px;
+  width: 360px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 16px var(--shadow-light);
+  transition: transform var(--transition-medium);
 }
 
 .offer-banner img {
   width: 100%;
+  height: auto;
   display: block;
-  border-radius: 10px;
 }
 
 .offer-banner:hover {
-  transform: scale(1.02);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  transform: scale(1.03);
 }
 
 .offer-btn {
   position: absolute;
-  bottom: 15px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 0.5rem 1rem;
-  background-color: #16a34a;
-  color: #fff;
-  font-weight: 600;
-  font-size: 13px;
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
   border: none;
-  border-radius: 6px;
+  padding: var(--spacing-sm) 1.2rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color var(--transition-medium);
 }
 
 .offer-btn:hover {
-  transform: translateX(-50%) scale(1.05);
-  background-color: #15803d;
+  background-color: var(--color-primary-dark);
 }
 
 /* --- Customer Reviews --- */
 .customer-reviews {
-  padding: 4rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  font-family: 'Inter', sans-serif;
+  margin: 5rem 0;
   text-align: center;
-}
-
-.customer-reviews h2 {
-  font-size: 30px;
-  font-weight: 700;
-  margin-bottom: 3rem;
-  color: #111827;
 }
 
 .reviews-grid {
   display: flex;
-  gap: 2rem;
-  justify-content: space-between;
+  gap: var(--spacing-lg);
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .review-card {
   flex: 1 1 30%;
-  background-color: #ffffff;
-  padding: 2rem 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.3s ease;
+  background-color: var(--color-bg-light);
+  padding: var(--spacing-xl) var(--spacing-lg);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 16px var(--shadow-light);
+  transition: transform var(--transition-medium), box-shadow var(--transition-medium);
 }
 
 .review-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .review-text {
-  font-size: 14px;
-  color: #4b5563;
-  line-height: 1.7;
-  margin-bottom: 2rem;
-  text-align: left;
-  flex-grow: 1;
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-lg);
+  font-style: italic;
 }
 
 .review-footer {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
 }
 
 .avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 1rem;
-  border: 2px solid #16a34a;
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-primary);
 }
 
 .review-info h4 {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
-  margin-bottom: 0.2rem;
-  color: #111827;
 }
 
 .review-rating i {
-  color: #facc15;
+  color: var(--color-accent-yellow);
   margin-right: 2px;
-  font-size: 14px;
-}
-
-/* --- Blog Section --- */
-.blog-section {
-  padding: 4rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.blog-section h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 3rem;
-  color: #111827;
-}
-
-.blog-grid {
-  display: flex;
-  gap: 2rem;
-  justify-content: space-between;
-  flex-wrap: wrap;
 }
 
 /* --- Responsive --- */
 @media (max-width: 1024px) {
-  .blog-card {
-    flex: 1 1 45%;
-    margin-bottom: 1.5rem;
+  .icon-item,
+  .product-card,
+  .offer-banner,
+  .review-card {
+    flex-basis: 45%;
   }
 }
 
 @media (max-width: 768px) {
-  .blog-card {
-    flex: 1 1 100%;
-  }
-}
-
-/* --- Responsive --- */
-@media (max-width: 1024px) {
-  .product-card, .review-card {
-    flex: 1 1 45%;
-    margin-bottom: 1.5rem;
+  .banner-section {
+    margin-bottom: var(--spacing-xl);
   }
 
-  .offer-banner {
-    flex: 1 1 48%;
+  .icon-item,
+  .product-card,
+  .offer-banner,
+  .review-card {
+    flex-basis: 100%;
   }
 
-  .banner-icons-section .icon-item {
-    flex: 1 1 45%;
-    margin-bottom: 0.8rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .product-card, .review-card, .offer-banner {
-    flex: 1 1 100%;
+  .offers-container {
+    flex-wrap: wrap;
   }
 
-  .banner-btn, .offer-btn, .add-cart-wrapper {
-    padding: 0.4rem 0.8rem;
-    font-size: 12px;
-  }
-
-  .banner-icons-section .icon-item {
-    flex: 1 1 100%;
-    margin-bottom: 0.8rem;
+  .banner-btn,
+  .offer-btn {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
   }
 }

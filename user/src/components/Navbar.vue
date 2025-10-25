@@ -10,12 +10,12 @@
 </router-link>
 
       <!-- Navigation -->
-      <nav class="hidden md:flex items-center gap-8">
-        <a href="#">Home</a>
-        <a href="#">Shop</a>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
-      </nav>
+     <nav class="hidden md:flex items-center gap-8">
+  <router-link to="/" class="text-gray-700 hover:text-green-600 transition">Home</router-link>
+  <router-link to="/products" class="text-gray-700 hover:text-green-600 transition">Shop</router-link>
+  <router-link to="/about" class="text-gray-700 hover:text-green-600 transition">About</router-link>
+  <router-link to="/contact" class="text-gray-700 hover:text-green-600 transition">Contact</router-link>
+</nav>
 
       <!-- Auth & Cart -->
       <div class="auth-cart">
