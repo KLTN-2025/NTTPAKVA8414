@@ -8,20 +8,25 @@ const routes = [
     component: Homepage,
   },
   {
-    path: '/login/:pathMatch(.*)*',      //Handle Clerk routing
-    name: 'Login',
-    component: () => import('../views/Login.vue'),
-  },
-  {
-    path: '/register/:pathMatch(.*)*',  //Handle Clerk routing
-    name: 'Register',
-    component: () => import('../views/Register.vue'),
+    path: '/products',
+    name: 'Products',
+    component: () => import('../views/Products.vue'), // ✅ Trang danh sách sản phẩm
   },
   {
     path: '/product/:id',
-    name: 'Product Details',
-    component: () => import('../views/ProductDetails.vue')
+    name: 'ProductDetails',
+    component: () => import('../views/ProductDetails.vue'),
   },
+  {
+  path: '/login', 
+  name: 'Login',
+  component: () => import('../views/Login.vue'),
+},
+{
+  path: '/register', 
+  name: 'Register',
+  component: () => import('../views/Register.vue'),
+},
   {
     path: '/:pathMatch(.*)*',
     redirect: '/',

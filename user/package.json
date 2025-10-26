@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@clerk/vue": "1.14.4",
+    "@fortawesome/fontawesome-free": "^7.1.0",
     "axios": "1.12.2",
     "pinia": "^3.0.3",
     "svix": "^1.77.0",

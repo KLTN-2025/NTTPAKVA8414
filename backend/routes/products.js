@@ -33,7 +33,7 @@ router.get('/search', async (req, res) => {
     const page = parseInt(req.query.page) || 1
     const limit = Math.min(parseInt(req.query.limit) || 20, 50)
     const skip = (page - 1) * limit
-
+    
     // 2. BUILD FILTER QUERY
     const filter = {}
 
@@ -52,7 +52,7 @@ router.get('/search', async (req, res) => {
         // Category not found, return empty result
         return res.status(200).json({
           success: true,
-          message: `No products found for category: ${req.query.category}`,
+          message: `0 products found for category: ${req.query.category}`,
           data: [],
           pagination: {
             current_page: page,
@@ -78,7 +78,7 @@ router.get('/search', async (req, res) => {
       } else {
         return res.status(200).json({
           success: true,
-          message: `No products found for type: ${req.query.type}`,
+          message: `0 products found for type: ${req.query.type}`,
           data: [],
           pagination: {
             current_page: page,
@@ -104,7 +104,7 @@ router.get('/search', async (req, res) => {
       } else {
         return res.status(200).json({
           success: true,
-          message: `No products found for brand: ${req.query.brand}`,
+          message: `0 products found for brand: ${req.query.brand}`,
           data: [],
           pagination: {
             current_page: page,
@@ -146,11 +146,10 @@ router.get('/search', async (req, res) => {
     // Filter by attributes (using friendly names)
     if (req.query.attributes) {
       const attributeSlugs = req.query.attributes.split(',').map(a => a.trim().toLowerCase())
-      
       // Find attributes by friendly names
       const attributes = await Attribute.find({
-        description: {
-          $in: attributeSlugs.map(slug => new RegExp('^' + slug.replace(/-/g, ' '), 'i'))
+        slug: {
+          $in: attributeSlugs
         }
       }).select('_id')
       
@@ -162,7 +161,7 @@ router.get('/search', async (req, res) => {
       } else {
         return res.status(200).json({
           success: true,
-          message: `No products found with attributes: ${req.query.attributes}`,
+          message: `0 products with attributes: ${req.query.attributes}`,
           data: [],
           pagination: {
             current_page: page,
@@ -176,7 +175,6 @@ router.get('/search', async (req, res) => {
       }
     }
 
-    // 3. SORTING (SEO-FRIENDLY)
     let sort = {}
     const sortOrder = (req.query.sortOrder === 'asc' ? 1 : - 1) || 1
     switch (req.query.sortBy) {
@@ -188,7 +186,6 @@ router.get('/search', async (req, res) => {
         break
     }
 
-    // 4. EXECUTE QUERY
     const products = await Product.find(filter)
       .populate({
         path: 'type_id',
@@ -205,7 +202,6 @@ router.get('/search', async (req, res) => {
       .limit(limit)
       .lean()
 
-    // 5. FORMAT RESPONSE DATA
     const formattedProducts = products.map(product => {
       const formattedSize = product.size ? parseFloat(product.size.toString()) : null
       
@@ -223,27 +219,29 @@ router.get('/search', async (req, res) => {
         category: product.type_id?.category_id ? {
           _id: product.type_id.category_id._id,
           name: product.type_id.category_id.category_name,
+          slug: product.type_id.category_id.category_name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and')
         } : null,
         type: product.type_id ? {
           _id: product.type_id._id,
           name: product.type_id.name,
+          slug: product.type_id.name.toLowerCase().replace(/\s+/g, '-')
         } : null,
         brand: product.brand_id ? {
           _id: product.brand_id._id,
           name: product.brand_id.name,
+          slug: product.brand_id.name.toLowerCase().replace(/\s+/g, '-')
         } : null,
         attributes: product.attributes ? product.attributes.map(attr => ({
           _id: attr._id,
           name: attr.description,
+          slug: attr.description.toLowerCase().replace(/\s+/g, '-')
         })) : [],
       }
     })
 
-    // 6. GET TOTAL COUNT FOR PAGINATION
     const totalItems = await Product.countDocuments(filter)
     const totalPages = Math.ceil(totalItems / limit)
 
-    // 7. BUILD SEO-FRIENDLY RESPONSE
     res.status(200).json({
       success: true,
       data: formattedProducts,
@@ -271,7 +269,11 @@ router.get('/search', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const productId = req.params.id;
+    const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid product id' });
+    }
+    const productId = new mongoose.Types.ObjectId(id);
 
     // 1. FETCH PRODUCT WITH POPULATED FIELDS
     const product = await Product.findById(productId)
@@ -346,7 +348,6 @@ router.get('/:id', async (req, res) => {
 
 router.get('/:id/reviews', async (req, res) => {
   try {
-    console.log('Route called');
     const { id } = req.params;
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.max(1, parseInt(req.query.limit) || 5);
@@ -390,10 +391,9 @@ router.get('/:id/reviews', async (req, res) => {
           { $skip: skip },
           { $limit: limit },
 
-          // optional: populate basic customer fields
           {
             $lookup: {
-              from: 'Customer',           // adjust if your collection name differs
+              from: 'Customer',           
               localField: 'customer_id',
               foreignField: '_id',
               as: 'customer'
@@ -401,7 +401,6 @@ router.get('/:id/reviews', async (req, res) => {
           },
           { $unwind: { path: '$customer', preserveNullAndEmptyArrays: true } },
 
-          // pick fields to return
           {
             $project: {
               _id: 1,

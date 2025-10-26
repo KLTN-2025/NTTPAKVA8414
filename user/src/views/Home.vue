@@ -1,176 +1,85 @@
 <template>
   <div class="home-page">
-    <!-- Main Home Content -->
-    <div class="home">
-      <!-- Banner Quảng Cáo -->
-      <section class="banner-section">
-        <img src="../assets/images/Banner4.png" alt="Banner" class="banner-img" />
-        <button class="banner-btn">Shop Now</button>
-      </section>
+    <!-- Banner chính -->
+    <section class="banner-section">
+      <img src="@/assets/images/Banner4.png" alt="Banner" class="banner-img" />
+      <router-link to="/products" class="banner-btn">Shop Now</router-link>
+    </section>
 
-      <!-- Banner Icons Section -->
-      <section class="banner-icons-section">
-        <div class="icon-item">
-          <i class="fa-solid fa-truck"></i>
-          <h4>Free Shipping</h4>
-          <p>Freeshipping on all your order</p>
-        </div>
-        <div class="icon-item">
-          <i class="fa-solid fa-headset"></i>
-          <h4>Customer Support 24/7</h4>
-          <p>Instant access to Support</p>
-        </div>
-        <div class="icon-item">
-          <i class="fa-solid fa-shield-halved"></i>
-          <h4>100% Secure Payment</h4>
-          <p>We ensure your money is safe</p>
-        </div>
-        <div class="icon-item">
-          <i class="fa-solid fa-rotate-left"></i>
-          <h4>Money-Back Guarantee</h4>
-          <p>30 days money-back guarantee</p>
-        </div>
-      </section>
+    <!-- Các icon mô tả dịch vụ -->
+    <section class="banner-icons-section">
+      <div class="icon-item">
+        <i class="fa-solid fa-truck"></i>
+        <h4>Free Shipping</h4>
+        <p>Free shipping on all your orders</p>
+      </div>
+      <div class="icon-item">
+        <i class="fa-solid fa-headset"></i>
+        <h4>Customer Support 24/7</h4>
+        <p>Instant access to support</p>
+      </div>
+      <div class="icon-item">
+        <i class="fa-solid fa-shield-halved"></i>
+        <h4>100% Secure Payment</h4>
+        <p>We ensure your money is safe</p>
+      </div>
+      <div class="icon-item">
+        <i class="fa-solid fa-rotate-left"></i>
+        <h4>Money-Back Guarantee</h4>
+        <p>30 days money-back guarantee</p>
+      </div>
+    </section>
 
-      <!-- Featured Products -->
-      <section class="featured-products">
-        <h2>Featured Products</h2>
-        <div class="products-grid">
-          <!-- Product Cards (5 products) -->
-          <div class="product-card">
-            <div class="sale-tag">-10%</div>
-            <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="../assets/images/Corn.png" alt="Product 1" />
-            <div class="product-info">
-              <div class="name-price">
-                <h3>Corn</h3>
-                <p class="price"><span class="old-price">$29.99</span>$19.99</p>
-              </div>
-              <div class="add-cart-wrapper"><i class="fa-solid fa-cart-plus"></i></div>
-            </div>
-          </div>
+    <!-- Featured Products -->
+    <section v-if="!loading" class="featured-products">
+      <h2>Featured Products</h2>
+      <div class="products-grid">
+        <ProductCard
+            v-for="product in featuredProducts"
+            :key="product._id"
+            :product="product"
+          />
+      </div>
+    </section>
 
-          <div class="product-card">
-            <div class="sale-tag">-10%</div>
-            <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="../assets/images/apple.png" alt="Product 2" />
-            <div class="product-info">
-              <div class="name-price">
-                <h3>Apple</h3>
-                <p class="price"><span class="old-price">$39.99</span>$29.99</p>
-              </div>
-              <div class="add-cart-wrapper"><i class="fa-solid fa-cart-plus"></i></div>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="sale-tag">-10%</div>
-            <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="../assets/images/ChaniseCabbage.png" alt="Product 3" />
-            <div class="product-info">
-              <div class="name-price">
-                <h3>Chanise Cabbage</h3>
-                <p class="price"><span class="old-price">$49.99</span>$39.99</p>
-              </div>
-              <div class="add-cart-wrapper"><i class="fa-solid fa-cart-plus"></i></div>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="sale-tag">-10%</div>
-            <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="../assets/images/GreenChili.png" alt="Product 4" />
-            <div class="product-info">
-              <div class="name-price">
-                <h3>Green Chili</h3>
-                <p class="price"><span class="old-price">$59.99</span>$49.99</p>
-              </div>
-              <div class="add-cart-wrapper"><i class="fa-solid fa-cart-plus"></i></div>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="sale-tag">-10%</div>
-            <div class="favorite-icon"><i class="fa-regular fa-heart"></i></div>
-            <img src="../assets/images/GreenLettuce.png" alt="Product 5" />
-            <div class="product-info">
-              <div class="name-price">
-                <h3>Green Lettuce</h3>
-                <p class="price"><span class="old-price">$69.99</span>$59.99</p>
-              </div>
-              <div class="add-cart-wrapper"><i class="fa-solid fa-cart-plus"></i></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Special Offers -->
-      <section class="special-offers">
-        <div class="offer-banner">
-          <img src="../assets/images/Offer1.png" alt="Special Offer 1" />
-          <button class="offer-btn">Shop Now</button>
-        </div>
-        <div class="offer-banner">
-          <img src="../assets/images/Offer2.png" alt="Special Offer 2" />
-          <button class="offer-btn">Shop Now</button>
-        </div>
-        <div class="offer-banner">
-          <img src="../assets/images/Offer3.png" alt="Special Offer 3" />
-          <button class="offer-btn">Shop Now</button>
-        </div>
-      </section>
+    <!-- Special Offers -->
+    <!-- Special Offers -->
+<section class="special-offers">
+  <h2>Special Offers</h2>
+  <div class="offers-container">
+    <div
+      class="offer-banner"
+      v-for="(offer, index) in offers"
+      :key="index"
+    >
+      <img :src="offer.image" :alt="`Special Offer ${index + 1}`" />
+      <button class="offer-btn">Shop Now</button>
     </div>
+  </div>
+</section>
 
     <!-- Customer Reviews -->
     <section class="customer-reviews">
       <h2>What our customers say</h2>
       <div class="reviews-grid">
-        <div class="review-card">
-          <p class="review-text">"Great products! Healthy and tasty. Highly recommended."</p>
+        <div
+          class="review-card"
+          v-for="(review, index) in reviews"
+          :key="index"
+        >
+          <p class="review-text">"{{ review.text }}"</p>
           <div class="review-footer">
-            <img src="../assets/images/avatar.png" alt="Customer 1" class="avatar" />
+            <img src="@/assets/images/avatar.png" alt="Avatar" class="avatar" />
             <div class="review-info">
-              <h4>Jane Doe</h4>
+              <h4>{{ review.name }}</h4>
               <div class="review-rating">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <p class="review-text">"Excellent service and fast delivery. Loved the taste."</p>
-          <div class="review-footer">
-            <img src="../assets/images/avatar.png" alt="Customer 2" class="avatar" />
-            <div class="review-info">
-              <h4>John Smith</h4>
-              <div class="review-rating">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="far fa-star"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <p class="review-text">"Loved the packaging and freshness. Will order again!"</p>
-          <div class="review-footer">
-            <img src="../assets/images/avatar.png" alt="Customer 3" class="avatar" />
-            <div class="review-info">
-              <h4>Mary Johnson</h4>
-              <div class="review-rating">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-                <i class="far fa-star"></i>
+                <i
+                  v-for="n in 5"
+                  :key="n"
+                  :class="[
+                    n <= review.rating ? 'fas fa-star' : 'far fa-star',
+                  ]"
+                ></i>
               </div>
             </div>
           </div>
@@ -179,5 +88,70 @@
     </section>
   </div>
 </template>
+
+<script setup>
+import ProductCard from '@/components/ProductCard.vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const featuredProducts = ref([])
+const loading = ref(true)
+const error = ref(null)
+
+//Placeholder reviews
+const reviews = [
+  {
+    name: 'Jane Doe',
+    text: 'Great products! Healthy and tasty. Highly recommended.',
+    rating: 5,
+  },
+  {
+    name: 'John Smith',
+    text: 'Excellent service and fast delivery. Loved the taste.',
+    rating: 4,
+  },
+  {
+    name: 'Mary Johnson',
+    text: 'Loved the packaging and freshness. Will order again!',
+    rating: 4,
+  },
+]
+
+//Placeholder offers
+const offers = [
+  { image: new URL('@/assets/images/Offer1.png', import.meta.url).href },
+  { image: new URL('@/assets/images/Offer2.png', import.meta.url).href },
+  { image: new URL('@/assets/images/Offer3.png', import.meta.url).href },
+]
+
+async function fetchProducts() {
+  try {
+    const params = {
+      page: 1,
+      limit: 3
+    }
+    const response = await axios.get('api/products/search', { 
+      params
+    })
+    if (response.data.success){
+      featuredProducts.value = response.data.data
+    }
+    else {
+      error.value = response.data.message || 'Failed to load products'
+    }
+  }
+  catch (err){
+    error.value = err.response?.data?.message || 'Failed to load products. Please try again.'
+    console.error('Error fetching products:', err)
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchProducts()
+})
+</script>
 
 <style src="./Home.css"></style>

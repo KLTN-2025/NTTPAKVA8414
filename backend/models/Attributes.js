@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const AttributeSchema = new mongoose.Schema(
   {
@@ -8,9 +9,25 @@ const AttributeSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       maxlength: 50
+    },
+    slug: {
+      type: String,
     }
   },
   { timestamps: true }
 );
 
+AttributeSchema.pre('insertMany', async (next, docs) => {
+  try {
+    docs.forEach(doc => {
+      doc.slug = slugify(`${doc.description}`, {
+        remove: /[*+~.()'"!:@]/g,
+        lower: true
+      });
+    })
+    next();
+  } catch (err){
+    console.error(err);
+  }
+})
 module.exports = mongoose.model('Attribute', AttributeSchema);

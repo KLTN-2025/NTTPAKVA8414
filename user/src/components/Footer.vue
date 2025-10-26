@@ -44,7 +44,7 @@
       <div class="footer-col">
         <h4 class="footer-title">Contact</h4>
         <ul class="footer-contact">
-          <li><i class="fa-solid fa-phone"></i> (+84) 869 979137</li>
+          <li><i class="fa-solid fa-phone"></i> (+84) 869 777777</li>
           <li><i class="fa-solid fa-envelope"></i> contact@healthycrave.com</li>
           <li><i class="fa-solid fa-location-dot"></i> 123 Healthy St, Ho Chi Minh City</li>
           <li><i class="fa-solid fa-clock"></i> Mon–Sat 8:00–18:00</li>

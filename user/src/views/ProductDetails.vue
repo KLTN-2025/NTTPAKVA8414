@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen w-[95%] bg-gray-50">
+  <div class="min-h-screen w-[80%] bg-gray-50">
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center min-h-screen">
       <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
@@ -20,7 +20,7 @@
     <div v-else-if="product" class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Breadcrumb -->
       <nav class="mb-6">
-        <ol class="flex items-center space-x-2 text-gray-500 gap-2 text-lg">
+        <ol class="flex items-center space-x-2 text-gray-500 gap-2 text-xl">
           <li><a href="/" class="hover:text-green-600">Home</a></li>
           <li> / </li>
           <li><a href="/" class="hover:text-green-600">{{ product.category?.name }}</a></li>

@@ -1,0 +1,82 @@
+@reference "tailwindcss";
+
+
+header {
+  @apply sticky top-0 left-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-md transition-all duration-300;
+  padding: 0 9.5rem; 
+}
+
+header > div {
+  @apply flex justify-between items-center h-16 mx-auto max-w-7xl;
+}
+
+
+header .logo {
+  @apply text-2xl font-extrabold text-gray-900 tracking-tight hover:text-green-600 transition-colors;
+}
+
+header nav a {
+  @apply text-gray-700 font-medium hover:text-green-600 transition-colors duration-200;
+  position: relative;
+}
+
+header nav a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: rgb(22 163 74);
+  transition: width 0.25s ease-in-out;
+}
+header nav a:hover::after {
+  width: 100%;
+}
+
+header .auth-cart {
+  @apply flex items-center gap-4;
+}
+
+/* Shopping cart button */
+header .cart-btn {
+  @apply relative p-2 hover:bg-gray-100 rounded-lg transition-colors;
+}
+header .cart-icon {
+  @apply w-6 h-6 text-gray-700;
+}
+header .cart-badge {
+  @apply absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center;
+}
+
+header .btn-login {
+  @apply px-6 py-2 bg-white text-green-600 border-2 border-green-600 rounded-lg hover:bg-green-50 font-semibold transition;
+}
+header .btn-signup {
+  @apply px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold transition;
+}
+
+@media (max-width: 768px) {
+  header {
+    @apply px-4;
+  }
+
+  header nav {
+    display: none;
+  }
+
+  header .auth-cart {
+    @apply gap-2;
+  }
+
+  header .btn-login, 
+  header .btn-signup {
+    @apply text-sm px-3 py-1.5;
+  }
+}
+header .logo img {
+  @apply transition-transform duration-200;
+}
+header .logo:hover img {
+  transform: scale(1.05);
+}
