@@ -8,7 +8,6 @@ const Attribute = require('../models/Attributes');
  */
 router.get('/', async (req, res) => {
   try {
-    console.log('Attributes API called')
     const attributes = await Attribute.find()
       .select('description')
       .sort({ description: 1 })

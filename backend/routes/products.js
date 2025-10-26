@@ -29,7 +29,6 @@ const Customer = require('../models/Customers')
  */
 router.get('/search', async (req, res) => {
   try {
-    console.log(req.query)
     // 1. PAGINATION PARAMETERS
     const page = parseInt(req.query.page) || 1
     const limit = Math.min(parseInt(req.query.limit) || 20, 50)
@@ -53,7 +52,7 @@ router.get('/search', async (req, res) => {
         // Category not found, return empty result
         return res.status(200).json({
           success: true,
-          message: `No products found for category: ${req.query.category}`,
+          message: `0 products found for category: ${req.query.category}`,
           data: [],
           pagination: {
             current_page: page,
@@ -79,7 +78,7 @@ router.get('/search', async (req, res) => {
       } else {
         return res.status(200).json({
           success: true,
-          message: `No products found for type: ${req.query.type}`,
+          message: `0 products found for type: ${req.query.type}`,
           data: [],
           pagination: {
             current_page: page,
@@ -105,7 +104,7 @@ router.get('/search', async (req, res) => {
       } else {
         return res.status(200).json({
           success: true,
-          message: `No products found for brand: ${req.query.brand}`,
+          message: `0 products found for brand: ${req.query.brand}`,
           data: [],
           pagination: {
             current_page: page,
@@ -149,8 +148,8 @@ router.get('/search', async (req, res) => {
       const attributeSlugs = req.query.attributes.split(',').map(a => a.trim().toLowerCase())
       // Find attributes by friendly names
       const attributes = await Attribute.find({
-        description: {
-          $in: attributeSlugs.map(slug => new RegExp('^' + slug.replace(/-/g, ' '), 'i'))
+        slug: {
+          $in: attributeSlugs
         }
       }).select('_id')
       
@@ -162,7 +161,7 @@ router.get('/search', async (req, res) => {
       } else {
         return res.status(200).json({
           success: true,
-          message: `No products found with attributes: ${req.query.attributes}`,
+          message: `0 products with attributes: ${req.query.attributes}`,
           data: [],
           pagination: {
             current_page: page,
@@ -235,7 +234,7 @@ router.get('/search', async (req, res) => {
         attributes: product.attributes ? product.attributes.map(attr => ({
           _id: attr._id,
           name: attr.description,
-          slug: pa.attribute_id.description.toLowerCase().replace(/\s+/g, '-')
+          slug: attr.description.toLowerCase().replace(/\s+/g, '-')
         })) : [],
       }
     })

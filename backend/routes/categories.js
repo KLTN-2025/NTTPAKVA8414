@@ -7,7 +7,6 @@ const ProductCategory = require('../models/ProductCategories');
  */
 router.get('/', async (req, res) => {
   try {
-    console.log('Categories API called')
     const categories = await ProductCategory.find()
       .select('category_name description')
       .sort({ category_name: 1 })
