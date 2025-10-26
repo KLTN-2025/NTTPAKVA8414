@@ -30,8 +30,8 @@
 
         <SignedOut>
           <div class="flex items-center gap-3">
-            <router-link to="/login" class="btn-login">Sign In</router-link>
-            <router-link to="/register" class="btn-signup">Sign Up</router-link>
+            <button @click="signIn" class="btn-login">Sign In</button>
+            <button @click="signUp" class="btn-signup">Sign Up</button>
           </div>
         </SignedOut>
 
@@ -44,6 +44,13 @@
 </template>
 
 <script setup>
-import { SignedIn, SignedOut, UserButton } from '@clerk/vue'
+import { useClerk, SignedIn, SignedOut, UserButton } from '@clerk/vue'
+const clerk = useClerk()
+function signIn() {
+  clerk.value.openSignIn()
+}
+function signUp() {
+  clerk.value.openSignUp()
+}
 import './Navbar.css'
 </script>
