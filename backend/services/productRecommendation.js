@@ -12,6 +12,10 @@ class RecommendationService {
    */
   async getRecommendations(productId, limit = 5) {
     try {
+      if (!mongoose.Types.ObjectId(productId)){
+        throw new Error('Invalid product id')
+      }
+      
       // Get the source product details
       const sourceProduct = await Product.findById(productId)
         .populate('type_id')

@@ -1,21 +1,21 @@
 <template>
   <header>
-    <div>
+    <div class="">
       <!-- Logo -->
      <router-link to="/" class="flex items-center gap-2 logo">
-  <img 
-    src="@/assets/images/logo.jpg" 
-    alt="Logo" 
-    class="h-10 w-auto md:h-10 transition-transform duration-200" />
-</router-link>
+      <img 
+        src="@/assets/images/logo.jpg" 
+        alt="Logo" 
+        class="h-10 w-auto md:h-10 transition-transform duration-200" />
+    </router-link>
 
       <!-- Navigation -->
      <nav class="hidden md:flex items-center gap-8">
-  <router-link to="/" class="text-gray-700 hover:text-green-600 transition">Home</router-link>
-  <router-link to="/products" class="text-gray-700 hover:text-green-600 transition">Shop</router-link>
-  <router-link to="/about" class="text-gray-700 hover:text-green-600 transition">About</router-link>
-  <router-link to="/contact" class="text-gray-700 hover:text-green-600 transition">Contact</router-link>
-</nav>
+      <router-link to="/" class="text-gray-700 hover:text-green-600 transition">Home</router-link>
+      <router-link to="/products" class="text-gray-700 hover:text-green-600 transition">Shop</router-link>
+      <router-link to="/about" class="text-gray-700 hover:text-green-600 transition">About</router-link>
+      <router-link to="/contact" class="text-gray-700 hover:text-green-600 transition">Contact</router-link>
+    </nav>
 
       <!-- Auth & Cart -->
       <div class="auth-cart">

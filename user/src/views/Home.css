@@ -71,7 +71,7 @@ h2, h3, h4, p {
   font-family: var(--font-family-primary);
   color: var(--color-text-heading);
   padding: 0 var(--spacing-xl);
-  max-width: 1200px;
+  max-width: 80vw;
   margin: 0 auto;
   background-color: var(--color-bg-light);
 }

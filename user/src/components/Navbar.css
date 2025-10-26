@@ -2,7 +2,7 @@
 
 
 header {
-  @apply sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300;
+  @apply sticky top-0 left-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-md transition-all duration-300;
   padding: 0 9.5rem; 
 }
 

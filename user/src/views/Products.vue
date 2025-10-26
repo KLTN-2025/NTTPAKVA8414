@@ -24,16 +24,16 @@
           <ul class="filter-list">
             <li>
               <label>
-                <input type="radio" name="category" v-model="selectedCategory" value="" />
+                <input type="radio" name="category" v-model="selectedCategory" value="" @change="applyFilters" />
                 <span class="custom-radio"></span>
                 <span class="label-text">All Categories</span>
               </label>
             </li>
-            <li v-for="cat in categories" :key="cat">
+            <li v-for="cat in categories" :key="cat.slug">
               <label>
-                <input type="radio" name="category" v-model="selectedCategory" :value="cat" />
+                <input type="radio" name="category" v-model="selectedCategory" :value="cat.name" @change="applyFilters" />
                 <span class="custom-radio"></span>
-                <span class="label-text">{{ cat }}</span>
+                <span class="label-text">{{ cat.name }}</span>
               </label>
             </li>
           </ul>
@@ -44,9 +44,17 @@
         <div class="filter-section">
           <h3>Price</h3>
           <div class="price-slider-container">
-            <input type="range" min="0" max="100" v-model="priceRange" class="price-slider" />
+            <input 
+              type="range" 
+              min="0" 
+              max="1000000" 
+              step="10000"
+              v-model="priceMax" 
+              @change="applyFilters"
+              class="price-slider" 
+            />
             <div class="price-values">
-              Price: <span>$0</span> — <span>${{ priceRange }}</span>
+              Price: <span>0</span> — <span>{{ formatPrice(priceMax) }}₫</span>
             </div>
           </div>
         </div>
@@ -54,34 +62,17 @@
         <hr />
 
         <div class="filter-section">
-          <h3>Rating</h3>
-          <ul class="filter-list rating-list">
-            <li v-for="rating in ratings" :key="rating.value">
-              <label>
-                <input type="checkbox" v-model="selectedRatings" :value="rating.value" />
-                <span class="custom-checkbox"></span>
-                <span class="stars">
-                  {{ getStars(rating.stars).solid }}<span class="star-empty">{{ getStars(rating.stars).empty }}</span>
-                </span>
-                <span>{{ rating.text }}</span>
-              </label>
-            </li>
-          </ul>
-        </div>
-
-        <hr />
-
-        <div class="filter-section">
           <h3>Popular Tags</h3>
-          <div class="tags">
+          <div v-if="attributesLoading" class="tags-loading">Loading...</div>
+          <div v-else class="tags">
             <span
-              v-for="(tag, index) in tags"
-              :key="index"
+              v-for="attr in attributes"
+              :key="attr.slug"
               class="tag"
-              :class="{ active: selectedTag === tag }"
-              @click="selectedTag = selectedTag === tag ? '' : tag"
+              :class="{ active: selectedAttributes.includes(attr.name) }"
+              @click="toggleAttribute(attr.name)"
             >
-              {{ tag }}
+              {{ attr.name }}
             </span>
           </div>
         </div>
@@ -94,49 +85,70 @@
             <input
               type="text"
               v-model="searchQuery"
+              @input="debouncedSearch"
               class="search-bar"
               placeholder="Search products..."
             />
-            <select v-model="sortOption" class="sort-select">
-              <option value="default">Sort by Default</option>
-              <option value="price-low-high">Price: Low → High</option>
-              <option value="price-high-low">Price: High → Low</option>
+            <select v-model="sortOption" @change="applyFilters" class="sort-select">
+              <option value="newest">Newest</option>
+              <option value="price-low">Price: Low → High</option>
+              <option value="price-high">Price: High → Low</option>
+              <option value="name-asc">Name: A → Z</option>
+              <option value="name-desc">Name: Z → A</option>
             </select>
           </div>
         </div>
 
-        <div v-if="paginatedProducts.length" class="products-grid">
+        <!-- Loading State -->
+        <div v-if="loading" class="loading-container">
+          <div class="spinner"></div>
+          <p>Loading products...</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error" class="error-container">
+          <h3>Error Loading Products</h3>
+          <p>{{ error }}</p>
+          <button @click="fetchProducts" class="retry-btn">Try Again</button>
+        </div>
+
+        <!-- Products Grid -->
+        <div v-else-if="products.length" class="products-grid">
           <ProductCard
-            v-for="(product, index) in paginatedProducts"
-            :key="index"
-            :img="product.image"
-            :name="product.name"
-            :oldPrice="product.oldPrice"
-            :price="product.price"
-            :discount="product.discount"
+            v-for="product in products"
+            :key="product._id"
+            :product="product"
           />
         </div>
 
-       <div v-else class="no-products-wrapper">
-  <div class="no-products">
-    <h3>No products found</h3>
-    <p>Try adjusting your search or filter options.</p>
-  </div>
-</div>
+        <!-- No Products Found -->
+        <div v-else class="no-products-wrapper">
+          <div class="no-products">
+            <h3>No products found</h3>
+            <p>Try adjusting your search or filter options.</p>
+          </div>
+        </div>
 
-        <div v-if="totalPages > 1" class="pagination">
-          <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">
+        <!-- Pagination -->
+        <div v-if="pagination.total_pages > 1" class="pagination">
+          <button 
+            @click="goToPage(pagination.current_page - 1)" 
+            :disabled="!pagination.has_prev_page"
+          >
             Prev
           </button>
           <button
-            v-for="page in totalPages"
+            v-for="page in visiblePages"
             :key="page"
             @click="goToPage(page)"
-            :class="{ active: currentPage === page }"
+            :class="{ active: pagination.current_page === page }"
           >
             {{ page }}
           </button>
-          <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages">
+          <button 
+            @click="goToPage(pagination.current_page + 1)" 
+            :disabled="!pagination.has_next_page"
+          >
             Next
           </button>
         </div>
@@ -146,157 +158,195 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import ProductCard from '@/components/ProductCard.vue'
-// Bỏ import font-awesome, vì chúng ta dùng text stars
-// import '@fortawesome/fontawesome-free/css/all.min.css' 
 
-// --- DỮ LIỆU GỐC CỦA BẠN ---
-const categories = ['Vegetables', 'Fruits', 'Nuts', 'Beverages']
-const tags = ['Organic', 'Fresh', 'Vegan', 'Low-fat', 'Natural']
-const products = ref([
-  {
-    name: 'Corn',
-    image: new URL('@/assets/images/Corn.png', import.meta.url).href,
-    oldPrice: 29.99,
-    price: 19.99,
-    discount: 10,
-    category: 'Vegetables',
-    rating: 4,
-    tags: ['Organic']
-  },
-  {
-    name: 'Apple',
-    image: new URL('@/assets/images/apple.png', import.meta.url).href,
-    oldPrice: 39.99,
-    price: 29.99,
-    discount: 10,
-    category: 'Fruits',
-    rating: 5,
-    tags: ['Fresh']
-  },
-  {
-    name: 'Cabbage',
-    image: new URL('@/assets/images/ChaniseCabbage.png', import.meta.url).href,
-    oldPrice: 49.99,
-    price: 39.99,
-    discount: 20,
-    category: 'Vegetables',
-    rating: 3,
-    tags: ['Vegan']
-  },
-  {
-    name: 'Green Chili',
-    image: new URL('@/assets/images/GreenChili.png', import.meta.url).href,
-    oldPrice: 59.99,
-    price: 49.99,
-    discount: 10,
-    category: 'Vegetables',
-    rating: 4,
-    tags: ['Low-fat']
-  },
-  {
-    name: 'Green Lettuce',
-    image: new URL('@/assets/images/GreenLettuce.png', import.meta.url).href,
-    oldPrice: 69.99,
-    price: 59.99,
-    discount: 10,
-    category: 'Vegetables',
-    rating: 5,
-    tags: ['Organic']
-  },
-  {
-    name: 'Cauliflower',
-    image: new URL('@/assets/images/Cauliflower.png', import.meta.url).href,
-    oldPrice: 45.99,
-    price: 34.99,
-    discount: 15,
-    category: 'Vegetables',
-    rating: 4,
-    tags: ['Fresh']
+// State
+const products = ref([])
+const categories = ref([])
+const attributes = ref([])
+const loading = ref(false)
+const attributesLoading = ref(false)
+const error = ref(null)
+
+// Filters
+const selectedCategory = ref('')
+const priceMax = ref(1000000)
+const selectedAttributes = ref([])
+const sortOption = ref('newest')
+const searchQuery = ref('')
+
+// Pagination
+const pagination = ref({
+  current_page: 1,
+  per_page: 6,
+  total_items: 0,
+  total_pages: 0,
+  has_next_page: false,
+  has_prev_page: false
+})
+
+// Debounce timer
+let searchTimeout = null
+
+// Computed
+const visiblePages = computed(() => {
+  const pages = []
+  const total = pagination.value.total_pages
+  const current = pagination.value.current_page
+  
+  // Show max 5 pages
+  let start = Math.max(1, current - 2)
+  let end = Math.min(total, current + 2)
+  
+  // Adjust if we're near the beginning or end
+  if (end - start < 4) {
+    if (start === 1) {
+      end = Math.min(total, start + 4)
+    } else if (end === total) {
+      start = Math.max(1, end - 4)
+    }
   }
-])
+  
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+  
+  return pages
+})
 
-// --- DỮ LIỆU MỚI & CẬP NHẬT ---
+// Methods
+async function fetchProducts(page = 1) {
+  try {
+    loading.value = true
+    error.value = null
 
-// Dữ liệu cho Rating, khớp với hình ảnh
-const ratings = ref([
-  { value: 5, text: '5.0', stars: 5 },
-  { value: 4, text: '4.0 & up', stars: 4 },
-  { value: 3, text: '3.0 & up', stars: 3 },
-  { value: 2, text: '2.0 & up', stars: 2 },
-  { value: 1, text: '1.0 & up', stars: 1 },
-])
+    const params = {
+      page: page,
+      limit: pagination.value.per_page
+    }
 
-// Hàm helper để tạo sao
-function getStars(n) {
-  return {
-    solid: '★'.repeat(n),
-    empty: '★'.repeat(5 - n)
+    const sortMapping = {
+      'newest': { sortBy: 'createdAt', sortOrder: 'desc' },
+      'price-low': { sortBy: 'price', sortOrder: 'asc' },
+      'price-high': { sortBy: 'price', sortOrder: 'desc' },
+      'name-asc': { sortBy: 'name', sortOrder: 'asc' },
+      'name-desc': { sortBy: 'name', sortOrder: 'desc' }
+    }
+
+    const sortConfig = sortMapping[sortOption.value] || {}
+    if (sortConfig.sortBy) {
+      params.sortBy = sortConfig.sortBy
+      params.sortOrder = sortConfig.sortOrder
+    }
+    
+    // Add filters
+    if (selectedCategory.value) {
+      params.category = selectedCategory.value
+    }
+    if (priceMax.value < 1000000) {
+      params.price_max = priceMax.value
+    }
+    if (selectedAttributes.value.length > 0) {
+      params.attributes = selectedAttributes.value.join(',')
+    }
+    if (searchQuery.value.trim()) {
+      params.q = searchQuery.value.trim()
+    }
+    console.log(params)
+    const response = await axios.get('api/products/search', { params })
+
+    if (response.data.success) {
+      products.value = response.data.data
+      pagination.value = response.data.pagination
+    } else {
+      error.value = response.data.message || 'Failed to load products'
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to load products. Please try again.'
+    console.error('Error fetching products:', err)
+  } finally {
+    loading.value = false
   }
 }
 
-// Thay đổi state cho filters
-const selectedCategory = ref('') // Đổi từ mảng sang chuỗi cho radio button
-const priceRange = ref(100) // Tăng max price default để thấy sản phẩm
-const selectedRatings = ref([]) // Giữ nguyên là mảng cho checkbox
-const selectedTag = ref('')
-const sortOption = ref('default')
-const searchQuery = ref('')
-
-const currentPage = ref(1)
-const itemsPerPage = 6
-
-// --- LOGIC TÍNH TOÁN (CẬP NHẬT) ---
-
-const sortedProducts = computed(() => {
-  let sorted = [...products.value]
-  if (sortOption.value === 'price-low-high') {
-    sorted.sort((a, b) => a.price - b.price)
-  } else if (sortOption.value === 'price-high-low') {
-    sorted.sort((a, b) => b.price - a.price)
-  }
-  return sorted
-})
-
-// CẬP NHẬT LOGIC FILTER
-const filteredProducts = computed(() => {
-  // Reset về trang 1 mỗi khi filter thay đổi
-  currentPage.value = 1
-
-  return sortedProducts.value.filter((p) => {
-    // Logic Category MỚI (khớp chuỗi, "" là 'All')
-    const matchCategory = !selectedCategory.value || p.category === selectedCategory.value
-
-    // Logic Rating MỚI (X & up = p.rating >= X)
-    // Tìm rating tối thiểu được chọn. Vd: nếu [4, 2] được chọn, min là 2 -> lọc p.rating >= 2
-    const minRating = selectedRatings.value.length ? Math.min(...selectedRatings.value) : 0
-    const matchRating = minRating === 0 || p.rating >= minRating
-
-    // Logic cũ
-    const matchTag = !selectedTag.value || p.tags.includes(selectedTag.value)
-    const matchSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchPrice = p.price <= priceRange.value
+async function fetchCategories() {
+  try {
+    const response = await axios.get('api/categories')
     
-    return matchCategory && matchRating && matchTag && matchSearch && matchPrice
-  })
-})
+    if (response.data.success) {
+      categories.value = response.data.data.map(cat => ({
+        name: cat.category_name,
+        slug: cat.category_name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and')
+      }))
+    }
+  } catch (err) {
+    console.error('Error fetching categories:', err)
+    // Fallback to empty array
+    categories.value = []
+  }
+}
 
-// Pagination (Không đổi)
-const totalPages = computed(() => Math.ceil(filteredProducts.value.length / itemsPerPage))
+async function fetchAttributes() {
+  try {
+    attributesLoading.value = true
+    const response = await axios.get('api/attributes')
+    
+    if (response.data.success) {
+      attributes.value = response.data.data.map(attr => ({
+        name: attr.description,
+        slug: attr.description.toLowerCase().replace(/\s+/g, '-')
+      }))
+    }
+  } catch (err) {
+    console.error('Error fetching attributes:', err)
+    attributes.value = []
+  } finally {
+    attributesLoading.value = false
+  }
+}
 
-const paginatedProducts = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return filteredProducts.value.slice(start, end)
-})
+function toggleAttribute(slug) {
+  const index = selectedAttributes.value.indexOf(slug)
+  if (index > -1) {
+    selectedAttributes.value.splice(index, 1)
+  } else {
+    selectedAttributes.value.push(slug)
+  }
+  applyFilters()
+}
+
+function applyFilters() {
+  fetchProducts(1) // Reset to page 1 when filters change
+}
+
+function debouncedSearch() {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    applyFilters()
+  }, 500) // Wait 500ms after user stops typing
+}
 
 function goToPage(page) {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
+  if (page >= 1 && page <= pagination.value.total_pages) {
+    fetchProducts(page)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
+
+function formatPrice(price) {
+  return new Intl.NumberFormat('vi-VN').format(price)
+}
+
+// Lifecycle
+onMounted(async () => {
+  await Promise.all([
+    fetchProducts(),
+    fetchCategories(),
+    fetchAttributes()
+  ])
+})
 </script>
 
 <style src="./Products.css"></style>

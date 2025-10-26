@@ -6,6 +6,7 @@ exports.getProductRecommendations = async (req, res) => {
     const { productId } = req.params;
     const { limit = 5 } = req.query;
 
+    
     const recommendations = await recommendationService.getRecommendations(
       productId,
       parseInt(limit)

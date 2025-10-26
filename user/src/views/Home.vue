@@ -3,7 +3,7 @@
     <!-- Banner chính -->
     <section class="banner-section">
       <img src="@/assets/images/Banner4.png" alt="Banner" class="banner-img" />
-      <button class="banner-btn">Shop Now</button>
+      <router-link to="/products" class="banner-btn">Shop Now</router-link>
     </section>
 
     <!-- Các icon mô tả dịch vụ -->
@@ -31,18 +31,14 @@
     </section>
 
     <!-- Featured Products -->
-    <section class="featured-products">
+    <section v-if="!loading" class="featured-products">
       <h2>Featured Products</h2>
       <div class="products-grid">
         <ProductCard
-          v-for="(product, index) in featuredProducts"
-          :key="index"
-          :img="product.image"
-          :name="product.name"
-          :oldPrice="product.oldPrice"
-          :price="product.price"
-          :discount="product.discount"
-        />
+            v-for="product in featuredProducts"
+            :key="product._id"
+            :product="product"
+          />
       </div>
     </section>
 
@@ -95,51 +91,14 @@
 
 <script setup>
 import ProductCard from '@/components/ProductCard.vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
-const featuredProducts = [
-  {
-    name: 'Corn',
-    image: new URL('@/assets/images/Corn.png', import.meta.url).href,
-    oldPrice: 29.99,
-    price: 19.99,
-    discount: 10
-  },
-  {
-    name: 'Apple',
-    image: new URL('@/assets/images/apple.png', import.meta.url).href,
-    oldPrice: 39.99,
-    price: 29.99,
-    discount: 10,
-  },
-  {
-    name: 'Chinese Cabbage',
-    image: new URL('@/assets/images/ChaniseCabbage.png', import.meta.url).href,
-    oldPrice: 49.99,
-    price: 39.99,
-    discount: 10,
-  },
-  {
-    name: 'Green Chili',
-    image: new URL('@/assets/images/GreenChili.png', import.meta.url).href,
-    oldPrice: 59.99,
-    price: 49.99,
-    discount: 10,
-  },
-  {
-    name: 'Green Lettuce',
-    image: new URL('@/assets/images/GreenLettuce.png', import.meta.url).href,
-    oldPrice: 69.99,
-    price: 59.99,
-    discount: 10,
-  },
-]
+const featuredProducts = ref([])
+const loading = ref(true)
+const error = ref(null)
 
-const offers = [
-  { image: new URL('@/assets/images/Offer1.png', import.meta.url).href },
-  { image: new URL('@/assets/images/Offer2.png', import.meta.url).href },
-  { image: new URL('@/assets/images/Offer3.png', import.meta.url).href },
-]
-
+//Placeholder reviews
 const reviews = [
   {
     name: 'Jane Doe',
@@ -157,6 +116,42 @@ const reviews = [
     rating: 4,
   },
 ]
+
+//Placeholder offers
+const offers = [
+  { image: new URL('@/assets/images/Offer1.png', import.meta.url).href },
+  { image: new URL('@/assets/images/Offer2.png', import.meta.url).href },
+  { image: new URL('@/assets/images/Offer3.png', import.meta.url).href },
+]
+
+async function fetchProducts() {
+  try {
+    const params = {
+      page: 1,
+      limit: 3
+    }
+    const response = await axios.get('api/products/search', { 
+      params
+    })
+    if (response.data.success){
+      featuredProducts.value = response.data.data
+    }
+    else {
+      error.value = response.data.message || 'Failed to load products'
+    }
+  }
+  catch (err){
+    error.value = err.response?.data?.message || 'Failed to load products. Please try again.'
+    console.error('Error fetching products:', err)
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchProducts()
+})
 </script>
 
 <style src="./Home.css"></style>
