@@ -29,7 +29,7 @@
 ### Clone repo từ Github:
 ```bash
 git clone https://github.com/KLTN-2025/NTTPAKVA8414
-cd healthycrave
+cd NTTPAKVA8414
 ```
 
 ### Cài dependencies:
@@ -48,6 +48,7 @@ npm install
 *Backend* (Port 5000, chạy đầu tiên)
 ```bash
 cd backend
+cp .env.example .env
 node scripts/seedProduct.js 
 node computeRecommendation.js
 node server.js
@@ -67,5 +68,5 @@ npm run dev
 
 Mở MongoDB Compass và connect:
 ```bash
-mongodb://localhost:27017/<dien_ten_db_vao_day>
+mongodb://localhost:27017/HealthyCrave
 ```

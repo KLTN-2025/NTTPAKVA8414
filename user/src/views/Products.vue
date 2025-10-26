@@ -254,11 +254,11 @@ async function fetchProducts(page = 1) {
     if (searchQuery.value.trim()) {
       params.q = searchQuery.value.trim()
     }
-    console.log(params)
     const response = await axios.get('api/products/search', { params })
 
     if (response.data.success) {
       products.value = response.data.data
+      console.log(products.value)
       pagination.value = response.data.pagination
     } else {
       error.value = response.data.message || 'Failed to load products'
