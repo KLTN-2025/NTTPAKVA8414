@@ -50,7 +50,7 @@ npm install
 cd backend
 cp .env.example .env
 node scripts/seedProduct.js 
-node computeRecommendation.js
+node scripts/computeRecommendation.js
 node server.js
 ```
 
