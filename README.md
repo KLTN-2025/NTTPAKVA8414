@@ -60,7 +60,7 @@ cd user
 npm run dev
 ```
 
-*User frontend* (Port 5174, chạy terminal riêng)
+*Admin frontend* (Port 5174, chạy terminal riêng)
 ```bash
 cd admin
 npm run dev
