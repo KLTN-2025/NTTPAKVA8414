@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="cart-banner-container">
     <img src="@/assets/images/Breadcrumbs.png" alt="Shopping Cart Banner" class="cart-banner-img" />
     
@@ -90,14 +91,14 @@
 
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router' // <-- 1. THÊM DÒNG NÀY
-import '@fortawesome/fontawesome-free/css/all.min.css'; // <-- Bỏ comment để icon hiển thị
+import { useRouter } from 'vue-router'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
-// --- DỮ LIỆU GIỎ HÀNG (GIẢ LẬP) ---
 const cartItems = ref([
   {
     id: 1,
@@ -115,15 +116,13 @@ const cartItems = ref([
   },
 ]);
 
-const shippingFee = ref(0); // Giả lập phí ship là Free
-const router = useRouter() // <-- 2. THÊM DÒNG NÀY
+const shippingFee = ref(0);
+const router = useRouter() 
 
-// --- CÁC HÀM TÍNH TOÁN (Computed) ---
 const subtotal = computed(() => {
   return cartItems.value.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 });
 
-// --- CÁC HÀM XỬ LÝ (Methods) ---
 function updateQuantity(id, newQuantity) {
   if (newQuantity < 1) return;
   const item = cartItems.value.find(i => i.id === id);
@@ -136,7 +135,6 @@ function removeItem(id) {
   cartItems.value = cartItems.value.filter(i => i.id !== id);
 }
 
-// 3. THÊM HÀM NÀY
 function goToCheckout() {
   if (cartItems.value.length > 0) {
     router.push('/checkout')

@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="cart-banner-container">
     <img src="@/assets/images/Breadcrumbs.png" alt="Checkout Banner" class="cart-banner-img" />
     
@@ -106,6 +107,7 @@
       </div>
 
     </form>
+  </div>
   </div>
 </template>
 

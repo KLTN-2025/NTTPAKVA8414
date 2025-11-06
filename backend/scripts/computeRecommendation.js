@@ -13,7 +13,6 @@ class RecommendationComputer {
   }
 
   async computeAllRecommendations() {
-    console.log('Starting recommendation computation...');
     const startTime = Date.now();
 
     try {
@@ -21,8 +20,6 @@ class RecommendationComputer {
       const now = new Date();
       const dateThreshold = new Date(now.getTime() - this.DAYS_THRESHOLD * 24 * 60 * 60 * 1000);
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-      console.log(`Analyzing orders from ${dateThreshold.toISOString()} onwards...`);
 
       // Get all orders within the time window
       const recentOrders = await CustomerOrder.find({
@@ -33,8 +30,6 @@ class RecommendationComputer {
       const orderDateMap = new Map(
         recentOrders.map(o => [o._id.toString(), o.order_date])
       );
-
-      console.log(`Found ${orderIds.length} orders in the last ${this.DAYS_THRESHOLD} days`);
 
       // Get all order items for these orders with product and category info
       const orderItems = await CustomerOrderItem.aggregate([
@@ -69,8 +64,6 @@ class RecommendationComputer {
           }
         }
       ]);
-
-      console.log(`Processing ${orderItems.length} order items...`);
 
       // Group items by order
       const orderItemsMap = new Map();
@@ -132,8 +125,6 @@ class RecommendationComputer {
         }
       });
 
-      console.log(`Calculated scores for ${pairScores.size} unique product pairs (${pairsProcessed} total occurrences)`);
-
       // Filter pairs with score >= 5.0 and prepare for database insertion
       const recommendationsToInsert = [];
       pairScores.forEach((score, pairKey) => {
@@ -148,31 +139,20 @@ class RecommendationComputer {
         }
       });
 
-      console.log(`${recommendationsToInsert.length} pairs meet the minimum score threshold of ${this.MIN_SCORE_THRESHOLD}`);
-
       // Clear existing recommendations and insert new ones
       if (recommendationsToInsert.length > 0) {
-        console.log('Clearing old recommendations...');
         await ProductRecommendation.deleteMany({});
 
-        console.log('Inserting new recommendations...');
         // Insert in batches to avoid memory issues
         const batchSize = 1000;
         for (let i = 0; i < recommendationsToInsert.length; i += batchSize) {
           const batch = recommendationsToInsert.slice(i, i + batchSize);
           await ProductRecommendation.insertMany(batch, { ordered: false });
-          console.log(`Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(recommendationsToInsert.length / batchSize)}`);
         }
       }
 
       const endTime = Date.now();
       const duration = ((endTime - startTime) / 1000).toFixed(2);
-
-      console.log('\n=== Computation Complete ===');
-      console.log(`Total time: ${duration} seconds`);
-      console.log(`Orders analyzed: ${orderIds.length}`);
-      console.log(`Product pairs evaluated: ${pairScores.size}`);
-      console.log(`Recommendations stored: ${recommendationsToInsert.length}`);
 
       return {
         success: true,
@@ -219,17 +199,10 @@ if (require.main === module) {
     useUnifiedTopology: true
   })
   .then(async () => {
-    console.log('Connected to MongoDB');
-    
     const computer = new RecommendationComputer();
-    
     try {
       const result = await computer.computeAllRecommendations();
-      console.log('\nFinal result:', JSON.stringify(result, null, 2));
-      
       const stats = await computer.getStats();
-      console.log('\nDatabase stats:', JSON.stringify(stats, null, 2));
-      
       process.exit(0);
     } catch (error) {
       console.error('Fatal error:', error);

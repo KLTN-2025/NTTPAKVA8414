@@ -432,7 +432,6 @@ async function fetchReviews(page = 1) {
 
     if (response.data?.success) {
       reviews.value = response.data || null;
-      console.log(reviews.value)
       reviewPagination.page = reviews.value.page
       reviewPagination.limit = reviews.value.limit
       reviewPagination.total_items = reviews.value.totalReviews

@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="cart-banner-container">
     <img src="@/assets/images/Breadcrumbs.png" alt="Products Banner" class="cart-banner-img" />
     
@@ -151,6 +152,7 @@
       </section>
     </div>
   </div>
+</div>
 </template>
 
 <script setup>
@@ -256,7 +258,6 @@ async function fetchProducts(page = 1) {
 
     if (response.data.success) {
       products.value = response.data.data
-      console.log(products.value)
       pagination.value = response.data.pagination
     } else {
       error.value = response.data.message || 'Failed to load products'

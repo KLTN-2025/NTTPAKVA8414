@@ -7,5 +7,7 @@ router.use('/products', require('./products'))
 router.use('/recommendations', require('./recommendations'))
 router.use('/attributes', require('./attributes'))
 router.use('/categories', require('./categories'))
+router.use('/carts', require('./carts'))
+router.use('/orders', require('./orders'))
 
 module.exports = router;

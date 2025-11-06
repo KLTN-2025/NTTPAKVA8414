@@ -12,7 +12,6 @@ export function useAuthSync() {
       const res = await axios.get('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
       })
-      console.log('👤 Profile:', res.data.customer)
       return res.data.customer
     } catch (error) {
       console.error('❌ Fetch profile failed:', error.response?.data || error.message)

@@ -10,7 +10,6 @@ router.post(
   bodyParser.raw({ type: 'application/json' }),
   async (req, res) => {
     // 1. Check for the webhook secret
-    console.log('--- Webhook Endpoint Hit ---');
 
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
@@ -43,7 +42,6 @@ router.post(
 
     // 5. Get the event type
     const eventType = evt.type;
-    console.log(`✅ Webhook received: ${eventType}`);
 
     // 6. Handle the event
     try {
@@ -66,7 +64,6 @@ router.post(
 
         // --- USER UPDATED ---
         case 'user.updated': {
-          console.log('Firing user.updated')
           const { id, email_addresses, first_name, last_name, image_url, phone_numbers, private_metadata } = evt.data;
 
           await Customer.findOneAndUpdate(

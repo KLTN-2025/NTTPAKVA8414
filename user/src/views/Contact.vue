@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="cart-banner-container">
     <img src="@/assets/images/Breadcrumbs.png" alt="Contact Us Banner" class="cart-banner-img" />
     <div class="cart-breadcrumbs-container">
@@ -90,6 +91,7 @@
       referrerpolicy="no-referrer-when-downgrade">
     </iframe>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -121,7 +123,6 @@ async function handleSubmit() {
 
   try {
     await sleep(1500); 
-    console.log("Contact Form Submitted:", form.value);
     
     formMessage.value = { 
       type: 'success', 
