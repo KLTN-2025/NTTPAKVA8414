@@ -344,9 +344,11 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import { useCartStore } from '@/stores/cartStore'
 
 const route = useRoute();
 const emit = defineEmits(['cart-updated']);
+const cartStore = useCartStore()
 
 /* --- State --- */
 const product = ref(null);
@@ -371,11 +373,8 @@ const newReview = reactive({
   comment: ''
 });
 const submittingReview = ref(false);
-
-/* --- Computed --- */
 const productId = computed(() => route.params.id);
 
-/* visiblePages computed (max 5 pages, centered around current) */
 const visiblePages = computed(() => {
   const pages = [];
   const total = reviewPagination.total_pages || 0;
@@ -384,7 +383,6 @@ const visiblePages = computed(() => {
   let start = Math.max(1, current - 2);
   let end = Math.min(total, current + 2);
 
-  // adjust if we have less than 5 pages shown and there are pages available
   if (end - start < 4) {
     if (start === 1) {
       end = Math.min(total, start + 4);
@@ -407,7 +405,6 @@ async function fetchProduct() {
 
     if (response.data?.success) {
       product.value = response.data.data;
-      // reset image index if images changed
       currentImageIndex.value = 0;
     } else {
       error.value = response.data?.message || 'Failed to load product';
@@ -489,34 +486,19 @@ function cancelReview() {
 
 async function addToCart() {
   if (!product.value?.in_stock) return;
-
   try {
-    addingToCart.value = true;
-
-    const response = await axios.post('/api/cart/add', {
-      product_id: product.value._id,
-      quantity: quantity.value
-    });
-
-    if (response.data?.success) {
-      alert(`Added ${quantity.value} ${product.value.name} to cart!`);
-      emit('cart-updated');
-    }
+    cartStore.addItemToCart(product.value, quantity.value)
   } catch (err) {
-    const errorMessage = err.response?.data?.message || 'Failed to add to cart. Please try again.';
-    alert(errorMessage);
-    console.error('Error adding to cart:', err);
+    console.error('Error adding to cart: ', err);
   } finally {
     addingToCart.value = false;
   }
 }
 
 function increaseQuantity() {
-  // original used this.product.stock — keep that check
   if (product.value && typeof product.value.stock !== 'undefined') {
     if (quantity.value < product.value.stock) quantity.value++;
   } else {
-    // if no stock field, still allow increment
     quantity.value++;
   }
 }
@@ -570,13 +552,11 @@ function formatDate(dateString) {
   }
 }
 
-/* --- Lifecycle / Watches --- */
 onMounted(() => {
   fetchProduct();
   fetchReviews(1);
 });
 
-// re-fetch when productId route param changes
 watch(productId, (newId, oldId) => {
   if (newId !== oldId) {
     fetchProduct();
@@ -587,7 +567,6 @@ watch(productId, (newId, oldId) => {
 
 
 <style scoped>
-/* Custom scrollbar for image thumbnails */
 .overflow-x-auto::-webkit-scrollbar {
   height: 8px;
 }
@@ -606,7 +585,6 @@ watch(productId, (newId, oldId) => {
   background: #555;
 }
 
-/* Remove number input arrows */
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;

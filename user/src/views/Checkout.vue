@@ -146,7 +146,7 @@ import axios from 'axios'
 const router = useRouter()
 const cartStore = useCartStore() 
 
-const cartItems = cartStore.items
+
 
 const form = ref({
   firstName: '',
@@ -160,7 +160,7 @@ const form = ref({
 })
 
 const loading = ref(false) 
-
+const cartItems = computed(() => cartStore.items)
 const subtotal = computed(() =>
   cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
 )
@@ -198,6 +198,8 @@ async function placeOrder() {
     loading.value = false
   }
 }
+
+
 </script>
 
 <style scoped src="./Checkout.css"></style>

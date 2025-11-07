@@ -3,8 +3,9 @@ import { defineStore } from 'pinia'
 import { ref, computed, watch, hydrate } from 'vue'
 import axios from 'axios'
 import { useProductCacheStore } from './productCacheStore'
-
 import { useAuth } from '@clerk/vue'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
 export const useCartStore = defineStore('cart', () => {
   const MAX_CART_SIZE = 10  // Prevent server overloading
@@ -26,7 +27,7 @@ export const useCartStore = defineStore('cart', () => {
     return items.value.findIndex(i => String(i.productId) === String(productId))
   }
 
-  function sanitizeQuantity(q) {
+  function validateQuantity(q) {
     q = Number(q)
     if (!Number.isInteger(q) || q <= 0) return null
     return q
@@ -36,14 +37,21 @@ export const useCartStore = defineStore('cart', () => {
     if (!product || !(product._id || product.id)) return false
     const id = product._id ?? product.id
     const idx = findIndex(id)
-    const qty = sanitizeQuantity(quantity) ?? 1
-
+    const qty = validateQuantity(quantity) ?? 1
     if (idx >= 0) {
-      items.value[idx].quantity = items.value[idx].quantity + qty
-      return true
+      if (items.value[idx].quantity + qty <= product.stock){
+        items.value[idx].quantity = items.value[idx].quantity + qty
+        toast.success('Item quantity updated!')
+        return true
+      }
+      else {
+        toast.error('Stock exceeded, can\'t increase quantity!')
+        return false
+      }
     }
 
     if (items.value.length >= MAX_CART_SIZE) {
+      toast.warning(`You have reached max cart size (${MAX_CART_SIZE} items)`)
       return false
     }
 
@@ -55,28 +63,39 @@ export const useCartStore = defineStore('cart', () => {
       image: product.images[0] ?? '',
       quantity: qty
     })
+    toast.success(`Add new item to cart!\n${items.value.length}/${MAX_CART_SIZE} items`)
 
-    if (price !== null || Number.isFinite(product.current_stock)) {
-      productCache.updateProduct(id, price, product.current_stock)
+    if (price !== null || Number.isFinite(product.stock)) {
+      productCache.updateProduct(id, price, product.stock)
     }
     return true
   }
 
   function removeFromCart(productId) {
     items.value = items.value.filter(i => String(i.productId) !== String(productId))
+    toast.success(`Drop item from cart!\n${items.value.length}/${MAX_CART_SIZE} items`)
   }
 
   function updateQuantity(productId, quantity) {
-    const q = sanitizeQuantity(quantity)
+    const q = validateQuantity(quantity)
+    const stock = productCache.getProduct(productId).current_stock
     if (q === null) {
-      // treat as remove if non-positive
       removeFromCart(productId)
       return false
     }
     const idx = findIndex(productId)
-    if (idx === -1) return false
-    items.value[idx].quantity = q
-    return true
+    if (idx === -1) 
+      return false
+    
+    if (q <= stock){
+      items.value[idx].quantity = q
+      toast.success('Item quantity updated!')
+      return true
+    }
+    else {
+      toast.error('Stock exceeded, can\'t increase quantity!')
+      return false
+    }
   }
 
   function clearCart() {
@@ -119,7 +138,7 @@ export const useCartStore = defineStore('cart', () => {
         const seen = new Map()
         for (const it of serverItems) {
           const id = String(it.productId ?? it.product_id ?? it._id)
-          const qty = sanitizeQuantity(it.quantity) ?? 0
+          const qty = validateQuantity(it.quantity) ?? 0
           if (!id || qty <= 0) continue
           if (seen.has(id)) {
             seen.set(id, seen.get(id) + qty)
@@ -165,7 +184,7 @@ export const useCartStore = defineStore('cart', () => {
       const map = new Map()
       for (const it of parsed) {
         const id = String(it.productId ?? it.product_id ?? it._id)
-        const qty = sanitizeQuantity(it.quantity) ?? 0
+        const qty = validateQuantity(it.quantity) ?? 0
         if (!id || qty <= 0) continue
         map.set(id, (map.get(id) || 0) + qty)
       }

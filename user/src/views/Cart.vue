@@ -143,11 +143,6 @@ function removeItem(productId) {
 function goToCheckout() {
   if (cartStore.items.length > 0) router.push('/checkout')
 }
-
-onMounted(() => {
-  console.clear()
-  console.log(JSON.stringify(cartStore.items))
-})
 </script>
 
 <style scoped src="./Cart.css"></style>

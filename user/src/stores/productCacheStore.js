@@ -8,6 +8,11 @@ export const useProductCacheStore = defineStore('productCache', () => {
   const products = ref({})
 
   function updateProduct(productId, selling_price, current_stock) {
+    console.log(JSON.stringify({
+      productId,
+      selling_price,
+      current_stock
+    }))
     if (!productId) 
       return
     products.value[String(productId)] = {

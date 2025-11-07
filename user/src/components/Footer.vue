@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <footer class="footer">
     <div class="container">
@@ -21,10 +20,10 @@
       <div class="footer-col">
         <h4 class="footer-title">Quick Links</h4>
         <ul class="footer-links">
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Shop</a></li>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Terms & Conditions</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/products">Shop</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
         </ul>
       </div>
 
@@ -46,13 +45,12 @@
         <ul class="footer-contact">
           <li><i class="fa-solid fa-phone"></i> (+84) 869 777777</li>
           <li><i class="fa-solid fa-envelope"></i> contact@healthycrave.com</li>
-          <li><i class="fa-solid fa-location-dot"></i> 123 Healthy St, Ho Chi Minh City</li>
+          <li><i class="fa-solid fa-location-dot"></i> 123 Healthy St, Da Nang City</li>
         </ul>
       </div>
 
     </div>
 
-    <!-- Footer Bottom -->
     <div class="footer-bottom">
       © 2025 HealthyCrave. All rights reserved.
     </div>
