@@ -5,7 +5,7 @@ const customerOrderSchema = new mongoose.Schema({
   customer_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Customer',
-    required: true
+    default: null
   },
   order_date: {
     type: Date,
@@ -20,7 +20,7 @@ const customerOrderSchema = new mongoose.Schema({
   },
   payment_method: {
     type: String,
-    enum: ['COD', 'Card', 'Transfer'],
+    enum: ['COD', 'Transfer'],
     default: 'COD',
     required: true
   },

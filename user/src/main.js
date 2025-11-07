@@ -9,7 +9,8 @@ import './style.css'
 
 const app = createApp(App)
 app.use(clerkPlugin, {
-    publishableKey: 'pk_test_cnVsaW5nLWNhbWVsLTQ2LmNsZXJrLmFjY291bnRzLmRldiQ'
+    publishableKey: 'pk_test_cnVsaW5nLWNhbWVsLTQ2LmNsZXJrLmFjY291bnRzLmRldiQ',
+    signInForceRedirectUrl: '/login'
 })
 app.use(createPinia())
 app.use(router)

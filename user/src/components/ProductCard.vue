@@ -74,7 +74,8 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { useCartStore } from '@/stores/cartStore'
+const { addItemToCart } = useCartStore()
 const props = defineProps({
   product: {
     type: Object,
@@ -105,22 +106,7 @@ function handleImageError(event) {
 }
 
 async function addToCart() {
-  if (!props.product.in_stock) return
-  
-  try {
-    // Emit event to parent or use store/composable
-    // For now, just show an alert
-    alert(`Added ${props.product.name} to cart!`)
-    
-    // TODO: Implement actual cart functionality
-    // await axios.post('/api/cart/add', {
-    //   product_id: props.product._id,
-    //   quantity: 1
-    // })
-  } catch (err) {
-    console.error('Error adding to cart:', err)
-    alert('Failed to add to cart. Please try again.')
-  }
+  addItemToCart(props.product, 1)
 }
 </script>
 

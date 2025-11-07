@@ -195,7 +195,7 @@ exports.searchAndFilterProducts = async (req, res) => {
         price: product.selling_price,
         stock: product.current_stock,
         in_stock: product.current_stock > 0,
-        images: product.image_urls[0] || null,
+        images: product.image_urls || null,
         category: product.type_id?.category_id ? {
           _id: product.type_id.category_id._id,
           name: product.type_id.category_id.category_name,

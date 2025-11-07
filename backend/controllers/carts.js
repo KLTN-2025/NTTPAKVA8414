@@ -4,8 +4,11 @@ const Product = require("../models/Products");
 const Customer = require("../models/Customers");
 const { getAuth } = require("@clerk/express");
 
+const MAX_CART_SIZE = 10
+
 /**
  * Validate the content inside the cart
+ * Body: [{ product_id, quantity }]   <-- make docs match this
  */
 exports.validateCart = async (req, res) => {
   try {
@@ -18,14 +21,14 @@ exports.validateCart = async (req, res) => {
       });
     }
 
-    if (items.length > 10) {
+    if (items.length > MAX_CART_SIZE) {
       return res.status(400).json({
         success: false,
-        message: "Cart can't have more than 10 items at once",
+        message: `Cart can't have more than ${MAX_CART_SIZE} items at once`,
       });
     }
 
-    const pIDs = [];
+    const pIDs = new Set();
     for (const it of items) {
       if (
         !it ||
@@ -34,10 +37,9 @@ exports.validateCart = async (req, res) => {
         it.quantity <= 0 ||
         !Number.isInteger(it.quantity)
       ) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid item format",
-        });
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid item format" });
       }
       if (!mongoose.Types.ObjectId.isValid(it.product_id)) {
         return res.status(400).json({
@@ -45,32 +47,45 @@ exports.validateCart = async (req, res) => {
           message: `Invalid product_id: ${it.product_id}`,
         });
       }
-      pIDs.push(it.product_id);
+      pIDs.add(String(it.product_id));
     }
 
-    const foundProducts = await Product.find({ _id: { $in: pIDs } })
+    const idsArray = Array.from(pIDs);
+
+    const foundProducts = await Product.find({ _id: { $in: idsArray } })
       .select("_id current_stock selling_price")
       .lean();
 
-    const prodMap = new Map(foundProducts.map((p) => [String(p._id), p]));
+    const prodMap = new Map();
+    for (const p of foundProducts) {
+      prodMap.set(String(p._id), p);
+    }
 
     const validationResults = items.map((item) => {
-      const p = prodMap.get(String(item.product_id));
+      const key = String(item.product_id);
+      const p = prodMap.get(key);
+      //This item no longer exists, marked as invalid
       if (!p) {
         return {
           product_id: item.product_id,
           valid: false,
           reason: "Product not found",
           exists: false,
+          available_stock: 0,
+          requested_quantity: item.quantity,
+          current_price: null,
+          in_stock: false,
         };
       }
+
+      //Mark an item as valid depending on current stock
       const availableStock = p.current_stock ?? 0;
       return {
         product_id: item.product_id,
         available_stock: availableStock,
         requested_quantity: item.quantity,
         valid: availableStock >= item.quantity,
-        current_price: p.selling_price,
+        current_price: p.selling_price ?? null,
         exists: true,
         in_stock: availableStock > 0,
       };
@@ -81,7 +96,6 @@ exports.validateCart = async (req, res) => {
       data: validationResults,
     });
   } catch (err) {
-    console.error("Error validating cart:", err);
     return res.status(500).json({
       success: false,
       message: "Error validating cart",
@@ -91,7 +105,7 @@ exports.validateCart = async (req, res) => {
 };
 
 /**
- * Get the items inside the cart
+ * Get the items inside the remote cart
  * Require auth
  */
 exports.getCart = async (req, res) => {
@@ -101,18 +115,15 @@ exports.getCart = async (req, res) => {
       return res.status(401).json({ message: "Unauthenticated user" });
     }
 
-    const customerId = await Customer.findOne({ clerkId: userId }).select(
+    const customer = await Customer.findOne({ clerkId: userId }).select(
       "_id"
-    );
+    ).lean()
+    const customerId = customer._id
+
     let cart = await Cart.findOne({ customer_id: customerId })
       .populate({
         path: "items.product_id",
-        select:
-          "name selling_price image_urls current_stock size unit brand_id",
-        populate: {
-          path: "brand_id",
-          select: "name",
-        },
+        select: "name selling_price image_urls current_stock"
       })
       .lean();
 
@@ -183,7 +194,7 @@ exports.syncCart = async (req, res) => {
         message: "Item list must be an array",
       });
     }
-    if (guestItems.length > 10) {
+    if (guestItems.length > MAX_CART_SIZE) {
       return res.status(400).json({
         success: false,
         message: "Cart can't have more than 10 items at once",
@@ -365,3 +376,33 @@ exports.syncCart = async (req, res) => {
     });
   }
 };
+
+exports.clearCart = async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthenticated user",
+      });
+    }
+    // Find existing cart on server
+    const customer = await Customer.findOne({ clerkId: userId }).select("_id").lean();
+    if (!customer) {
+      return res.status(404).json({ success: false, message: "Customer not found" });
+    }
+
+    const customerId = customer._id;
+    let cart = await Cart.findOne({ customer_id: customerId });
+
+    if (cart) {
+      cart.items = []
+      cart.total_amount = 0
+      await cart.save()
+    }
+    else {
+      res.status(404).json({ message: 'No cart found with this customer ID' })
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Server error: ' + String(err)})
+  }
+}

@@ -4,15 +4,15 @@ const { requireAuth } = require('@clerk/express')
 const cartController = require('../controllers/carts.js')
 
 
-router.post('/validate-cart', 
+router.post('/validate', 
   cartController.validateCart
 );
 
-router.get('/get-cart', requireAuth(),
+router.get('/get', requireAuth(),
   cartController.getCart
 )
 
-router.get('/sync-cart', requireAuth(),
+router.post('/sync', requireAuth(),
   cartController.syncCart
 )
 
