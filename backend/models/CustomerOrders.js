@@ -20,8 +20,8 @@ const customerOrderSchema = new mongoose.Schema({
   },
   payment_method: {
     type: String,
-    enum: ['COD', 'Transfer'],
-    default: 'COD',
+    enum: ['cod', 'transfer'],
+    default: 'cod',
     required: true
   },
   payment_status: {
@@ -45,5 +45,7 @@ const customerOrderSchema = new mongoose.Schema({
     trim: true
   }
 }, { timestamps: true });
+
+customerOrderSchema.index({ customer_id: 1, order_date: -1 });
 
 module.exports = mongoose.model('CustomerOrder', customerOrderSchema);

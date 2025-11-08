@@ -8,7 +8,7 @@ const MAX_CART_SIZE = 10
 
 /**
  * Validate the content inside the cart
- * Body: [{ product_id, quantity }]   <-- make docs match this
+ * Body: [{ product_id, quantity }] 
  */
 exports.validateCart = async (req, res) => {
   try {

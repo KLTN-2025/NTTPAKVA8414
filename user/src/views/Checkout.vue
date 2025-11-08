@@ -175,10 +175,10 @@ async function placeOrder() {
 
   try {
     const payload = {
-      billingDetails: {
-        address: `${form.value.address}, ${form.value.city}`,
-        notes: form.value.notes,
-        paymentMethod: form.value.paymentMethod,
+      shippingDetails: {
+        shipping_address: `${form.value.address}, ${form.value.city}`,
+        shipping_note: form.value.notes,
+        payment_method: form.value.paymentMethod,
       },
       items: cartItems.value.map((i) => ({
         product_id: i.productId,
@@ -190,7 +190,9 @@ async function placeOrder() {
     console.log('Order placed:', res.data)
 
     cartStore.clearCart()
-    router.push('/thank-you')
+    alert('Order complete! Thank you for buying at our store')
+    router.push('/')
+    //router.push('/thank-you')
   } catch (err) {
     console.error('Order failed:', err.response?.data || err.message)
     alert('Failed to place order. Please try again.')
