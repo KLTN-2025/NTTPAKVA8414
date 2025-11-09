@@ -389,7 +389,7 @@ exports.cancelOrder = async (req, res) => {
     if (order.payment_status === 'paid') {
       newPaymentStatus = 'refunded';
     } else if (order.payment_status === 'pending') {
-      newPaymentStatus = 'failed'; // or keep as 'pending' if preferred
+      newPaymentStatus = 'failed'; 
     }
 
     //Update order status
