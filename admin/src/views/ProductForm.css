@@ -1,0 +1,289 @@
+/* ----- BREADCRUMBS ----- */
+.form-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+.form-breadcrumbs a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.form-breadcrumbs a:hover {
+  color: var(--primary-color);
+}
+.form-breadcrumbs i {
+  font-size: 0.6rem;
+}
+.form-breadcrumbs strong {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+
+/* ----- BỐ CỤC CHUNG ----- */
+.product-form-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Cột trái 2/3, Cột phải 1/3 */
+  gap: 1.5rem;
+  align-items: flex-start; /* Giữ 2 cột align top */
+}
+
+.form-column-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.form-column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ----- STYLE CARD CHUNG ----- */
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+.card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.card-header h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.card-header p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+.card-header p.note {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+.card-header p.note b {
+  color: var(--text-muted);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* ----- STYLE FORM ----- */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+.form-group:last-child {
+  margin-bottom: 0;
+}
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  background-color: var(--admin-bg); /* Nền xám nhạt */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background-color: #fff; /* Nền trắng khi focus */
+  box-shadow: 0 0 0 2px var(--primary-color-light);
+}
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+.form-group select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+}
+
+/* === CSS MỚI CHO CHẾ ĐỘ "VIEW" (BỊ KHÓA) === */
+.form-group input:disabled,
+.form-group textarea:disabled,
+.form-group select:disabled {
+  background-color: var(--admin-bg); /* Giữ nền xám */
+  color: var(--text-muted); /* Chữ xám */
+  border-color: var(--border-color);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.form-group select:disabled {
+  /* Ẩn mũi tên select khi bị khóa */
+  background-image: none;
+}
+.image-upload-wrapper.disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.image-upload-wrapper.disabled:hover {
+  border-color: var(--border-color);
+  color: var(--text-muted);
+}
+
+.form-row-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* ----- STYLE UPLOAD ẢNH ----- */
+.image-upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.image-upload-wrapper {
+  position: relative;
+  border: 1px solid var(--border-color);
+  background-color: var(--admin-bg);
+  border-radius: 8px;
+  padding: 1rem; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-muted);
+  transition: border-color 0.2s, color 0.2s;
+  height: 100px; 
+  overflow: hidden; 
+}
+.image-upload-wrapper:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+.image-upload-wrapper i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.image-upload-wrapper span {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  border-radius: 6px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.image-upload-wrapper input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* ----- NÚT BẤM (ĐÃ CẬP NHẬT) ----- */
+.form-action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: -0.5rem;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  width: 100%; 
+}
+.btn-secondary {
+  background-color: var(--sidebar-bg);
+  border-color: var(--border-color);
+  color: var(--text-dark);
+}
+.btn-secondary:hover {
+  background-color: var(--admin-bg);
+}
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+.btn-primary:hover {
+  opacity: 0.9;
+}
+/* Nút "Back" full-width */
+.btn-full {
+  width: 100%;
+}
+
+/* ----- TOAST (ĐÃ THÊM TỪ TRƯỚC) ----- */
+@keyframes slideIn {
+  from { transform: translate(100%, -50%); opacity: 0; }
+  to { transform: translate(0, -50%); opacity: 1; }
+}
+.toast-notification {
+  position: fixed;
+  top: 90px;
+  right: 1.5rem;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid transparent;
+  animation: slideIn 0.3s ease-out forwards;
+}
+.toast-notification.success {
+  background-color: var(--primary-color-light, #EEF2FF);
+  border-color: var(--primary-color, #4F46E5);
+  color: var(--primary-color, #4F46E5);
+}
+.toast-notification.error {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+.toast-notification i { font-size: 1.25rem; }
+.toast-notification span { font-size: 0.9rem; font-weight: 500; }
+
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .product-form-layout {
+    grid-template-columns: 1fr; 
+  }
+}

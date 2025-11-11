@@ -1,0 +1,283 @@
+/* ----- TIÊU ĐỀ TRANG ----- */
+.page-title-header {
+  margin-bottom: 1.5rem;
+}
+.page-title-header h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.page-title-header span {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ----- CARD CHUNG ----- */
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem; 
+}
+.card-header h4, .card-header h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.card-header h5 {
+  color: var(--text-muted);
+}
+.card-header .show-all {
+  font-size: 0.875rem;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.card-header .show-all i {
+  font-size: 0.75rem;
+  margin-left: 0.25rem;
+}
+
+/* ----- BỐ CỤC GRID MỚI ----- */
+.sales-target-card {
+  /* Style cho card full-width */
+  margin-bottom: 1.5rem; 
+  padding: 1.25rem 1.5rem; /* Giảm padding */
+}
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 66% cho biểu đồ, 33% cho stats */
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.grid-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.grid-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ----- CARD SALES TARGET ----- */
+.sales-target-card .card-header {
+  margin-bottom: 0;
+}
+.sales-target-card h4 {
+  font-size: 1rem;
+}
+.target-amount-top {
+  font-size: 0.875rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+.target-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+.current-sales {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.target-status {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+.progress-bar-wrapper {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+.progress-bar-track {
+  width: 100%;
+  height: 100%;
+  background-color: var(--border-color);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  border-radius: 5px;
+  pointer-events: none;
+}
+.progress-thumb {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background-color: var(--sidebar-bg); 
+  border: 4px solid var(--primary-color); 
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  pointer-events: none; 
+}
+
+/* ----- CARD THỐNG KÊ (Bên phải) ----- */
+.stat-card {
+  padding: 1.25rem 1.5rem;
+}
+.stat-card.revenue {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none; /* Bỏ viền cho màu nổi bật */
+}
+.stat-card.revenue .card-header h5 { color: #fff; opacity: 0.8; }
+.stat-card.revenue .stat-body h3 { color: #fff; }
+.stat-card.revenue .stat-footer { color: #fff; opacity: 0.8; }
+.stat-card.revenue .stat-change { background: #fff; color: var(--primary-color); }
+.stat-card .card-header i {
+  color: var(--text-light); /* Màu icon 3 chấm */
+}
+.stat-card.revenue .card-header i {
+  color: #fff;
+}
+
+.stat-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+.stat-body h3 {
+  font-size: 1.75rem; /* Nhỏ lại cho vừa 4 thẻ */
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.stat-change {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.stat-change.positive {
+  background-color: var(--primary-color-light);
+  color: var(--primary-color);
+}
+.stat-change.negative {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+.stat-footer {
+  font-size: 0.875rem;
+  color: var(--text-light);
+}
+
+/* ----- CARD BIỂU ĐỒ ----- */
+.placeholder-chart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  background-color: var(--admin-bg);
+  border-radius: 8px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* ----- CARD BẢNG SẢN PHẨM ----- */
+.popular-product-card .card-header .filter-btn {
+  display: none; /* Bỏ nút filter vì nó không có trong mẫu mới */
+}
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.product-table th, .product-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+.product-table th {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.product-cell img {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.product-info {
+  display: flex;
+  flex-direction: column;
+}
+.product-id {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+.product-name {
+  font-weight: 500;
+  color: var(--text-dark);
+}
+.status-badge {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.status-badge.success {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+/* ----- CARD PROMO ----- */
+.promo-card {
+  background: linear-gradient(135deg, #a78bfa 0%, #4f46e5 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  margin-top: 0; /* Bỏ margin-top vì nó nằm trong grid */
+}
+.promo-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+.promo-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.promo-card p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.promo-card .btn {
+  width: auto; 
+  background-color: #fff;
+  color: var(--primary-color);
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+}
+.promo-card .btn:hover {
+  background-color: #f3f4f6;
+}

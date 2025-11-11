@@ -1,0 +1,235 @@
+/* ----- BREADCRUMBS (Dùng chung) ----- */
+.form-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+.form-breadcrumbs a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.form-breadcrumbs a:hover {
+  color: var(--primary-color);
+}
+.form-breadcrumbs i {
+  font-size: 0.6rem;
+}
+.form-breadcrumbs strong {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* ----- HEADER TRANG ----- */
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.detail-header h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+/* Nút bấm */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.btn-secondary {
+  background-color: var(--sidebar-bg);
+  border-color: var(--border-color);
+  color: var(--text-dark);
+}
+.btn-secondary:hover {
+  background-color: var(--admin-bg);
+}
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* ----- BỐ CỤC CHUNG ----- */
+.detail-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+.detail-column-left, .detail-column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+.card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.card-header h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0; /* Xóa margin mặc định */
+}
+.card-body {
+  padding: 1.5rem;
+}
+
+/* ----- CỘT TRÁI - BẢNG ITEM ----- */
+.detail-item-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.detail-item-table th {
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.detail-item-table td {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+.detail-item-table tr:last-child td {
+  border-bottom: none;
+}
+.detail-item-table .col-image { width: 60px; }
+.detail-item-table .col-qty { text-align: right; }
+.detail-item-table .col-price { text-align: right; }
+
+.detail-item-table img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+.item-name {
+  font-weight: 600;
+  color: var(--text-dark);
+  display: block;
+}
+.item-sku {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.order-summary-detail {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: 1rem;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+}
+.summary-row.total {
+  font-size: 1.125rem;
+  color: var(--text-dark);
+  margin-top: 1rem;
+}
+
+/* ----- CỘT PHẢI - INFO ----- */
+
+/* Thẻ Status (MỚI) */
+.status-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.status-group:last-child {
+  margin-bottom: 0;
+}
+.status-group label {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* Tái sử dụng style status-badge từ OrderList.css */
+.status-badge {
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 99px; /* Bo tròn */
+  font-size: 0.8rem;
+  text-align: center;
+  display: inline-block;
+}
+.status-badge.paid {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+.status-badge.unpaid {
+  background-color: #fffbeb;
+  color: #f59e0b;
+}
+.status-badge.shipping {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+.status-badge.cancelled {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+.status-badge.completed {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+/* Thẻ Customer */
+.customer-info-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+}
+.customer-info-row i {
+  width: 20px;
+  text-align: center;
+  color: var(--primary-color);
+}
+.customer-info-row a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+.customer-info-row a:hover {
+  text-decoration: underline;
+}
+.customer-info-row:last-child {
+  margin-bottom: 0;
+}
+.shipping-address {
+  font-style: normal;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
