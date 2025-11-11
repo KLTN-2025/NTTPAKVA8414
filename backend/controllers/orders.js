@@ -397,7 +397,7 @@ exports.cancelOrder = async (req, res) => {
     order.payment_status = newPaymentStatus;
     await order.save({ session });
 
-    // 10. Commit transaction
+    //Commit transaction
     await session.commitTransaction();
 
     return res.status(200).json({

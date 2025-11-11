@@ -248,37 +248,103 @@
   width: 100%;
 }
 
-/* ----- TOAST (ĐÃ THÊM TỪ TRƯỚC) ----- */
-@keyframes slideIn {
-  from { transform: translate(100%, -50%); opacity: 0; }
-  to { transform: translate(0, -50%); opacity: 1; }
+.loading-overlay,
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem;
+  text-align: center;
 }
-.toast-notification {
-  position: fixed;
-  top: 90px;
-  right: 1.5rem;
-  z-index: 2000;
+
+.loading-overlay i,
+.error-message i {
+  font-size: 2rem;
+  color: #666;
+}
+
+.error-text {
+  display: block;
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.attribute-checkbox {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  border: 1px solid transparent;
-  animation: slideIn 0.3s ease-out forwards;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.toast-notification.success {
-  background-color: var(--primary-color-light, #EEF2FF);
-  border-color: var(--primary-color, #4F46E5);
-  color: var(--primary-color, #4F46E5);
+
+.attribute-checkbox:hover:not(.disabled) {
+  border-color: #4CAF50;
+  background-color: #f9f9f9;
 }
-.toast-notification.error {
-  background-color: #fef2f2;
-  border-color: #ef4444;
-  color: #ef4444;
+
+.attribute-checkbox.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
-.toast-notification i { font-size: 1.25rem; }
-.toast-notification span { font-size: 0.9rem; font-weight: 500; }
+
+.attribute-checkbox input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.attribute-checkbox.disabled input[type="checkbox"] {
+  cursor: not-allowed;
+}
+
+.image-preview-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.remove-image-btn:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+}
 
 
 /* Responsive */

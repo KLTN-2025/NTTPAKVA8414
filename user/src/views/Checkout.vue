@@ -146,8 +146,6 @@ import axios from 'axios'
 const router = useRouter()
 const cartStore = useCartStore() 
 
-
-
 const form = ref({
   firstName: '',
   lastName: '',

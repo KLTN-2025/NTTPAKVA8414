@@ -254,7 +254,7 @@ async function fetchProducts(page = 1) {
     if (searchQuery.value.trim()) {
       params.q = searchQuery.value.trim()
     }
-    const response = await axios.get('api/products/search', { params })
+    const response = await axios.get('/api/products/search', { params })
 
     if (response.data.success) {
       products.value = response.data.data
@@ -272,7 +272,7 @@ async function fetchProducts(page = 1) {
 
 async function fetchCategories() {
   try {
-    const response = await axios.get('api/categories')
+    const response = await axios.get('/api/categories')
     
     if (response.data.success) {
       categories.value = response.data.data.map(cat => ({
@@ -290,7 +290,7 @@ async function fetchCategories() {
 async function fetchAttributes() {
   try {
     attributesLoading.value = true
-    const response = await axios.get('api/attributes')
+    const response = await axios.get('/api/attributes')
     
     if (response.data.success) {
       attributes.value = response.data.data.map(attr => ({
@@ -359,7 +359,7 @@ onMounted(async () => {
   min-height: 400px;
   width: 100%;
   color: var(--color-text-muted, #6b7280);
-  grid-column: 1 / -1; /* Đảm bảo nó chiếm trọn grid */
+  grid-column: 1 / -1; 
 }
 .spinner {
   border: 4px solid var(--color-bg-muted, #f3f4f6);
@@ -377,7 +377,7 @@ onMounted(async () => {
 .error-container h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #ef4444; /* Màu đỏ */
+  color: #ef4444;
   margin-bottom: 0.5rem;
 }
 .retry-btn {

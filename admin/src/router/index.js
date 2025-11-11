@@ -1,16 +1,14 @@
+//src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import AdminHome from '@/views/AdminHome.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import ProductList from '@/views/ProductList.vue'
-import OrderList from '@/views/OrderList.vue' // <-- File chính
+import OrderList from '@/views/OrderList.vue' 
 
-// === CÁC COMPONENT CẦN THIẾT ===
 const ProductForm = () => import('@/views/ProductForm.vue') 
-// (Chúng ta sẽ tạo 2 file này ở bước tiếp theo)
 const OrderDetailView = () => import('@/views/OrderDetailView.vue') 
 const OrderForm = () => import('@/views/OrderForm.vue') 
 
-// (Các file giữ chỗ cho sidebar)
 const CustomerList = () => import('@/views/CustomerList.vue')
 const SalesReport = () => import('@/views/SalesReport.vue')
 const Settings = () => import('@/views/Settings.vue')
@@ -28,7 +26,6 @@ const routes = [
         component: Dashboard,
         meta: { title: 'Dashboard' }
       },
-      // --- Products ---
       {
         path: '/products',
         name: 'admin-products',
@@ -50,11 +47,10 @@ const routes = [
       {
         path: '/products/view/:id', 
         name: 'admin-product-view',
-        component: ProductForm, // Tái sử dụng form ở chế độ "View"
+        component: ProductForm,
         meta: { title: 'Product Details' }
       },
       
-      // === CÁC ROUTE MỚI CHO ORDERS ===
       {
         path: '/orders',
         name: 'admin-orders',
@@ -64,24 +60,21 @@ const routes = [
       {
         path: '/orders/new',
         name: 'admin-order-new',
-        component: OrderForm, // Form tạo đơn hàng mới
+        component: OrderForm,
         meta: { title: 'New Order' }
       },
       {
         path: '/orders/edit/:id',
         name: 'admin-order-edit',
-        component: OrderForm, // Form sửa đơn hàng
+        component: OrderForm,
         meta: { title: 'Edit Order' }
       },
       {
         path: '/orders/view/:id',
         name: 'admin-order-view',
-        component: OrderDetailView, // Trang xem chi tiết (chỉ đọc)
+        component: OrderDetailView,
         meta: { title: 'Order Details' }
       },
-      // ===========================
-
-      // (Các route khác giữ nguyên)
       {
         path: '/customers',
         name: 'admin-customers',

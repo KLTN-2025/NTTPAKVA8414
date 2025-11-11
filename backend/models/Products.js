@@ -1,3 +1,4 @@
+//models/Products.js
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 

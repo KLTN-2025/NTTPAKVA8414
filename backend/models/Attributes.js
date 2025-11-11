@@ -1,3 +1,4 @@
+//models/Attributes.js
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 

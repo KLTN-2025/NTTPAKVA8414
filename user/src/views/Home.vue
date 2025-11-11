@@ -130,7 +130,7 @@ async function fetchProducts() {
       page: 1,
       limit: 3
     }
-    const response = await axios.get('api/products/search', { 
+    const response = await axios.get('/api/products/search', { 
       params
     })
     if (response.data.success){

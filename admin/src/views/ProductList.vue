@@ -1,10 +1,16 @@
+<!--src/views/ProductList.vue-->
 <template>
   <div class="product-list-page">
     
     <div class="product-list-header">
       <div class="search-bar">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search for id, name product..." />
+        <input 
+          type="text" 
+          placeholder="Search for SKU, name..." 
+          v-model="searchQuery"
+          @input="debounceSearch"
+        />
       </div>
       
       <div class="header-actions">
@@ -34,15 +40,33 @@
 
     <nav class="product-tabs">
       <button 
-        v-for="cat in categories" :key="cat.slug"
-        :class="['tab-btn', { 'active': activeTab === cat.slug }]"
-        @click="activeTab = cat.slug"
+        :class="['tab-btn', { 'active': !filters.category_id }]"
+        @click="setCategory(null)"
       >
-        {{ cat.name }} ({{ cat.count }})
+        All Products
+      </button>
+      <button 
+        v-for="cat in categories" 
+        :key="cat._id"
+        :class="['tab-btn', { 'active': filters.category_id === cat._id }]"
+        @click="setCategory(cat._id)"
+      >
+        {{ cat.category_name }}
       </button>
     </nav>
 
-    <div class="table-container">
+    <div v-if="loading" class="loading-overlay">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Loading products...</span>
+    </div>
+
+    <div v-else-if="error" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>{{ error }}</span>
+      <button @click="fetchProducts" class="btn btn-secondary btn-sm">Retry</button>
+    </div>
+
+    <div v-else class="table-container">
       <table class="product-table">
         <thead>
           <tr>
@@ -56,62 +80,80 @@
             <th @click="handleSort('name')" class="sortable">
               Product <i :class="getSortIcon('name')"></i>
             </th>
-            <th @click="handleSort('price')" class="sortable">
-              Price <i :class="getSortIcon('price')"></i>
+            <th class="sortable">
+              Attributes
             </th>
-            <th @click="handleSort('qty')" class="sortable">
-              QTY <i :class="getSortIcon('qty')"></i>
+            <th @click="handleSort('selling_price')" class="sortable">
+              Price <i :class="getSortIcon('selling_price')"></i>
             </th>
-            <th @click="handleSort('date')" class="sortable">
-              Date <i :class="getSortIcon('date')"></i>
+            <th @click="handleSort('current_stock')" class="sortable">
+              Stock <i :class="getSortIcon('current_stock')"></i>
             </th>
-            <th @click="handleSort('status')" class="sortable">
-              Status <i :class="getSortIcon('status')"></i>
+            <th @click="handleSort('createdAt')" class="sortable">
+              Date <i :class="getSortIcon('createdAt')"></i>
             </th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="product in sortedProducts" :key="product.id">
+          <tr v-if="products.length === 0">
+            <td colspan="7" style="text-align: center; padding: 2rem;">
+              No products found
+            </td>
+          </tr>
+          <tr v-for="product in products" :key="product._id">
             <td>
-              <input type="checkbox" v-model="selectedProducts" :value="product.id" />
+              <input type="checkbox" v-model="selectedProducts" :value="product._id" />
             </td>
             <td>
               <div class="product-cell">
-                <img :src="product.image" :alt="product.name" />
+                <img 
+                  :src="product.image_urls[0] || 'https://via.placeholder.com/40'" 
+                  :alt="product.name"
+                  @error="handleImageError"
+                />
                 <div class="product-info">
-                  <span class="product-id">{{ product.id }}</span>
+                  <span class="product-id">{{ product.SKU }}</span>
                   <span class="product-name">{{ product.name }}</span>
                 </div>
               </div>
             </td>
-            <td>{{ product.price }}</td>
-            <td>{{ product.qty }}</td>
+            <td>
+              <span style="font-weight: 400;" v-for="attr in product.attributes" :key="attr._id">
+                {{ attr.description }} 
+                <br>
+              </span>
+            </td>
+            <td>
+              {{ formatPrice(product.selling_price) }}
+            </td>
+            <td>{{ product.current_stock }}</td>
             <td>
               <div class="date-cell">
-                <span>{{ product.date }}</span>
-                <span>{{ product.time }}</span>
+                <span>{{ formatDate(product.updatedAt) }}</span>
+                <span>{{ formatTime(product.updatedAt) }}</span>
               </div>
             </td>
             <td>
               <span 
                 class="status-badge" 
-                :class="product.status === 'Available' ? 'available' : 'out-of-stock'"
+                :class="product.current_stock > 0 ? 'available' : 'out-of-stock'"
               >
-                {{ product.status }}
+                {{ product.current_stock > 0 ? 'Available' : 'Out of Stock' }}
               </span>
             </td>
             <td>
               <div class="action-buttons">
-                <router-link :to="'/products/view/' + product.id" class="action-btn">
+                <router-link :to="'/products/view/' + product._id" class="action-btn">
                   <i class="fas fa-eye"></i>
                 </router-link>
-                <router-link :to="'/products/edit/' + product.id" class="action-btn">
+                <router-link :to="'/products/edit/' + product._id" class="action-btn">
                   <i class="fas fa-pencil-alt"></i>
                 </router-link>
                 <button 
                   class="action-btn btn-delete" 
-                  @click="openSingleDeleteModal(product.id, product.name)"
+                  @click="openSingleDeleteModal(product._id, product.name)"
                 >
                   <i class="fas fa-trash"></i>
                 </button>
@@ -122,28 +164,35 @@
       </table>
     </div>
 
-    <div class="pagination-footer">
-      <span>1 - 8 of 13 Pages</span>
+    <div class="pagination-footer" v-if="!loading && products.length > 0">
+      <span>{{ paginationText }}</span>
       <div class="page-controls">
-        <span>The page on</span>
-        <select>
-          <option value="1">1</option>
+        <span>Page</span>
+        <select v-model.number="currentPage" @change="fetchProducts">
+          <option v-for="page in totalPages" :key="page" :value="page">
+            {{ page }}
+          </option>
         </select>
-        <button><i class="fas fa-chevron-left"></i></button>
-        <button><i class="fas fa-chevron-right"></i></button>
+        <button @click="previousPage" :disabled="currentPage === 1">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button @click="nextPage" :disabled="currentPage === totalPages">
+          <i class="fas fa-chevron-right"></i>
+        </button>
       </div>
     </div>
 
+    <!-- Delete Modal -->
     <div v-if="isDeleteModalVisible" class="modal-overlay" @click.self="closeDeleteModal">
       <div class="modal-card">
         <div class="modal-header">
           <i class="fas fa-exclamation-triangle warning-icon"></i>
           <h3>{{ isBulkDelete ? 'Delete Products' : 'Delete Product' }}</h3>
-          <button @click="closeDeleteModal" class="close-btn">&times;</button>
+          <button @click="closeDeleteModal" class="close-btn"></button>
         </div>
         <div class="modal-body">
           <p v-if="isBulkDelete">
-            Are you sure you want to delete the 
+            Are you sure you want to delete 
             <strong>{{ selectedProducts.length }} selected products</strong>?
             This action cannot be undone.
           </p>
@@ -154,16 +203,18 @@
           </p>
         </div>
         <div class="modal-footer">
-          <button @click="closeDeleteModal" class="btn btn-secondary">
+          <button @click="closeDeleteModal" class="btn btn-secondary" :disabled="deleting">
             Cancel
           </button>
-          <button @click="confirmDelete" class="btn btn-danger">
-            Delete
+          <button @click="confirmDelete" class="btn btn-danger" :disabled="deleting">
+            <i v-if="deleting" class="fas fa-spinner fa-spin"></i>
+            <span>{{ deleting ? 'Deleting...' : 'Delete' }}</span>
           </button>
         </div>
       </div>
     </div>
     
+    <!-- Filter Panel -->
     <Teleport to="body">
       <div 
         class="filter-panel-overlay" 
@@ -173,197 +224,413 @@
         <div class="filter-panel">
           <div class="filter-header">
             <h4>Filter Products</h4>
-            <button @click="isFilterVisible = false" class="close-btn">&times;</button>
+            <button @click="isFilterVisible = false" class="close-btn"></button>
           </div>
           <div class="filter-body">
             <div class="filter-group">
               <label>Category</label>
-              <select>
+              <select v-model="tempFilters.category_id">
                 <option value="">All Categories</option>
-                <option v-for="cat in categories" :key="cat.slug" :value="cat.slug">
-                  {{ cat.name }}
+                <option v-for="cat in categories" :key="cat._id" :value="cat._id">
+                  {{ cat.category_name }}
                 </option>
               </select>
             </div>
             <div class="filter-group">
-              <label>Status</label>
-              <select>
-                <option value="">All Statuses</option>
-                <option value="Available">Available</option>
-                <option value="Out of Stock">Out of Stock</option>
+              <label>Product Type</label>
+              <select v-model="tempFilters.type_id">
+                <option value="">All Types</option>
+                <option v-for="type in productTypes" :key="type._id" :value="type._id">
+                  {{ type.name }}
+                </option>
               </select>
             </div>
             <div class="filter-group">
-              <label>Price Range</label>
-              <div class="price-inputs">
-                <input type="number" placeholder="Min" />
-                <span>-</span>
-                <input type="number" placeholder="Max" />
-              </div>
+              <label>Brand</label>
+              <select v-model="tempFilters.brand_id">
+                <option value="">All Brands</option>
+                <option v-for="brand in brands" :key="brand._id" :value="brand._id">
+                  {{ brand.name }}
+                </option>
+              </select>
             </div>
             <div class="filter-group">
-              <label>Date Added</label>
-              <div class="date-inputs">
-                <input type="date" placeholder="Start Date" />
+              <label>Stock Status</label>
+              <select v-model="tempFilters.in_stock">
+                <option value="">All</option>
+                <option value="true">In Stock</option>
+                <option value="false">Out of Stock</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Price Range (VND)</label>
+              <div class="price-inputs">
+                <input type="number" placeholder="Min" v-model.number="tempFilters.min_price" />
                 <span>-</span>
-                <input type="date" placeholder="End Date" />
+                <input type="number" placeholder="Max" v-model.number="tempFilters.max_price" />
               </div>
             </div>
           </div>
           <div class="filter-footer">
-            <button class="btn btn-secondary" @click="isFilterVisible = false">Cancel</button>
-            <button class="btn btn-primary">Apply Filters</button>
+            <button class="btn btn-secondary" @click="clearFilters">Clear</button>
+            <button class="btn btn-primary" @click="applyFilters">Apply Filters</button>
           </div>
         </div>
       </div>
     </Teleport>
 
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
-// (Dữ liệu giả lập categories và products giữ nguyên)
-const categories = ref([
-  { name: 'Rau củ', count: 50, slug: 'vegetables' },
-  { name: 'Trái cây', count: 26, slug: 'fruits' },
-  { name: 'Low-Carb', count: 121, slug: 'low-carb' },
-  { name: 'Đồ uống', count: 21, slug: 'beverages' },
-]);
-const activeTab = ref('vegetables'); 
-const products = ref([
-  { id: 'HC001', name: 'Bông Cải Xanh (Organic)', image: 'https://via.placeholder.com/40/27ae60/ffffff?text=V', price: '$2.50', qty: 150, date: '11/10/25', time: 'at 9:30 AM', status: 'Available' },
-  { id: 'HC002', name: 'Ức Gà Phi Lê', image: 'https://via.placeholder.com/40/f1c40f/ffffff?text=M', price: '$5.00', qty: 80, date: '11/10/25', time: 'at 9:25 AM', status: 'Available' },
-  { id: 'HC003', name: 'Bánh Mì Keto Hạnh Nhân', image: 'https://via.placeholder.com/40/e67e22/ffffff?text=B', price: '$7.20', qty: 0, date: '11/09/25', time: 'at 5:00 PM', status: 'Out of Stock' },
-  { id: 'HC004', name: 'Sữa Hạnh Nhân (Không đường)', image: 'https://via.placeholder.com/40/3498db/ffffff?text=D', price: '$3.50', qty: 200, date: '11/09/25', time: 'at 4:30 PM', status: 'Available' },
-  { id: 'HC005', name: 'Cải Bó Xôi (Spinach)', image: 'https://via.placeholder.com/40/2ecc71/ffffff?text=V', price: '$1.80', qty: 300, date: '11/08/25', time: 'at 11:00 AM', status: 'Available' },
-  { id: 'HC006', name: 'Quả Bơ (Avocado)', image: 'https://via.placeholder.com/40/1abc9c/ffffff?text=F', price: '$1.50', qty: 0, date: '11/08/25', time: 'at 10:00 AM', status: 'Out of Stock' },
-  { id: 'HC007', name: 'Hạt Chia (Organic)', image: 'https://via.placeholder.com/40/9b59b6/ffffff?text=S', price: '$6.00', qty: 90, date: '11/07/25', time: 'at 3:15 PM', status: 'Available' },
-  { id: 'HC008', name: 'Trà Kombucha Vị Gừng', image: 'https://via.placeholder.com/40/e74c3c/ffffff?text=D', price: '$4.20', qty: 45, date: '11/07/25', time: 'at 1:00 PM', status: 'Available' },
-]);
+import { useAuth } from '@clerk/vue'
+const { getToken } = useAuth()
 
+import axios from 'axios'
 
-// === LOGIC "SELECT ALL" ===
-const selectedProducts = ref([]);
+import { useToast } from 'vue-toastification'
+const toast = useToast()
+
+import { formatDate, formatPrice, formatTime } from '@/utilities/helper.js'
+
+// State
+const products = ref([])
+const categories = ref([])
+const productTypes = ref([])
+const brands = ref([])
+const loading = ref(false)
+const error = ref(null)
+const deleting = ref(false)
+
+// Pagination
+const currentPage = ref(1)
+const pageSize = 10
+const totalCount = ref(0)
+const totalPages = computed(() => Math.ceil(totalCount.value / pageSize))
+const paginationText = computed(() => {
+  const start = (currentPage.value - 1) * pageSize + 1
+  const end = Math.min(currentPage.value * pageSize, totalCount.value)
+  return `${start} - ${end} of ${totalCount.value} Products`
+})
+
+// Search & Filters
+const searchQuery = ref('')
+const filters = ref({
+  category_id: null,
+  type_id: '',
+  brand_id: '',
+  in_stock: '',
+  min_price: null,
+  max_price: null
+})
+const tempFilters = ref({ ...filters.value })
+
+// Sorting
+const sortField = ref('-createdAt')
+
+// Selection
+const selectedProducts = ref([])
 const isIndeterminate = computed(() => 
   selectedProducts.value.length > 0 && 
   selectedProducts.value.length < products.value.length
-);
+)
 const selectAllModel = computed({
   get() {
     return products.value.length > 0 && 
-           selectedProducts.value.length === products.value.length;
+           selectedProducts.value.length === products.value.length
   },
   set(value) {
     if (value) {
-      selectedProducts.value = products.value.map(p => p.id);
+      selectedProducts.value = products.value.map(p => p._id)
     } else {
-      selectedProducts.value = [];
+      selectedProducts.value = []
     }
   }
-});
+})
 
-// === LOGIC SẮP XẾP (SORTING) ===
-const sortKey = ref('date'); 
-const sortDirection = ref('desc'); 
-function getSortIcon(key) {
-  if (sortKey.value !== key) { return 'fas fa-sort'; }
-  if (sortDirection.value === 'asc') { return 'fas fa-sort-up active-sort'; }
-  return 'fas fa-sort-down active-sort';
-}
-function handleSort(key) {
-  if (sortKey.value === key) {
-    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
-  } else {
-    sortKey.value = key;
-    sortDirection.value = 'asc'; 
-  }
-}
-const sortedProducts = computed(() => {
-  const key = sortKey.value;
-  const direction = sortDirection.value === 'asc' ? 1 : -1;
-  return [...products.value].sort((a, b) => {
-    let valA = a[key]; let valB = b[key];
-    switch (key) {
-      case 'price':
-        valA = parseFloat(a.price.replace('$', ''));
-        valB = parseFloat(b.price.replace('$', ''));
-        break;
-      case 'date':
-        valA = new Date(a.date); valB = new Date(b.date);
-        break;
-      case 'name': case 'status':
-        valA = a[key].toLowerCase(); valB = b[key].toLowerCase();
-        break;
+// Delete Modal
+const isDeleteModalVisible = ref(false)
+const productToDeleteId = ref(null)
+const productToDeleteName = ref('')
+const isBulkDelete = ref(false)
+
+// Filter Panel
+const isFilterVisible = ref(false)
+
+// Fetch Products
+const fetchProducts = async () => {
+  loading.value = true
+  error.value = null
+  
+  try {
+    const params = {
+      page: currentPage.value,
+      limit: pageSize,
+      sort: sortField.value,
+      search: searchQuery.value || undefined,
+      ...filters.value
     }
-    if (valA < valB) return -1 * direction;
-    if (valA > valB) return 1 * direction;
-    return 0;
-  });
-});
+    
+    Object.keys(params).forEach(key => {
+      if (params[key] === '' || params[key] === null || params[key] === undefined) {
+        delete params[key]
+      }
+    })
 
-// === LOGIC MODAL XÓA ===
-const isDeleteModalVisible = ref(false);
-const productToDeleteId = ref(null);
-const productToDeleteName = ref('');
-const isBulkDelete = ref(false); 
+    const token = await getToken.value()
 
-function openSingleDeleteModal(id, name) {
-  isBulkDelete.value = false;
-  productToDeleteId.value = id;
-  productToDeleteName.value = name;
-  isDeleteModalVisible.value = true;
-}
-function openBulkDeleteModal() {
-  isBulkDelete.value = true;
-  isDeleteModalVisible.value = true;
-}
-function closeDeleteModal() {
-  isDeleteModalVisible.value = false;
-  isBulkDelete.value = false;
-  productToDeleteId.value = null;
-  productToDeleteName.value = '';
-}
-function confirmDelete() {
-  if (isBulkDelete.value) {
-    products.value = products.value.filter(
-      (product) => !selectedProducts.value.includes(product.id)
-    );
-    selectedProducts.value = [];
-  } else {
-    products.value = products.value.filter(
-      (product) => product.id !== productToDeleteId.value
-    );
+    const response = await axios.get('/api/admin/products', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      params: params
+    })
+    products.value = response.data.data
+    totalCount.value = response.data.pagination.total_items
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to load products'
+    console.error('Error fetching products:', err)
+  } finally {
+    loading.value = false
   }
-  closeDeleteModal();
 }
 
-// === LOGIC FILTER PANEL ===
-const isFilterVisible = ref(false);
+// Fetch Categories
+const fetchCategories = async () => {
+  try {
+    const token = await getToken.value()
 
-// === LOGIC EXPORT ===
-function exportToCSV() {
-  const headers = ['ID', 'Name', 'Price', 'Quantity', 'Status'];
-  let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
+    const response = await axios.get('/api/admin/categories', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    categories.value = response.data.data || []
+  } catch (err) {
+    console.error('Error fetching categories:', err)
+  }
+}
+
+// Fetch Product Types
+const fetchProductTypes = async () => {
+  try {
+    const token = await getToken.value()
+
+    const response = await axios.get('/api/admin/product-types', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      params: {
+        category_id: tempFilters.value.category_id
+      }
+    })
+    productTypes.value = response.data.data || []
+  } catch (err) {
+    console.error('Error fetching product types:', err)
+  }
+}
+
+// Fetch Brands
+const fetchBrands = async () => {
+  try {
+    const token = await getToken.value()
+
+    const response = await axios.get('/api/admin/brands', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    brands.value = response.data.data || []
+  } catch (err) {
+    console.error('Error fetching brands:', err)
+  }
+}
+
+// Category Tab Click
+const setCategory = (categoryId) => {
+  filters.value.category_id = categoryId
+  currentPage.value = 1
+  fetchProducts()
+}
+
+// Search Debounce
+let searchTimeout = null
+const debounceSearch = () => {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    currentPage.value = 1
+    fetchProducts()
+  }, 500)
+}
+
+// Sorting
+const getSortIcon = (field) => {
+  const fieldMap = {
+    'name': 'name',
+    'selling_price': 'selling_price',
+    'current_stock': 'current_stock',
+    'createdAt': 'createdAt'
+  }
+  const mappedField = fieldMap[field]
+  if (sortField.value === mappedField) return 'fas fa-sort-up active-sort'
+  if (sortField.value === `-${mappedField}`) return 'fas fa-sort-down active-sort'
+  return 'fas fa-sort'
+}
+
+const handleSort = (field) => {
+  const fieldMap = {
+    'name': 'name',
+    'selling_price': 'selling_price',
+    'current_stock': 'current_stock',
+    'createdAt': 'createdAt'
+  }
+  const mappedField = fieldMap[field]
+  
+  if (sortField.value === mappedField) {
+    sortField.value = `-${mappedField}`
+  } else {
+    sortField.value = mappedField
+  }
+  fetchProducts()
+}
+
+// Pagination
+const previousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    fetchProducts()
+  }
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    fetchProducts()
+  }
+}
+
+// Delete Functions
+const openSingleDeleteModal = (id, name) => {
+  isBulkDelete.value = false
+  productToDeleteId.value = id
+  productToDeleteName.value = name
+  isDeleteModalVisible.value = true
+}
+
+const openBulkDeleteModal = () => {
+  isBulkDelete.value = true
+  isDeleteModalVisible.value = true
+}
+
+const closeDeleteModal = () => {
+  isDeleteModalVisible.value = false
+  isBulkDelete.value = false
+  productToDeleteId.value = null
+  productToDeleteName.value = ''
+}
+
+const confirmDelete = async () => {
+  deleting.value = true
+  try {
+    const token = await getToken.value()
+    if (isBulkDelete.value) {
+      await axios.delete('/api/admin/products/bulk-delete', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        data: {
+          product_ids: selectedProducts.value
+        }
+      })
+      toast.success(`${selectedProducts.value.length} products deleted successfully`)
+      selectedProducts.value = []
+    } else {
+      await axios.delete(`/api/admin/products/${productToDeleteId.value}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      toast.success('Product deleted successfully')
+    }
+    closeDeleteModal()
+    fetchProducts()
+  } catch (err) {
+      toast.error('Failed to delete products!')
+  } finally {
+    deleting.value = false
+  }
+}
+
+// Filter Functions
+watch(() => tempFilters.value.category_id, (newCategoryId) => {
+  if (newCategoryId) {
+    fetchProductTypes()
+  }
+})
+
+const applyFilters = () => {
+  filters.value = { ...tempFilters.value }
+  currentPage.value = 1
+  isFilterVisible.value = false
+  fetchProducts()
+}
+
+
+const clearFilters = () => {
+  tempFilters.value = {
+    category_id: null,
+    type_id: '',
+    brand_id: '',
+    in_stock: '',
+    min_price: null,
+    max_price: null
+  }
+  filters.value = { ...tempFilters.value }
+  currentPage.value = 1
+  isFilterVisible.value = false
+  fetchProducts()
+}
+
+// Export CSV
+const exportToCSV = () => {
+  const headers = ['SKU', 'Name', 'Price', 'Stock', 'Status']
+  let csvContent = "data:text/csvcharset=utf-8," + headers.join(",") + "\n"
+  
   products.value.forEach(product => {
     const row = [
-      product.id,
-      `"${product.name}"`, 
-      product.price,
-      product.qty,
-      product.status
-    ];
-    csvContent += row.join(",") + "\n";
-  });
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "product_export.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+      product.SKU,
+      `"${product.name}"`,
+      product.selling_price,
+      product.current_stock,
+      product.current_stock > 0 ? 'Available' : 'Out of Stock'
+    ]
+    csvContent += row.join(",") + "\n"
+  })
+  
+  const encodedUri = encodeURI(csvContent)
+  const link = document.createElement("a")
+  link.setAttribute("href", encodedUri)
+  link.setAttribute("download", `products_export_${Date.now()}.csv`)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
+
+// Utilities
+const handleImageError = (e) => {
+  e.target.src = 'https://via.placeholder.com/40/cccccc/ffffff?text=No+Image'
+}
+
+// Initialize
+onMounted(() => {
+  fetchCategories()
+  fetchProductTypes()
+  fetchBrands()
+  fetchProducts()
+})
 </script>
 
 <style scoped src="./ProductList.css"></style>

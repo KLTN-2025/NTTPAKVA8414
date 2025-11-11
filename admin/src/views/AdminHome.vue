@@ -20,14 +20,14 @@
         <li>
           <router-link to="/products" :class="{ 'active-parent': $route.path.startsWith('/products') }">
             <i class="fas fa-box"></i>
-            <span>Product (19)</span>
+            <span>Product</span>
           </router-link>
         </li>
 
         <li>
           <router-link to="/orders">
             <i class="fas fa-file-alt"></i>
-            <span>Orders (444)</span>
+            <span>Orders</span>
           </router-link>
         </li>
         <li>
@@ -99,14 +99,13 @@
 import { ref } from 'vue'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-// Logic cho Sidebar
+// Logic Sidebar
 const isSidebarCollapsed = ref(false);
 function toggleSidebar() {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
 }
 
-// === TOÀN BỘ LOGIC CLICK ĐÃ BỊ XÓA BỎ ===
-// function handleLinkClick(event) { ... }
+
 </script>
 
 <style src="./AdminHome.css"></style>

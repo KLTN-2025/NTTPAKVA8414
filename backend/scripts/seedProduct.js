@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 // ============================================
 // 1. PRODUCT CATEGORIES 
 // ============================================
+
 const productCategories = [
   {
     _id: new mongoose.Types.ObjectId(),
@@ -134,6 +135,8 @@ const attributes = [
   { _id: new mongoose.Types.ObjectId(), description: 'Dairy-Free' },
   { _id: new mongoose.Types.ObjectId(), description: 'Low-Sodium' }
 ]
+
+
 
 // ============================================
 // 5. PRODUCTS 
