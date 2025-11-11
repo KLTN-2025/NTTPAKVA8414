@@ -17,7 +17,7 @@ yarn.lock
 *.rej
 *.pid
 *.pid.lock
-node_modules
+/node_modules
 
 # Local environment files
 .env
