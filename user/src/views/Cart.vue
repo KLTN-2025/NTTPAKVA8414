@@ -34,7 +34,7 @@
             class="cart-item-row"
           >
             <div class="col-product item-details">
-              <img :src="item.image" :alt="item.name" class="item-image" />
+              <img :src="buildImagePath(item.image)" :alt="item.name" class="item-image" />
               <span class="item-name">{{ item.name }}</span>
             </div>
 
@@ -122,6 +122,7 @@ import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import { useCartStore } from '@/stores/cartStore'
+import { buildImagePath } from '@/utilities/helper'
 
 const cartStore = useCartStore()
 const router = useRouter()

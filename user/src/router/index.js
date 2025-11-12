@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Homepage from '../views/Home.vue'
-import Cart from '@/views/Cart.vue' // <-- Bạn đặt tên component là 'Cart'
+import Cart from '@/views/Cart.vue'
 import Checkout from '@/views/Checkout.vue'
 import About from '@/views/About.vue'
 import Contact from '@/views/Contact.vue'
@@ -41,16 +41,6 @@ const routes = [
     name: 'contact',
     component: Contact
   },
-  {
-  path: '/login', 
-  name: 'Login',
-  component: () => import('../views/Login.vue'),
-},
-{
-  path: '/register', 
-  name: 'Register',
-  component: () => import('../views/Register.vue'),
-},
   {
     path: '/:pathMatch(.*)*',
     redirect: '/',

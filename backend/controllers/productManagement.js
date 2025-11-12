@@ -40,7 +40,6 @@ exports.createProduct = async (req, res) => {
       current_stock,
       attributes,
     } = req.body;
-
     // Validate required fields
     if (
       !type_id ||
@@ -65,7 +64,6 @@ exports.createProduct = async (req, res) => {
         message: "Invalid product type ID",
       });
     }
-
     // Validate brand_id if provided
     if (brand_id) {
       const brandExists = await Brand.findById(brand_id);
@@ -76,20 +74,19 @@ exports.createProduct = async (req, res) => {
         });
       }
     }
-
     // Validate attributes if provided
-    if (attributes && attributes.length > 0) {
-      const validAttributes = await Attribute.find({
-        _id: { $in: attributes },
-      });
-      if (validAttributes.length !== attributes.length) {
+    let attr = []
+    if (attributes) {
+          attr = JSON.parse(attributes)
+          const ids = attr.map(id => new mongoose.Types.ObjectId(id))      
+          const validAttributes = await Attribute.find({ _id: { $in: ids } });
+      if (validAttributes.length !== attr.length) {
         return res.status(400).json({
           success: false,
           message: "One or more invalid attribute IDs",
         });
       }
     }
-
     // Handle image uploads
     let image_urls = [];
     if (req.files && req.files.length > 0) {
@@ -98,7 +95,6 @@ exports.createProduct = async (req, res) => {
         return `/uploads${relativePath}`;
       });
     }
-
     const product = new Product({
       type_id,
       brand_id: brand_id || null,
@@ -111,23 +107,16 @@ exports.createProduct = async (req, res) => {
       selling_price: parseFloat(selling_price),
       current_stock: parseInt(current_stock),
       image_urls,
-      attributes: attributes || [],
+      attributes: attr || [],
     });
-
     await product.save();
-
-    await product.populate([
-      { path: "type_id", select: "name category_id" },
-      { path: "brand_id", select: "name" },
-      { path: "attributes", select: "description slug" },
-    ]);
-
     res.status(201).json({
       success: true,
       message: "Product created successfully",
-      data: product,
     });
+
   } catch (error) {
+    console.error(error);
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
         try {

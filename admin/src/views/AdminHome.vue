@@ -79,7 +79,7 @@
           </button>
           
           <div class="admin-profile">
-            <img src="https://via.placeholder.com/40" alt="Admin" />
+            <img src="https://picsum.photos/300" alt="Admin" />
             <div class="admin-info">
               <span class="admin-name">Guy Hawkins</span>
               <span class="admin-role">Admin</span>

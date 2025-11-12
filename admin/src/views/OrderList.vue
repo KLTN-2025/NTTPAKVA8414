@@ -244,13 +244,13 @@ const formatter = new Intl.NumberFormat('vi-VN', {
 });
 
 const orders = ref([
-  { id: 'HC1021', productName: 'Bông Cải Xanh, Ức Gà,... (3 items)', image: 'https://via.placeholder.com/40/27ae60/ffffff?text=V', customer: 'Trần Văn An', total: formatter.format(250000), date: '11/11/25', time: 'at 8:30 AM', payment: 'Paid', status: 'Shipping', price: 250000 },
-  { id: 'HC1020', productName: 'Bánh Mì Keto (2 items)', image: 'https://via.placeholder.com/40/e67e22/ffffff?text=B', customer: 'Nguyễn Thị Bích', total: formatter.format(120000), date: '11/11/25', time: 'at 8:00 AM', payment: 'Unpaid', status: 'Cancelled', price: 120000 },
-  { id: 'HC1019', productName: 'Sữa Hạnh Nhân (1 item)', image: 'https://via.placeholder.com/40/3498db/ffffff?text=D', customer: 'Leslie Alexander', total: formatter.format(85000), date: '11/10/25', time: 'at 5:00 PM', payment: 'Paid', status: 'Completed', price: 85000 },
-  { id: 'HC1018', productName: 'Set ăn kiêng 1 tuần (5 items)', image: 'https://via.placeholder.com/40/f1c40f/ffffff?text=M', customer: 'Phạm Hùng', total: formatter.format(550000), date: '11/10/25', time: 'at 4:00 PM', payment: 'Paid', status: 'Shipping', price: 550000 },
-  { id: 'HC1017', productName: 'Quả Bơ, Hạt Chia (2 items)', image: 'https://via.placeholder.com/40/1abc9c/ffffff?text=F', customer: 'Guy Hawkins', total: formatter.format(310000), date: '11/09/25', time: 'at 2:00 PM', payment: 'Unpaid', status: 'Cancelled', price: 310000 },
-  { id: 'HC1016', productName: 'Cải Bó Xôi (1 item)', image: 'https://via.placeholder.com/40/2ecc71/ffffff?text=V', customer: 'Lê Thị Lanh', total: formatter.format(75000), date: '11/09/25', time: 'at 1:00 PM', payment: 'Paid', status: 'Completed', price: 75000 },
-  { id: 'HC1015', productName: 'Hạt Chia, Kombucha (2 items)', image: 'https://via.placeholder.com/40/9b59b6/ffffff?text=S', customer: 'Jane Cooper', total: formatter.format(190000), date: '11/08/25', time: 'at 3:00 PM', payment: 'Paid', status: 'Completed', price: 190000 },
+  { id: 'HC1021', productName: 'Bông Cải Xanh, Ức Gà,... (3 items)', image: 'https://picsum.photos/300/27ae60/ffffff?text=V', customer: 'Trần Văn An', total: formatter.format(250000), date: '11/11/25', time: 'at 8:30 AM', payment: 'Paid', status: 'Shipping', price: 250000 },
+  { id: 'HC1020', productName: 'Bánh Mì Keto (2 items)', image: 'https://picsum.photos/300/e67e22/ffffff?text=B', customer: 'Nguyễn Thị Bích', total: formatter.format(120000), date: '11/11/25', time: 'at 8:00 AM', payment: 'Unpaid', status: 'Cancelled', price: 120000 },
+  { id: 'HC1019', productName: 'Sữa Hạnh Nhân (1 item)', image: 'https://picsum.photos/300/3498db/ffffff?text=D', customer: 'Leslie Alexander', total: formatter.format(85000), date: '11/10/25', time: 'at 5:00 PM', payment: 'Paid', status: 'Completed', price: 85000 },
+  { id: 'HC1018', productName: 'Set ăn kiêng 1 tuần (5 items)', image: 'https://picsum.photos/300/f1c40f/ffffff?text=M', customer: 'Phạm Hùng', total: formatter.format(550000), date: '11/10/25', time: 'at 4:00 PM', payment: 'Paid', status: 'Shipping', price: 550000 },
+  { id: 'HC1017', productName: 'Quả Bơ, Hạt Chia (2 items)', image: 'https://picsum.photos/300/1abc9c/ffffff?text=F', customer: 'Guy Hawkins', total: formatter.format(310000), date: '11/09/25', time: 'at 2:00 PM', payment: 'Unpaid', status: 'Cancelled', price: 310000 },
+  { id: 'HC1016', productName: 'Cải Bó Xôi (1 item)', image: 'https://picsum.photos/300/2ecc71/ffffff?text=V', customer: 'Lê Thị Lanh', total: formatter.format(75000), date: '11/09/25', time: 'at 1:00 PM', payment: 'Paid', status: 'Completed', price: 75000 },
+  { id: 'HC1015', productName: 'Hạt Chia, Kombucha (2 items)', image: 'https://picsum.photos/300/9b59b6/ffffff?text=S', customer: 'Jane Cooper', total: formatter.format(190000), date: '11/08/25', time: 'at 3:00 PM', payment: 'Paid', status: 'Completed', price: 190000 },
 ]);
 
 // === LOGIC "SELECT ALL" ===

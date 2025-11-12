@@ -34,7 +34,8 @@
         <div class="space-y-4">
           <div class="bg-white rounded-lg shadow-md overflow-hidden aspect-square relative">
             <img 
-              :src="product.images[currentImageIndex] || 'https://via.placeholder.com/600x600?text=No+Image'" 
+              :src="buildImagePath(product.images[currentImageIndex]) || 
+              'https://via.placeholder.com/600x600?text=No+Image'" 
               :alt="product.name"
               class="w-full h-full object-cover"
             >
@@ -71,7 +72,7 @@
                 currentImageIndex === index ? 'border-green-600' : 'border-gray-200 hover:border-gray-300'
               ]"
             >
-              <img :src="image" :alt="`${product.name} - ${index + 1}`" class="w-full h-full object-cover">
+              <img :src="buildImagePath(image)" :alt="`${product.name} - ${index + 1}`" class="w-full h-full object-cover">
             </button>
           </div>
         </div>
@@ -86,7 +87,7 @@
                 SKU: <span class="text-green-700 font-bold">{{ product.sku }}</span>
               </span>
             </p>
-            <h1 class="text-2xl font-bold text-gray-900 mb-4">{{ product.name }} {{ product.size }} {{ product.unit }}</h1>
+            <h1 class="text-2xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
             <p class="text-gray-600">{{ product.description }}</p>
           </div>
 
@@ -343,6 +344,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { buildImagePath } from '@/utilities/helper';
 import axios from 'axios';
 import { useCartStore } from '@/stores/cartStore'
 

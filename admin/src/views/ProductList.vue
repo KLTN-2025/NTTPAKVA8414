@@ -109,7 +109,7 @@
             <td>
               <div class="product-cell">
                 <img 
-                  :src="product.image_urls[0] || 'https://via.placeholder.com/40'" 
+                  :src="buildImagePath(product.image_urls[0])" 
                   :alt="product.name"
                   @error="handleImageError"
                 />
@@ -294,7 +294,10 @@ import axios from 'axios'
 import { useToast } from 'vue-toastification'
 const toast = useToast()
 
-import { formatDate, formatPrice, formatTime } from '@/utilities/helper.js'
+import { 
+  formatDate, formatPrice, 
+  formatTime, buildImagePath } 
+  from '@/utilities/helper.js'
 
 // State
 const products = ref([])
@@ -455,6 +458,7 @@ const setCategory = (categoryId) => {
   currentPage.value = 1
   fetchProducts()
 }
+
 
 // Search Debounce
 let searchTimeout = null
@@ -621,7 +625,7 @@ const exportToCSV = () => {
 
 // Utilities
 const handleImageError = (e) => {
-  e.target.src = 'https://via.placeholder.com/40/cccccc/ffffff?text=No+Image'
+  e.target.src = 'https://picsum.photos/300/cccccc/ffffff?text=No+Image'
 }
 
 // Initialize

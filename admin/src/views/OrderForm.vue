@@ -136,8 +136,8 @@ onMounted(() => {
         status: 'Shipping',
         total: formatter.format(250000),
         items: [
-          { name: 'Bông Cải Xanh', qty: 2, price: formatter.format(50000), image: 'https://via.placeholder.com/40' },
-          { name: 'Ức Gà', qty: 3, price: formatter.format(200000), image: 'https://via.placeholder.com/40' }
+          { name: 'Bông Cải Xanh', qty: 2, price: formatter.format(50000), image: 'https://picsum.photos/300' },
+          { name: 'Ức Gà', qty: 3, price: formatter.format(200000), image: 'https://picsum.photos/300' }
         ]
       }
     } else {

@@ -60,7 +60,7 @@
               <tr>
                 <td>
                   <div class="product-cell">
-                    <img src="https://via.placeholder.com/40" alt="Bông Cải" />
+                    <img src="https://picsum.photos/300" alt="Bông Cải" />
                     <div class="product-info">
                       <span class="product-id">HC001</span>
                       <span class="product-name">Bông Cải Xanh (Organic)</span>

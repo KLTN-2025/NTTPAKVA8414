@@ -3,7 +3,7 @@
     <router-link :to="`/product/${product._id}`" class="product-link">
       <div class="product-image">
         <img 
-          :src="product.images || placeholderImage" 
+          :src="buildImagePath(product.images) || placeholderImage" 
           :alt="product.name"
           @error="handleImageError"
         />
@@ -75,6 +75,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
+import { buildImagePath } from '@/utilities/helper'
 const { addItemToCart } = useCartStore()
 const props = defineProps({
   product: {
@@ -85,7 +86,7 @@ const props = defineProps({
 
 const router = useRouter()
 
-const placeholderImage = 'https://via.placeholder.com/400x400?text=No+Image'
+const placeholderImage = 'https://picsum.photos/3000x400?text=No+Image'
 
 const hasDiscount = computed(() => {
   return props.product.original_price && props.product.original_price > props.product.price

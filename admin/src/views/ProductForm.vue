@@ -241,7 +241,8 @@
                 :class="{ 'disabled': isViewMode, 'has-image': imagePreview[index - 1] }"
               >
                 <div v-if="imagePreview[index - 1]" class="image-preview-container">
-                  <img :src="imagePreview[index - 1]" class="image-preview" :alt="`Preview ${index}`" />
+                  <img :src="imagePreview[index - 1]" class="image-preview" 
+                  :alt="`Preview ${index}`" />
                   <button 
                     v-if="!isViewMode" 
                     type="button"
@@ -293,6 +294,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import { buildImagePath } from '@/utilities/helper'
 
 import { useAuth } from '@clerk/vue'
 const { getToken } = useAuth()
@@ -375,7 +377,6 @@ const fetchProductTypes = async () => {
         category_id: product.value.category_id
       }
     })
-    console.log(response.data.data)
     productTypes.value = response.data.data || []
   } catch (err) {
     console.error('Error fetching product types:', err)
@@ -575,28 +576,27 @@ const handleSubmit = async () => {
     
     // Submit
     if (isEditMode.value) {
-      await axios.put(`/api/admin/products/${productId.value}`, {
+      await axios.put(`/api/admin/products/${productId.value}`, formData, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
       },
-      data: formData
     })
-      toast.success('Product updated successfully!')
+      toast.success('Product updated successfully!', { timeout: 1500 })
     } else {
-      await axios.post(`/api/admin/products/${productId.value}`, {
+      await axios.post('/api/admin/products', formData, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
         },
-        data: formData
       })
-      toast.success('Product created successfully!')
+      toast.success('Product created successfully!', { timeout: 1500 })
     }
     
     setTimeout(() => router.push('/products'), 1500)
     
   } catch (err) {
-    const errorMsg = err.response?.data?.message || 'Failed to save product'
-    toast.error(errorMsg)
+    toast.error('Failed to save product')
   } finally {
     submitting.value = false
   }

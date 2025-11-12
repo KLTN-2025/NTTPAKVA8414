@@ -83,7 +83,7 @@
               class="summary-row product-item-row"
             >
               <div class="product-info-checkout">
-                <img :src="item.image" :alt="item.name" class="product-thumbnail" />
+                <img :src="buildImagePath(item.image)" :alt="item.name" class="product-thumbnail" />
                 <span class="product-name">{{ item.name }} × {{ item.quantity }}</span>
               </div>
               <span class="product-price">{{ (item.price * item.quantity).toFixed(0) }}đ</span>
@@ -139,6 +139,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { buildImagePath } from '@/utilities/helper'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import { useCartStore } from '@/stores/cartStore'
 import axios from 'axios' 
