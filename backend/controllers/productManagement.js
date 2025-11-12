@@ -75,12 +75,10 @@ exports.createProduct = async (req, res) => {
       }
     }
     // Validate attributes if provided
-    let attr = []
-    if (attributes) {
-          attr = JSON.parse(attributes)
-          const ids = attr.map(id => new mongoose.Types.ObjectId(id))      
+    if (attributes && Array.isArray(attributes) && attributes.length > 0) {
+          const ids = attributes.map(id => new mongoose.Types.ObjectId(id))      
           const validAttributes = await Attribute.find({ _id: { $in: ids } });
-      if (validAttributes.length !== attr.length) {
+      if (validAttributes.length !== attributes.length) {
         return res.status(400).json({
           success: false,
           message: "One or more invalid attribute IDs",
@@ -107,7 +105,7 @@ exports.createProduct = async (req, res) => {
       selling_price: parseFloat(selling_price),
       current_stock: parseInt(current_stock),
       image_urls,
-      attributes: attr || [],
+      attributes: attributes || [],
     });
     await product.save();
     res.status(201).json({

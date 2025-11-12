@@ -558,7 +558,9 @@ const handleSubmit = async () => {
     }
     
     if (product.value.attributes.length > 0) {
-      formData.append('attributes', JSON.stringify(product.value.attributes))
+      product.value.attributes.forEach(attr => {
+      formData.append('attributes[]', attr)
+      })
     }
     
     // Add images
