@@ -78,13 +78,10 @@
             <i class="fas fa-comment-dots"></i>
           </button>
           
-          <div class="admin-profile">
-            <img src="https://picsum.photos/300" alt="Admin" />
-            <div class="admin-info">
-              <span class="admin-name">Guy Hawkins</span>
-              <span class="admin-role">Admin</span>
-            </div>
-          </div>
+          
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
         </div>
       </header>
       
@@ -98,6 +95,8 @@
 <script setup>
 import { ref } from 'vue'
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { useClerk, SignedIn, UserButton } from '@clerk/vue'
+const clerk = useClerk()
 
 // Logic Sidebar
 const isSidebarCollapsed = ref(false);
