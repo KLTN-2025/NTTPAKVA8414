@@ -7,8 +7,6 @@ const mongoose = require("mongoose");
 const fs = require("fs/promises");
 const path = require("path");
 
-const { checkAdminRole } = require("../middleware/checkAdmin");
-
 // Helper function to delete image files
 async function deleteImageFiles(imageUrls) {
   if (!imageUrls || imageUrls.length === 0) return;

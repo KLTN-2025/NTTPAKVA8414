@@ -159,6 +159,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import ProductCard from '@/components/ProductCard.vue'
+
 // Thêm import cho icon
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -254,9 +255,11 @@ async function fetchProducts(page = 1) {
     if (searchQuery.value.trim()) {
       params.q = searchQuery.value.trim()
     }
-    const response = await axios.get('/api/products/search', { params })
+    const response = await axios.get('/api/products/search', {
+      params: params })
 
     if (response.data.success) {
+      console.log(response.data.user)
       products.value = response.data.data
       pagination.value = response.data.pagination
     } else {

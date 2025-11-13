@@ -4,7 +4,6 @@ const ProductType = require('../models/ProductTypes')
 const ProductCategory = require('../models/ProductCategories')
 const Brand = require('../models/Brands')
 const Attribute = require('../models/Attributes')
-
 /**
  * Query Parameters:
  * - page: Page number (default: 1)
@@ -91,6 +90,7 @@ exports.searchAndFilterProducts = async (req, res) => {
       } else {
         return res.status(200).json({
           success: true,
+          userRole: userRole,
           message: `0 products found for brand: ${req.query.brand}`,
           data: [],
           pagination: {

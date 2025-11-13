@@ -1,5 +1,5 @@
 const express = require('express')
-const { requireAuth } = require('@clerk/express')
+const { checkMemberStatus } = require('../middleware/checkMember')
 const router = express.Router()
 
 const orderController = require('../controllers/orders')
@@ -13,7 +13,7 @@ router.post('/',
  * Get all orders made by a specific user;
  * Requires auth.
  * */ 
-router.get('/', requireAuth(),
+router.get('/', checkMemberStatus,
   orderController.getOrders
 )
 
@@ -21,7 +21,7 @@ router.get('/', requireAuth(),
  * Get the product list in a specific order;
  * Requires auth.
  */
-router.get('/:id', requireAuth(),
+router.get('/:id', checkMemberStatus,
   orderController.getOrderDetails
 )
 
@@ -29,7 +29,7 @@ router.get('/:id', requireAuth(),
  * Cancel an order;
  * Requires auth.
  */
-router.put('/:id/cancel', requireAuth(),
+router.put('/:id/cancel', checkMemberStatus,
   orderController.cancelOrder
 )
 

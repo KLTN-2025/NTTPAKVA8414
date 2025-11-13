@@ -1,5 +1,11 @@
 //src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuth } from '@clerk/vue'
+
+import { watch } from 'vue'
+import axios from 'axios'
+
+import AdminLogin from '@/views/AdminLogin.vue'
 import AdminHome from '@/views/AdminHome.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import ProductList from '@/views/ProductList.vue'
@@ -17,89 +23,104 @@ const Help = () => import('@/views/Help.vue')
 
 const routes = [
   {
-    path: '/',
+    path: '/login',
+    name: 'Login',
+    component: AdminLogin,
+    meta: { requiresGuest: true, title: 'Login' }
+  },
+  {
+    path: '/admin',
     component: AdminHome,
+    redirect: '/admin/dashboard',
     children: [
       {
-        path: '', 
+        path: 'dashboard', 
         name: 'dashboard',
         component: Dashboard,
-        meta: { title: 'Dashboard' }
+        meta: { requireAdmin: true, title: 'Dashboard' }
       },
       {
-        path: '/products',
+        path: 'products',
         name: 'admin-products',
         component: ProductList,
-        meta: { title: 'Product Management' }
+        meta: { requireAdmin: true, title: 'Product Management' }
       },
       {
-        path: '/products/new',
+        path: 'products/new',
         name: 'admin-product-new',
         component: ProductForm,
-        meta: { title: 'Add New Product' }
+        meta: { requireAdmin: true, title: 'Add New Product' }
       },
       {
-        path: '/products/edit/:id', 
+        path: 'products/edit/:id', 
         name: 'admin-product-edit',
         component: ProductForm,     
-        meta: { title: 'Edit Product' }
+        meta: { requireAdmin: true, title: 'Edit Product' }
       },
       {
-        path: '/products/view/:id', 
+        path: 'products/view/:id', 
         name: 'admin-product-view',
         component: ProductForm,
-        meta: { title: 'Product Details' }
+        meta: { requireAdmin: true, title: 'Product Details' }
       },
       
       {
-        path: '/orders',
+        path: 'orders',
         name: 'admin-orders',
         component: OrderList,
-        meta: { title: 'Order Management' }
+        meta: { requireAdmin: true, title: 'Order Management' }
       },
       {
-        path: '/orders/new',
+        path: 'orders/new',
         name: 'admin-order-new',
         component: OrderForm,
-        meta: { title: 'New Order' }
+        meta: { requireAdmin: true, title: 'New Order' }
       },
       {
-        path: '/orders/edit/:id',
+        path: 'orders/edit/:id',
         name: 'admin-order-edit',
         component: OrderForm,
-        meta: { title: 'Edit Order' }
+        meta: { requireAdmin: true, title: 'Edit Order' }
       },
       {
-        path: '/orders/view/:id',
+        path: 'orders/view/:id',
         name: 'admin-order-view',
         component: OrderDetailView,
-        meta: { title: 'Order Details' }
+        meta: { requireAdmin: true, title: 'Order Details' }
       },
       {
-        path: '/customers',
+        path: 'customers',
         name: 'admin-customers',
         component: CustomerList,
-        meta: { title: 'Customers' }
+        meta: { requireAdmin: true, title: 'Customers' }
       },
       {
-        path: '/sales-report',
+        path: 'sales-report',
         name: 'admin-sales-report',
         component: SalesReport,
-        meta: { title: 'Sales Report' }
+        meta: { requireAdmin: true, title: 'Sales Report' }
       },
       {
-        path: '/settings',
+        path: 'settings',
         name: 'admin-settings',
         component: Settings,
-        meta: { title: 'Account & Settings' }
+        meta: { requireAdmin: true, title: 'Account & Settings' }
       },
       {
-        path: '/help',
+        path: 'help',
         name: 'admin-help',
         component: Help,
-        meta: { title: 'Help' }
+        meta: { requireAdmin: true, title: 'Help' }
       }
     ]
+  },
+  {
+    path: '/',
+    redirect: 'login'
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/login'
   }
 ]
 
@@ -108,4 +129,51 @@ const router = createRouter({
   routes
 })
 
+router.beforeEach(async (to, from, next) => {
+  const { isLoaded, isSignedIn, getToken } = useAuth()
+  if (!isLoaded.value) {
+    await new Promise(resolve => {
+      const unwatch = watch(isLoaded, (loaded) => {
+        if (loaded) {
+          unwatch()
+          resolve()
+        }
+      })
+    })
+  }
+ 
+  if (to.meta.requireAdmin && !isSignedIn.value) {
+    return next('/login')
+  }
+
+  if (to.meta.requiresGuest && isSignedIn.value) {
+    return next('/admin/dashboard')
+  }
+  
+  next()
+})
+/*
+async function checkAdminRole(token) {
+  try {
+    if (!token) {
+      return false
+    }    
+    const response = await axios.get('/api/admin/verify', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    })
+
+    if (response.status !== 200) {
+      return false
+    }
+    const data = response.data
+    console.log('Data: ' + data)
+
+    return data?.isAdmin === true
+  } catch (error) {
+    console.error('Error checking admin role:', error)
+    return false
+  }
+}*/
 export default router

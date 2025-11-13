@@ -1,33 +1,66 @@
 // routes/admin/products.js
-const express = require('express')
-const router = express.Router()
-const createUpload = require('../../middleware/upload')
-const productController = require('../../controllers/productManagement')
-const { checkAdminRole } = require('../../middleware/checkAdmin')
-
-//router.use(checkAdminRole)
+const express = require("express");
+const router = express.Router();
+const createUpload = require("../../middleware/upload");
+const productController = require("../../controllers/productManagement");
+const { checkAdminRole } = require("../../middleware/checkAdmin");
 
 const upload = createUpload({
   maxSize: 3 * 1024 * 1024, // 3MB
-  allowedMime: ['image/jpeg', 'image/png', 'image/webp']
-})
+  allowedMime: ["image/jpeg", "image/png", "image/webp"],
+});
 
-router.post('/', upload.array('images', 4), productController.createProduct)
+router.post(
+  "/",
+  upload.array("images", 4),
+  checkAdminRole,
+  productController.createProduct
+);
 
-router.get('/', productController.getAllProducts)
+router.get(
+  "/",
+  productController.getAllProducts
+);
 
-router.delete('/bulk-delete', productController.bulkDeleteProducts)
+router.delete(
+  "/bulk-delete",
+  checkAdminRole,
+  productController.bulkDeleteProducts
+);
 
-router.get('/:id', productController.getProductById)
+router.get(
+  "/:id",
+  productController.getProductById
+);
 
-router.get('/slug/:slug', productController.getProductBySlug)
+router.get(
+  "/slug/:slug",
+  productController.getProductBySlug
+);
 
-router.put('/:id', upload.array('images', 4), productController.updateProduct)
+router.put(
+  "/:id",
+  upload.array("images", 4),
+  checkAdminRole,
+  productController.updateProduct
+);
 
-router.delete('/:id', productController.deleteProduct)
+router.delete(
+  "/:id",
+  checkAdminRole,
+  productController.deleteProduct
+);
 
-router.patch('/:id/inventory/adjust', productController.adjustInventory)
+router.patch(
+  "/:id/inventory/adjust",
+  checkAdminRole,
+  productController.adjustInventory
+);
 
-router.patch('/:id/inventory/set', productController.setInventory)
+router.patch(
+  "/:id/inventory/set",
+  checkAdminRole,
+  productController.setInventory
+);
 
-module.exports = router
+module.exports = router;

@@ -31,7 +31,7 @@
           <i class="fas fa-file-export"></i>
           <span>Export</span>
         </button>
-        <router-link to="/products/new" class="btn btn-primary">
+        <router-link to="/admin/products/new" class="btn btn-primary">
           <i class="fas fa-plus"></i>
           <span>New Product</span>
         </router-link>
@@ -145,10 +145,10 @@
             </td>
             <td>
               <div class="action-buttons">
-                <router-link :to="'/products/view/' + product._id" class="action-btn">
+                <router-link :to="'/admin/products/view/' + product._id" class="action-btn">
                   <i class="fas fa-eye"></i>
                 </router-link>
-                <router-link :to="'/products/edit/' + product._id" class="action-btn">
+                <router-link :to="'/admin/products/edit/' + product._id" class="action-btn">
                   <i class="fas fa-pencil-alt"></i>
                 </router-link>
                 <button 
@@ -367,7 +367,6 @@ const isFilterVisible = ref(false)
 const fetchProducts = async () => {
   loading.value = true
   error.value = null
-  
   try {
     const params = {
       page: currentPage.value,

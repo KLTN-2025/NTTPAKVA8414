@@ -1,18 +1,17 @@
 const express = require('express')
 const router = express.Router()
-const { requireAuth } = require('@clerk/express')
 const cartController = require('../controllers/carts.js')
+const { checkMemberStatus } = require('../middleware/checkMember.js')
 
-
-router.post('/validate', 
+router.post('/validate', checkMemberStatus,
   cartController.validateCart
 );
 
-router.get('/get', requireAuth(),
+router.get('/get', checkMemberStatus,
   cartController.getCart
 )
 
-router.post('/sync', requireAuth(),
+router.post('/sync', checkMemberStatus,
   cartController.syncCart
 )
 

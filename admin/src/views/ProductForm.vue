@@ -3,9 +3,9 @@
   <div class="product-form-page">
     
     <nav class="form-breadcrumbs">
-      <router-link to="/">Dashboard</router-link>
+      <router-link to="/admin/dashboard">Dashboard</router-link>
       <i class="fas fa-chevron-right"></i>
-      <router-link to="/products">Product</router-link>
+      <router-link to="/admin/products">Product</router-link>
       <i class="fas fa-chevron-right"></i>
       <strong>{{ pageTitle }}</strong>
     </nav>
@@ -18,7 +18,7 @@
     <div v-else-if="loadError" class="error-message">
       <i class="fas fa-exclamation-circle"></i>
       <span>{{ loadError }}</span>
-      <router-link to="/products" class="btn btn-secondary">Back to List</router-link>
+      <router-link to="/admin/products" class="btn btn-secondary">Back to List</router-link>
     </div>
 
     <form v-else @submit.prevent="handleSubmit" class="product-form-layout">
@@ -269,13 +269,13 @@
         </div>
 
         <div class="form-action-buttons">
-          <router-link to="/products" v-if="isViewMode" class="btn btn-secondary btn-full">
+          <router-link to="/admin/products" v-if="isViewMode" class="btn btn-secondary btn-full">
             <i class="fas fa-arrow-left"></i>
             <span>Back to List</span>
           </router-link>
           
           <template v-else>
-            <router-link to="/products" class="btn btn-secondary">
+            <router-link to="/admin/products" class="btn btn-secondary">
               {{ isEditMode ? 'Discard Changes' : 'Discard' }}
             </router-link>
             <button type="submit" class="btn btn-primary" :disabled="submitting">
@@ -595,7 +595,7 @@ const handleSubmit = async () => {
       toast.success('Product created successfully!', { timeout: 1500 })
     }
     
-    setTimeout(() => router.push('/products'), 1500)
+    setTimeout(() => router.push('/admin/products'), 1500)
     
   } catch (err) {
     toast.error('Failed to save product')

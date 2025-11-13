@@ -6,20 +6,21 @@ const { clerkMiddleware  } = require('@clerk/express')
 require('dotenv').config()
 
 const app = express()
+
 app.use('/api/webhooks', require('./routes/webhooks'))
 
 const corsOptions = {
   origin: [
-    'http://localhost:5173',  //public
-    'http://localhost:5174'   //admin
+    'http://localhost:5173',  //Allow customer access
+    'http://localhost:5174'   //Allow admin access
   ]
 }
 
 app.use(cors(corsOptions))
 app.use(express.json())
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(clerkMiddleware())
 app.use('/api', require('./routes/index'))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/HealthyCrave', 
   { useNewUrlParser: true, useUnifiedTopology: true })

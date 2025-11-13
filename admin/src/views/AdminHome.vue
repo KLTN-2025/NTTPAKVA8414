@@ -11,33 +11,33 @@
       <div class="nav-section-title">GENERAL</div>
       <ul class="nav-links">
         <li>
-          <router-link to="/">
+          <router-link to="/admin/dashboard">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
           </router-link>
         </li>
         
         <li>
-          <router-link to="/products" :class="{ 'active-parent': $route.path.startsWith('/products') }">
+          <router-link to="/admin/products" :class="{ 'active-parent': $route.path.startsWith('/products') }">
             <i class="fas fa-box"></i>
             <span>Product</span>
           </router-link>
         </li>
 
         <li>
-          <router-link to="/orders">
+          <router-link to="/admin/orders">
             <i class="fas fa-file-alt"></i>
             <span>Orders</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/customers">
+          <router-link to="/admin/customers">
             <i class="fas fa-users"></i>
             <span>Customers</span>
           </router-link>
         </li>
          <li>
-          <router-link to="/sales-report">
+          <router-link to="/admin/sales-report">
             <i class="fas fa-chart-line"></i>
             <span>Sales Report</span>
           </router-link>
@@ -47,13 +47,13 @@
       <div class="nav-section-title">TOOLS</div>
       <ul class="nav-links">
         <li>
-          <router-link to="/settings">
+          <router-link to="/admin/settings">
             <i class="fas fa-cog"></i>
             <span>Account & Settings</span>
           </router-link>
         </li>
          <li>
-          <router-link to="/help">
+          <router-link to="/admin/help">
             <i class="fas fa-question-circle"></i>
             <span>Help</span>
           </router-link>
