@@ -37,10 +37,10 @@ cd NTTPAKVA8414
 cd backend
 npm install
 
-cd ../user
+cd user
 npm install
 
-cd ../admin
+cd admin
 npm install
 ```
 
