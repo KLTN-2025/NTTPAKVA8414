@@ -210,7 +210,7 @@ const mockOrderDatabase = [
       { id: 2, name: 'Cải Xoăn (Organic)', price: formatter.format(45000), quantity: 2, subtotal: formatter.format(90000), image: 'https://via.placeholder.com/60/2ecc71/ffffff?text=C' },
     ],
     billingAddress: { name: 'Lê Văn Chính', address: '101 Đường Trần Phú', city: 'Huế', email: 'chinh@example.com', phone: '0901 000 111' },
-    shippingAddress: { name: 'Lê Văn Chính', address: '101 Đường Trần Phú', city: 'Huế', email: 'chinh@example.com', phone: '0901 000 111' },
+    shippingAddress: { name: 'Lê Văn Chính', address: '101 Đường Nguyen Van Linh', city: 'Da Nang', email: 'chinh@example.com', phone: '0901 000 111' },
     paymentMethod: 'Paypal', subtotal: formatter.format(240000), discount: '10%', shipping: formatter.format(30000), total: formatter.format(246000)
   },
 ];
