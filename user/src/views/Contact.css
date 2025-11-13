@@ -1,3 +1,14 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ----- BANNER/BREADCRUMB (DÙNG CHUNG) ----- */
 .cart-banner-container {
   position: relative; 
@@ -271,4 +282,16 @@
     grid-template-columns: 1fr; 
     gap: 0;
   }
+}
+
+/* === SỬA LỖI Ở ĐÂY === */
+/* (Áp dụng hiệu ứng cho class đúng) */
+.contact-split-layout, .map-section {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* (Hiệu ứng nối tiếp) */
+.map-section {
+  animation-delay: 0.2s;
 }

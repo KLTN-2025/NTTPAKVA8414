@@ -4,6 +4,9 @@ import Cart from '@/views/Cart.vue'
 import Checkout from '@/views/Checkout.vue'
 import About from '@/views/About.vue'
 import Contact from '@/views/Contact.vue'
+import OrderHistory from '@/views/OrderHistory.vue' 
+// 1. IMPORT COMPONENT CHI TIẾT ĐƠN HÀNG
+import UserOrderDetail from '@/views/UserOrderDetail.vue'
 
 const routes = [
   {
@@ -25,6 +28,16 @@ const routes = [
     path: '/cart',
     name: 'cart',
     component: Cart 
+  },
+  {
+    path: '/orders',
+    name: 'orders',
+    component: OrderHistory
+  },
+  {
+    path: '/orders/:id',
+    name: 'order-detail',
+    component: UserOrderDetail
   },
   {
     path: '/checkout',

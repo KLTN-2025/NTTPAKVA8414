@@ -43,7 +43,6 @@
     </section>
 
     <!-- Special Offers -->
-    <!-- Special Offers -->
 <section class="special-offers">
   <h2>Special Offers</h2>
   <div class="offers-container">

@@ -66,6 +66,7 @@ h2, h3, h4, p {
   margin: 0;
 }
 
+
 /* --- Tổng thể trang --- */
 .home-page {
   font-family: var(--font-family-primary);
@@ -75,6 +76,43 @@ h2, h3, h4, p {
   margin: 0 auto;
   background-color: var(--color-bg-light);
 }
+ 
+/* === HIỆU ỨNG MỚI === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Áp dụng animation vào các khối */
+.banner-section, 
+.banner-icons-section, 
+.featured-products, 
+.special-offers, 
+.customer-reviews {
+  /* Bắt đầu ẩn đi */
+  opacity: 0; 
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+/* Tạo hiệu ứng nối tiếp */
+.banner-icons-section {
+  animation-delay: 0.1s;
+}
+.featured-products {
+  animation-delay: 0.2s;
+}
+.special-offers {
+  animation-delay: 0.3s;
+}
+.customer-reviews {
+  animation-delay: 0.4s;
+}
+/* === KẾT THÚC HIỆU ỨNG === */
+
 
 /* --- Banner chính --- */
 .banner-section {
@@ -109,7 +147,6 @@ h2, h3, h4, p {
 }
 
 .banner-btn:hover {
-  /* Sửa lỗi: Phải bao gồm cả translateX và scale */
   transform: translateX(-50%) scale(1.05);
   background-color: var(--color-primary-dark);
 }

@@ -1,11 +1,22 @@
-/* ----- BANNER VÀ BREADCRUMB (CẬP NHẬT) ----- */
+/* === 1. THÊM KHỐI NÀY VÀO ĐẦU FILE === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ----- BANNER VÀ BREADCRUMB (DÙNG CHUNG) ----- */
 .cart-banner-container {
   position: relative; 
   width: 100%;
   margin-bottom: var(--gutter-gap, 2rem);
   overflow: hidden; 
 }
-
 .cart-banner-img {
   position: absolute;
   top: 0;
@@ -15,7 +26,6 @@
   object-fit: cover;
   z-index: 1; 
 }
-
 .cart-breadcrumbs-container {
   position: relative; 
   z-index: 2; 
@@ -31,7 +41,6 @@
 
 /* STYLE CHO BREADCRUMBS BÊN TRONG */
 .cart-breadcrumbs {
-  /* ĐÃ SỬA: Dùng biến --container-width và --gutter-gap */
   max-width: var(--container-width, 80vw); 
   width: 100%;
   padding: 0 var(--gutter-gap, 2rem);
@@ -62,7 +71,6 @@
 
 /* ----- CẤU TRÚC TRANG CHÍNH ----- */
 .cart-container {
-  /* ĐÃ SỬA: Dùng biến --container-width và --gutter-gap */
   max-width: var(--container-width, 80vw);
   margin: 2rem auto;
   padding: 0 var(--gutter-gap, 2rem);
@@ -362,4 +370,19 @@
   .coupon-inputs {
     flex-direction: column; /* Nút apply xuống dưới */
   }
+}
+
+/* === 2. THÊM KHỐI NÀY VÀO CUỐI FILE === */
+/* (Áp dụng hiệu ứng) */
+.cart-title, .cart-table-wrapper, .cart-bottom-section {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* (Hiệu ứng nối tiếp) */
+.cart-table-wrapper {
+  animation-delay: 0.1s;
+}
+.cart-bottom-section {
+  animation-delay: 0.2s;
 }

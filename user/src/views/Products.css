@@ -1,3 +1,15 @@
+/* === 1. THÊM KHỐI NÀY VÀO ĐẦU FILE === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 :root {
   --color-primary: #27ae60;
   --color-primary-dark: #229954;
@@ -111,9 +123,6 @@
   color: #cccccc;
   font-size: 10px;
 }
-
-/* .breadcrumb (CŨ) ĐÃ BỊ XÓA */
-/* .page-banner (CŨ) ĐÃ BỊ XÓA */
 
 /* ========== PRODUCTS PAGE ========== */
 .products-page {
@@ -538,4 +547,16 @@ input[type="range"].price-slider::-moz-range-track {
   .products-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* === 2. THÊM KHỐI NÀY VÀO CUỐI FILE === */
+/* (Áp dụng hiệu ứng) */
+.sidebar, .products-content {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* (Hiệu ứng nối tiếp) */
+.products-content {
+  animation-delay: 0.1s;
 }
