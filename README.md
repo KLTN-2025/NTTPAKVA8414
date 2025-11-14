@@ -74,7 +74,7 @@ mongodb://localhost:27017/HealthyCrave
 ```
 
 ### Lưu ý cho tester
-Chạy script này mỗi khi tạo người dùng mới hoặc thay đổi thông tin cá nhân
+Chạy script này (ở backend) mỗi khi tạo người dùng mới hoặc thay đổi thông tin cá nhân
 (không nên thường xuyên vì sẽ bị giới hạn lượt dùng API)
 ```
 node scripts/syncUsers.js
