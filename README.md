@@ -26,6 +26,7 @@
 | [Clerk](https://clerk.com/) | — | Công cụ xác thực người dùng |
 
 
+## Cài đặt và sử dung
 ### Clone repo từ Github:
 ```bash
 git clone https://github.com/KLTN-2025/NTTPAKVA8414
@@ -37,10 +38,10 @@ cd NTTPAKVA8414
 cd backend
 npm install
 
-cd user
+cd ../user
 npm install
 
-cd admin
+cd ../admin
 npm install
 ```
 
@@ -67,7 +68,19 @@ cd admin
 npm run dev
 ```
 
-Mở MongoDB Compass và connect:
+Mở MongoDB Compass và kiểm tra dữ liệu:
 ```bash
 mongodb://localhost:27017/HealthyCrave
 ```
+
+### Lưu ý cho tester
+Chạy script này mỗi khi tạo người dùng mới hoặc thay đổi thông tin cá nhân
+(không nên thường xuyên vì sẽ bị giới hạn lượt dùng API)
+```
+node scripts/syncUsers.js
+```
+
+Test bằng tài khoản sau đây:
+email:nguyenvana@gmail.com
+password: nguyenvana123
+(Có quyền admin)
