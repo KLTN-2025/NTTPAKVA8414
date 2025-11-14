@@ -1,0 +1,280 @@
+/* === 1. THÊM KHỐI NÀY VÀO ĐẦU FILE === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ----- BANNER/BREADCRUMB (DÙNG CHUNG) ----- */
+.cart-banner-container {
+  position: relative; 
+  width: 100%;
+  margin-bottom: var(--gutter-gap, 2rem);
+  overflow: hidden; 
+}
+.cart-banner-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1; 
+}
+.cart-breadcrumbs-container {
+  position: relative; 
+  z-index: 2; 
+  width: 100%;
+  padding: 1.5rem 0; 
+  background-color: rgba(0, 0, 0, 0.4); 
+  color: var(--color-text-light, #fff);
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.cart-breadcrumbs {
+  max-width: var(--container-width, 80vw); 
+  width: 100%;
+  padding: 0 var(--gutter-gap, 2rem);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cart-breadcrumbs a {
+  color: #f0f0f0;
+  text-decoration: none;
+  transition: color var(--transition-short, 0.2s ease);
+}
+.cart-breadcrumbs a:hover {
+  color: var(--color-text-light, #fff);
+  text-decoration: underline;
+}
+.cart-breadcrumbs strong {
+  color: var(--color-text-light, #fff);
+  font-weight: 600;
+}
+.breadcrumb-separator {
+  color: #cccccc;
+  font-size: 10px;
+}
+
+/* ----- CẤU TRÚC TRANG ----- */
+.order-history-container {
+  max-width: var(--container-width, 80vw);
+  margin: 2rem auto;
+  padding: 0 var(--gutter-gap, 2rem);
+  min-height: 50vh; /* Giữ cho trang không quá ngắn */
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: var(--color-text-heading, #111827);
+}
+
+/* ----- BẢNG ĐƠN HÀNG ----- */
+.table-container {
+  background: var(--color-bg-light, #fff);
+  border-radius: var(--border-radius-xl, 16px);
+  border: 1px solid var(--color-border-light, #e5e7eb);
+  box-shadow: var(--shadow-sm, 0 2px 10px rgba(0,0,0,0.05));
+  overflow: hidden; /* Giữ bo góc */
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-table th, .order-table td {
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border-light, #e5e7eb);
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.order-table th {
+  color: var(--color-text-muted, #6b7280);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: var(--color-bg-subtle, #f9fafb);
+}
+
+.order-table td {
+  color: var(--color-text-body, #374151);
+}
+.order-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.order-id {
+  font-weight: 600;
+  color: var(--color-primary, #16a34a);
+}
+
+/* === CSS MỚI CHO CỘT "ORDER" === */
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.product-cell img {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--color-border, #e5e7eb);
+}
+.product-cell .product-info {
+  display: flex;
+  flex-direction: column;
+}
+.order-id {
+  font-size: 0.8rem;
+  color: var(--color-text-subtle, #9ca3af);
+  font-weight: 600;
+}
+.product-name {
+  font-weight: 500;
+  color: var(--color-text-heading, #111827);
+}
+/* === KẾT THÚC CSS MỚI === */
+
+
+/* Style cho các nút */
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--border-radius-md, 8px);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.btn-view-details {
+  background-color: var(--color-bg-light, #fff);
+  border-color: var(--color-border, #dcdcdc);
+  color: var(--color-text-body, #374151);
+}
+.btn-view-details:hover {
+  background-color: var(--color-bg-muted, #f3f4f6);
+  border-color: var(--color-text-muted, #6b7280);
+}
+.btn-shop-now {
+  background-color: var(--color-primary, #16a34a);
+  color: var(--color-text-light, #fff);
+}
+.btn-shop-now:hover {
+  background-color: var(--color-primary-dark, #15803d);
+}
+
+/* Style cho Status Badge (Giống admin) */
+.status-badge {
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  text-align: center;
+  display: inline-block;
+}
+.status-badge.shipping {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+.status-badge.cancelled {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+.status-badge.completed {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+/* Khi không có đơn hàng */
+.empty-orders td {
+  text-align: center;
+  padding: 3rem;
+}
+.empty-orders p {
+  font-size: 1rem;
+  color: var(--color-text-muted, #6b7280);
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .order-table {
+    display: block;
+    width: 100%;
+  }
+  .order-table thead {
+    display: none; /* Ẩn tiêu đề trên mobile */
+  }
+  .order-table tbody, .order-table tr, .order-table td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .order-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid var(--color-border-light, #e5e7eb);
+    border-radius: var(--border-radius-md, 8px);
+  }
+  .order-table td {
+    border: none;
+    border-bottom: 1px solid var(--color-border-lighter, #f0f0f0);
+    padding-left: 50%; /* Đẩy nội dung sang phải */
+    position: relative;
+    text-align: right;
+  }
+  .order-table td:last-child {
+    border-bottom: none;
+  }
+  
+  /* Cột "Order" (product-cell) cần style riêng */
+  .order-table td:first-child {
+    text-align: left;
+    padding-left: 1.5rem;
+  }
+  
+  /* Tạo tiêu đề giả bên trái */
+  .order-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1.5rem;
+    width: calc(50% - 2rem);
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text-heading, #111827);
+  }
+  
+  /* Gán nhãn cho từng cell */
+  .order-table td:nth-of-type(1)::before { content: ""; } /* Bỏ nhãn cho cột đầu */
+  .order-table td:nth-of-type(2)::before { content: "Date"; }
+  .order-table td:nth-of-type(3)::before { content: "Status"; }
+  .order-table td:nth-of-type(4)::before { content: "Total"; }
+  .order-table td:nth-of-type(5)::before { content: "Actions"; }
+}
+
+/* === 2. THÊM KHỐI NÀY VÀO CUỐI FILE === */
+/* (Áp dụng hiệu ứng) */
+.page-title, .table-container {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+/* (Hiệu ứng nối tiếp) */
+.table-container {
+  animation-delay: 0.1s;
+}

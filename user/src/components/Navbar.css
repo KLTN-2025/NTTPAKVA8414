@@ -1,5 +1,4 @@
-@reference "tailwindcss";
-
+@import "tailwindcss";
 
 header {
   @apply sticky top-0 left-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-md transition-all duration-300;
@@ -40,7 +39,7 @@ header .auth-cart {
 
 /* Shopping cart button */
 header .cart-btn {
-  @apply relative p-2 hover:bg-gray-100 rounded-lg transition-colors;
+  @apply relative p-2 hover:bg-gray-100 rounded-lg transition-colors no-underline text-inherit;
 }
 header .cart-icon {
   @apply w-6 h-6 text-gray-700;
@@ -77,6 +76,38 @@ header .btn-signup {
 header .logo img {
   @apply transition-transform duration-200;
 }
-header .logo:hover img {
-  transform: scale(1.05);
+
+
+/* ----- CSS MỚI CHO CART DROPDOWN (ĐÃ TINH CHỈNH) ----- */
+
+/* Wrapper cho icon và menu */
+.cart-dropdown-wrapper {
+  @apply relative;
+}
+
+/* Menu sổ xuống (ẩn mặc định) */
+.cart-dropdown-menu {
+  @apply absolute top-full right-0 z-50; /* Vị trí */
+  @apply bg-white border border-gray-200 rounded-lg shadow-lg; /* Giao diện */
+  @apply min-w-[160px] py-2; /* Kích thước */
+  
+  /* Hiệu ứng (ẩn) */
+  @apply opacity-0 invisible;
+  @apply translate-y-2 transition-all duration-200 ease-out;
+}
+
+/* Khi hover vào wrapper -> hiển thị menu */
+.cart-dropdown-wrapper:hover .cart-dropdown-menu {
+  @apply opacity-100 visible translate-y-0;
+}
+
+/* Style cho các link trong menu */
+.cart-dropdown-menu a {
+  @apply block px-4 py-2 text-sm text-gray-700 no-underline whitespace-nowrap;
+  /* (Giống với nav a) */
+}
+
+/* Hiệu ứng khi hover vào link */
+.cart-dropdown-menu a:hover {
+  @apply bg-gray-50 text-green-600; /* (Giống với nav a:hover) */
 }

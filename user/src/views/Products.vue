@@ -1,15 +1,17 @@
 <template>
-  <div class="container">
-    <nav class="breadcrumb">
-      <span>Home</span>
-      <span class="separator">/</span>
-      <span>Products</span>
-    </nav>
-
-    <div class="page-banner">
-      <img src="@/assets/images/Banner3.png" alt="Products Banner" />
+  <div>
+  <div class="cart-banner-container">
+    <img src="@/assets/images/Breadcrumbs.png" alt="Products Banner" class="cart-banner-img" />
+    
+    <div class="cart-breadcrumbs-container">
+      <nav class="cart-breadcrumbs">
+        <router-link to="/">Home</router-link>
+        <i class="fas fa-chevron-right breadcrumb-separator"></i> 
+        <strong>Shop</strong> </nav>
     </div>
+  </div>
 
+  <div class="container">
     <div class="products-page">
       <aside class="sidebar">
         <button class="filter-btn">
@@ -99,20 +101,17 @@
           </div>
         </div>
 
-        <!-- Loading State -->
         <div v-if="loading" class="loading-container">
           <div class="spinner"></div>
           <p>Loading products...</p>
         </div>
 
-        <!-- Error State -->
         <div v-else-if="error" class="error-container">
           <h3>Error Loading Products</h3>
           <p>{{ error }}</p>
           <button @click="fetchProducts" class="retry-btn">Try Again</button>
         </div>
 
-        <!-- Products Grid -->
         <div v-else-if="products.length" class="products-grid">
           <ProductCard
             v-for="product in products"
@@ -121,7 +120,6 @@
           />
         </div>
 
-        <!-- No Products Found -->
         <div v-else class="no-products-wrapper">
           <div class="no-products">
             <h3>No products found</h3>
@@ -129,7 +127,6 @@
           </div>
         </div>
 
-        <!-- Pagination -->
         <div v-if="pagination.total_pages > 1" class="pagination">
           <button 
             @click="goToPage(pagination.current_page - 1)" 
@@ -155,12 +152,16 @@
       </section>
     </div>
   </div>
+</div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import ProductCard from '@/components/ProductCard.vue'
+
+// Thêm import cho icon
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // State
 const products = ref([])
@@ -254,11 +255,12 @@ async function fetchProducts(page = 1) {
     if (searchQuery.value.trim()) {
       params.q = searchQuery.value.trim()
     }
-    const response = await axios.get('api/products/search', { params })
+    const response = await axios.get('/api/products/search', {
+      params: params })
 
     if (response.data.success) {
+      console.log(response.data.user)
       products.value = response.data.data
-      console.log(products.value)
       pagination.value = response.data.pagination
     } else {
       error.value = response.data.message || 'Failed to load products'
@@ -273,7 +275,7 @@ async function fetchProducts(page = 1) {
 
 async function fetchCategories() {
   try {
-    const response = await axios.get('api/categories')
+    const response = await axios.get('/api/categories')
     
     if (response.data.success) {
       categories.value = response.data.data.map(cat => ({
@@ -291,7 +293,7 @@ async function fetchCategories() {
 async function fetchAttributes() {
   try {
     attributesLoading.value = true
-    const response = await axios.get('api/attributes')
+    const response = await axios.get('/api/attributes')
     
     if (response.data.success) {
       attributes.value = response.data.data.map(attr => ({
@@ -350,3 +352,53 @@ onMounted(async () => {
 </script>
 
 <style src="./Products.css"></style>
+
+<style>
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  width: 100%;
+  color: var(--color-text-muted, #6b7280);
+  grid-column: 1 / -1; 
+}
+.spinner {
+  border: 4px solid var(--color-bg-muted, #f3f4f6);
+  border-top: 4px solid var(--color-primary, #27ae60);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.error-container h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ef4444;
+  margin-bottom: 0.5rem;
+}
+.retry-btn {
+  background-color: var(--color-primary, #27ae60);
+  color: var(--color-text-light, white);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--border-radius-sm, 6px);
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s;
+}
+.retry-btn:hover {
+  background-color: var(--color-primary-dark, #229954);
+}
+.tags-loading {
+  color: var(--color-text-muted, #6b7280);
+  font-style: italic;
+}
+</style>

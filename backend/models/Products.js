@@ -1,3 +1,4 @@
+//models/Products.js
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
@@ -72,7 +73,7 @@ const ProductSchema = new mongoose.Schema(
 ProductSchema.pre('insertMany', async (next, docs) => {
   try {
     docs.forEach(doc => {
-      doc.slug = slugify(`${doc.name} ${doc._id}`, {
+      doc.slug = slugify(`${doc.name}`, {
         remove: /[*+~.()'"!:@]/g,
         lower: true
       });
@@ -83,19 +84,27 @@ ProductSchema.pre('insertMany', async (next, docs) => {
   }
 })
 
-ProductSchema.pre('save', async (next, doc) => {
-  try {
-      doc.slug = slugify(`${doc.name} ${doc._id}`, {
-      remove: /[*+~.()'"!:@]/g,
-      lower: true
-    });
-    next();
-  } catch (err){
-    console.error(err);
+ProductSchema.pre('save', async function(next) {
+  const doc = this;
+
+  if (!doc.isModified('name')) return next();
+
+  let baseSlug = slugify(doc.name, { 
+    remove: /[*+~.()'"!:@]/g, 
+    lower: true });
+  let slug = baseSlug;
+  const count = await mongoose.models.Product.exists({ slug });
+
+  while (await mongoose.models.Product.exists({ slug })) {
+    slug = `${baseSlug}-${count++}`;
   }
-})
+
+  doc.slug = slug;
+  next();
+});
+
 
 ProductSchema.index({ type_id: 1, name: 1 }, { unique: true });
-ProductSchema.index({ slug: 1 })
+ProductSchema.index({ slug: 1 }, { unique: true });
 
 module.exports = mongoose.model('Product', ProductSchema);

@@ -1,0 +1,471 @@
+/* ----- BỐ CỤC CHUNG ----- */
+.product-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ----- 1. THANH HEADER ----- */
+.product-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.search-bar {
+  position: relative;
+  flex-grow: 1;
+  max-width: 400px;
+}
+.search-bar i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+}
+.search-bar input {
+  background: var(--sidebar-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color-light);
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+/* Nút bấm chung */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+/* Nút phụ (Filter, Export) */
+.btn-secondary {
+  background-color: var(--sidebar-bg);
+  border-color: var(--border-color);
+  color: var(--text-dark);
+}
+.btn-secondary:hover {
+  background-color: var(--admin-bg);
+}
+/* Nút chính (New Product) */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* ----- 2. CÁC TAB DANH MỤC ----- */
+.product-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.tab-btn {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.tab-btn:hover {
+  color: var(--text-dark);
+}
+.tab-btn.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  background-color: var(--primary-color-light);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* ----- 3. BẢNG SẢN PHẨM ----- */
+.table-container {
+  background: var(--sidebar-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden; 
+}
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.product-table th, .product-table td {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+.product-table th {
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.product-table td {
+  color: var(--text-dark);
+  font-weight: 500;
+}
+.product-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.product-table tbody tr:hover {
+  background-color: var(--admin-bg);
+}
+/* Căn chỉnh checkbox */
+.product-table th:first-child, .product-table td:first-child {
+  width: 1%; 
+  text-align: center;
+}
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-color);
+}
+
+
+/* Cột Product */
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.product-cell img {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+.product-cell .product-info {
+  display: flex;
+  flex-direction: column;
+}
+.product-cell .product-id {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  font-weight: 400;
+}
+.product-cell .product-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+/* Cột Date */
+.date-cell {
+  display: flex;
+  flex-direction: column;
+}
+.date-cell span:last-child {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+/* Cột Status */
+.status-badge {
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+.status-badge.available {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+.status-badge.out-of-stock {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+/* Cột Action */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+.action-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: inline-block;
+  line-height: 1; 
+}
+.action-btn:hover {
+  background-color: var(--admin-bg);
+  color: var(--text-dark);
+}
+.action-btn.btn-delete:hover {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+/* ----- 4. PHÂN TRANG ----- */
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+}
+.page-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.page-controls select {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+  font-weight: 500;
+}
+.page-controls button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--sidebar-bg);
+  cursor: pointer;
+}
+.page-controls button:hover {
+  background-color: var(--admin-bg);
+}
+
+/* ----- 5. MODAL XÁC NHẬN XÓA ----- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-card {
+  background: var(--sidebar-bg, #fff);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  overflow: hidden;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+.modal-header .warning-icon {
+  font-size: 1.5rem;
+  color: #f59e0b; 
+  margin-right: 1rem;
+}
+.modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark, #111827);
+  margin: 0;
+}
+.modal-header .close-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-light, #9ca3af);
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-body {
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted, #6b7280);
+  line-height: 1.6;
+}
+.modal-body strong {
+  color: var(--text-dark, #111827);
+  font-weight: 600;
+}
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background-color: var(--admin-bg, #f9fafb);
+  border-top: 1px solid var(--border-color, #e5e7eb);
+}
+.btn-danger {
+  background-color: #ef4444; 
+  color: #fff;
+}
+.btn-danger:hover {
+  background-color: #dc2626; 
+}
+
+/* ----- 6. FILTER PANEL ----- */
+.filter-panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.filter-panel-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+.filter-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 400px; 
+  height: 100%;
+  background: var(--sidebar-bg, #fff);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-out;
+}
+.filter-panel-overlay.open .filter-panel {
+  transform: translateX(0);
+}
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+.filter-header h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark, #111827);
+  margin: 0;
+}
+.filter-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+.filter-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+.filter-group select,
+.filter-group input[type="number"],
+.filter-group input[type="date"] { 
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  background-color: var(--admin-bg);
+  font-family: inherit; 
+}
+.price-inputs,
+.date-inputs { 
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.price-inputs span,
+.date-inputs span { 
+  color: var(--text-light);
+  padding: 0 0.25rem;
+}
+.filter-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+  background-color: var(--admin-bg, #f9fafb);
+}
+
+/* ----- 7. STYLE CHO SORTING (ĐÃ SỬA LỖI) ----- */
+.product-table th.sortable {
+  cursor: pointer;
+  user-select: none; 
+}
+
+.product-table th.sortable:hover {
+  color: var(--text-dark);
+}
+
+/* SỬA LỖI Ở ĐÂY: Áp dụng cho TẤT CẢ icon, không chỉ .fa-sort */
+.product-table th.sortable i {
+  margin-left: 0.5rem;
+  color: var(--text-light);
+  opacity: 0.5; /* Mặc định icon mờ đi */
+  width: 1em; /* Đảm bảo icon chiếm không gian cố định */
+  text-align: center; /* Căn giữa icon (nếu width > glyph) */
+}
+
+.product-table th.sortable:hover i {
+  opacity: 1; /* Hiển thị icon khi hover tiêu đề */
+}
+
+.product-table th .active-sort {
+  color: var(--primary-color); /* Màu xanh dương */
+  opacity: 1;
+}
+/* ================================== */
+
+
+/* ----- 8. NÚT XÓA HÀNG LOẠT ----- */
+.btn-danger-outline {
+  background-color: #fef2f2; 
+  border-color: #fecaca; 
+  color: #ef4444; 
+}
+.btn-danger-outline:hover {
+  background-color: #fee2e2; 
+  border-color: #fca5a5;
+  color: #dc2626; 
+}

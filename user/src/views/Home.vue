@@ -43,7 +43,6 @@
     </section>
 
     <!-- Special Offers -->
-    <!-- Special Offers -->
 <section class="special-offers">
   <h2>Special Offers</h2>
   <div class="offers-container">
@@ -130,7 +129,7 @@ async function fetchProducts() {
       page: 1,
       limit: 3
     }
-    const response = await axios.get('api/products/search', { 
+    const response = await axios.get('/api/products/search', { 
       params
     })
     if (response.data.success){

@@ -3,7 +3,7 @@
     <router-link :to="`/product/${product._id}`" class="product-link">
       <div class="product-image">
         <img 
-          :src="product.images || placeholderImage" 
+          :src="buildImagePath(product.images) || placeholderImage" 
           :alt="product.name"
           @error="handleImageError"
         />
@@ -74,7 +74,9 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { useCartStore } from '@/stores/cartStore'
+import { buildImagePath } from '@/utilities/helper'
+const { addItemToCart } = useCartStore()
 const props = defineProps({
   product: {
     type: Object,
@@ -84,7 +86,7 @@ const props = defineProps({
 
 const router = useRouter()
 
-const placeholderImage = 'https://via.placeholder.com/400x400?text=No+Image'
+const placeholderImage = 'https://picsum.photos/3000x400?text=No+Image'
 
 const hasDiscount = computed(() => {
   return props.product.original_price && props.product.original_price > props.product.price
@@ -105,22 +107,7 @@ function handleImageError(event) {
 }
 
 async function addToCart() {
-  if (!props.product.in_stock) return
-  
-  try {
-    // Emit event to parent or use store/composable
-    // For now, just show an alert
-    alert(`Added ${props.product.name} to cart!`)
-    
-    // TODO: Implement actual cart functionality
-    // await axios.post('/api/cart/add', {
-    //   product_id: props.product._id,
-    //   quantity: 1
-    // })
-  } catch (err) {
-    console.error('Error adding to cart:', err)
-    alert('Failed to add to cart. Please try again.')
-  }
+  addItemToCart(props.product, 1)
 }
 </script>
 

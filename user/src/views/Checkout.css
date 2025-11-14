@@ -1,0 +1,275 @@
+/* ----- BANNER/BREADCRUMB (DÙNG CHUNG) ----- */
+.cart-banner-container {
+  position: relative; 
+  width: 100%;
+  margin-bottom: var(--gutter-gap, 2rem);
+  overflow: hidden; 
+}
+.cart-banner-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1; 
+}
+.cart-breadcrumbs-container {
+  position: relative; 
+  z-index: 2; 
+  width: 100%;
+  padding: 1.5rem 0; 
+  background-color: rgba(0, 0, 0, 0.4); 
+  color: var(--color-text-light, #fff);
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.cart-breadcrumbs {
+  max-width: var(--container-width, 80vw); 
+  width: 100%;
+  padding: 0 var(--gutter-gap, 2rem);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cart-breadcrumbs a {
+  color: #f0f0f0;
+  text-decoration: none;
+  transition: color var(--transition-short, 0.2s ease);
+}
+.cart-breadcrumbs a:hover {
+  color: var(--color-text-light, #fff);
+  text-decoration: underline;
+}
+.cart-breadcrumbs strong {
+  color: var(--color-text-light, #fff);
+  font-weight: 600;
+}
+.breadcrumb-separator {
+  color: #cccccc;
+  font-size: 10px;
+}
+
+/* ----- CẤU TRÚC TRANG CHECKOUT ----- */
+.checkout-container {
+  max-width: var(--container-width, 80vw);
+  margin: 2rem auto;
+  padding: 0 var(--gutter-gap, 2rem);
+}
+
+.checkout-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 2.5rem;
+  color: var(--color-text-heading, #111827);
+}
+
+.checkout-layout {
+  display: flex;
+  gap: var(--gutter-gap, 2rem);
+  align-items: flex-start;
+}
+
+/* ----- CỘT BÊN TRÁI: FORM (60%) ----- */
+.billing-details-column {
+  flex: 1 1 60%;
+}
+
+.form-row-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-body, #374151);
+  margin-bottom: 0.5rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border, #dcdcdc);
+  border-radius: var(--border-radius-md, 8px);
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-primary, #27ae60);
+  box-shadow: var(--focus-ring-shadow, 0 0 0 3px rgba(39, 174, 96, 0.15));
+}
+
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ----- CỘT BÊN PHẢI: ĐƠN HÀNG (40%) ----- */
+.order-summary-column {
+  flex: 1 1 40%;
+  position: sticky;
+  top: 100px; /* Dính lại khi cuộn (giống sidebar) */
+}
+
+.order-summary-card {
+  border: 1px solid var(--color-border-light, #e5e7eb);
+  border-radius: var(--border-radius-xl, 16px);
+  padding: 1.5rem;
+  background: var(--color-bg-muted, #f3f4f6);
+}
+
+.order-summary-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-heading, #111827);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  color: var(--color-text-muted, #4b5563);
+  border-bottom: 1px solid var(--color-border-lighter, #f0f0f0);
+  padding-bottom: 1rem;
+}
+.summary-row:last-of-type {
+  border-bottom: none;
+}
+
+.summary-row.product-header {
+  font-weight: 600;
+  color: var(--color-text-body, #374151);
+}
+.summary-row .product-name {
+  font-size: 13px;
+}
+.summary-row .product-price {
+  font-size: 13px;
+}
+
+.summary-row.total-row {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-heading, #111827);
+}
+
+/* Phương thức thanh toán */
+.payment-methods {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--color-border-light, #e5e7eb);
+  padding-top: 1.5rem;
+}
+.payment-option {
+  margin-bottom: 1rem;
+}
+.payment-option label {
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+.payment-desc {
+  font-size: 13px;
+  color: var(--color-text-muted, #6b7280);
+  padding: 0.75rem;
+  background: #fff;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  margin-left: 1.75rem; /* Thụt vào */
+}
+
+.place-order-btn {
+  width: 100%;
+  padding: 0.85rem;
+  border: none;
+  border-radius: var(--border-radius-md, 8px);
+  background-color: var(--color-primary, #16a34a);
+  color: var(--color-text-light, white);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-short, 0.2s);
+  margin-top: 1rem;
+}
+.place-order-btn:hover {
+  background-color: var(--color-primary-dark, #15803d);
+}
+
+/* ----- RESPONSIVE ----- */
+@media (max-width: 768px) {
+  .checkout-layout {
+    flex-direction: column; /* Xếp 2 cột chồng lên nhau */
+  }
+  .order-summary-column {
+    position: static; /* Bỏ sticky */
+    width: 100%;
+  }
+  .form-row-grid {
+    grid-template-columns: 1fr; /* Chồng các input */
+    gap: 0;
+  }
+}
+/* ----- THÊM CSS MỚI CHO HÌNH ẢNH SẢN PHẨM TRONG ĐƠN HÀNG ----- */
+.summary-row.product-item-row {
+  display: flex;
+  align-items: center; /* Căn giữa dọc */
+  gap: 1rem; /* Khoảng cách giữa thông tin sản phẩm và giá */
+  margin-bottom: 1rem;
+  font-size: 14px;
+  color: var(--color-text-body, #374151);
+  border-bottom: 1px solid var(--color-border-lighter, #f0f0f0);
+  padding-bottom: 1rem;
+}
+
+.product-info-checkout {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* Khoảng cách giữa ảnh và tên */
+  flex-grow: 1; /* Cho phép giãn nở để đẩy giá sang phải */
+}
+
+.product-thumbnail {
+  width: 40px; /* Kích thước ảnh nhỏ */
+  height: 40px;
+  object-fit: cover;
+  border-radius: var(--border-radius-sm, 6px);
+  border: 1px solid var(--color-border-light, #e5e7eb);
+}
+
+.product-name {
+  font-weight: 500;
+  color: var(--color-text-body, #374151);
+  font-size: 14px; /* Điều chỉnh font size nếu cần */
+}
+
+.product-price {
+    font-weight: 500;
+    color: var(--color-text-heading, #111827);
+}
+
+/* Đảm bảo các hàng không có ảnh vẫn đúng */
+.summary-row:not(.product-item-row) {
+    display: flex; /* Đảm bảo display: flex cho các hàng khác */
+    justify-content: space-between;
+    align-items: center; /* Căn giữa dọc cho các hàng khác */
+}
+/* KẾT THÚC CSS MỚI */
+
+/* (Phần CSS còn lại của bạn giữ nguyên) */
