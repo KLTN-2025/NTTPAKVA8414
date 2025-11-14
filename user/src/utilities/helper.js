@@ -17,7 +17,7 @@ export function formatTime (dateString) {
 }
 
 export function buildImagePath (imageUrl) {
-  return imageUrl.startsWith('http') ? 
+  return imageUrl.startsWith('https') ? 
   imageUrl : 
   `http://localhost:5000${imageUrl}`
 }

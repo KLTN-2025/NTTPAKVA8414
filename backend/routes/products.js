@@ -24,4 +24,12 @@ router.get('/:id/reviews',
   reviewController.fetchSingleProductReviews
 );
 
+/**
+ * Batch fetch products based on supplied product IDs
+ * Used for frontend cart
+ */
+router.post('/bulk-fetch', 
+  productController.bulkFetchProducts
+)
+
 module.exports = router

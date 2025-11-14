@@ -93,7 +93,7 @@ ProductSchema.pre('save', async function(next) {
     remove: /[*+~.()'"!:@]/g, 
     lower: true });
   let slug = baseSlug;
-  let count = 1;
+  const count = await mongoose.models.Product.exists({ slug });
 
   while (await mongoose.models.Product.exists({ slug })) {
     slug = `${baseSlug}-${count++}`;

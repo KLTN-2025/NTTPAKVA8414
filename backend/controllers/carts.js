@@ -8,7 +8,7 @@ const MAX_CART_SIZE = 10
 
 /**
  * Validate the content inside the cart
- * Body: [{ product_id, quantity }] 
+ * Body: [{ productId, quantity }] 
  */
 exports.validateCart = async (req, res) => {
   try {
@@ -32,7 +32,7 @@ exports.validateCart = async (req, res) => {
     for (const it of items) {
       if (
         !it ||
-        !it.product_id ||
+        !it.productId ||
         typeof it.quantity !== "number" ||
         it.quantity <= 0 ||
         !Number.isInteger(it.quantity)
@@ -41,13 +41,13 @@ exports.validateCart = async (req, res) => {
           .status(400)
           .json({ success: false, message: "Invalid item format" });
       }
-      if (!mongoose.Types.ObjectId.isValid(it.product_id)) {
+      if (!mongoose.Types.ObjectId.isValid(it.productId)) {
         return res.status(400).json({
           success: false,
-          message: `Invalid product_id: ${it.product_id}`,
+          message: `Invalid productId: ${it.productId}`,
         });
       }
-      pIDs.add(String(it.product_id));
+      pIDs.add(String(it.productId));
     }
 
     const idsArray = Array.from(pIDs);
@@ -62,12 +62,12 @@ exports.validateCart = async (req, res) => {
     }
 
     const validationResults = items.map((item) => {
-      const key = String(item.product_id);
+      const key = String(item.productId);
       const p = prodMap.get(key);
       //This item no longer exists, marked as invalid
       if (!p) {
         return {
-          product_id: item.product_id,
+          productId: item.productId,
           valid: false,
           reason: "Product not found",
           exists: false,
@@ -81,7 +81,7 @@ exports.validateCart = async (req, res) => {
       //Mark an item as valid depending on current stock
       const availableStock = p.current_stock ?? 0;
       return {
-        product_id: item.product_id,
+        productId: item.productId,
         available_stock: availableStock,
         requested_quantity: item.quantity,
         valid: availableStock >= item.quantity,
@@ -122,7 +122,7 @@ exports.getCart = async (req, res) => {
 
     let cart = await Cart.findOne({ customer_id: customerId })
       .populate({
-        path: "items.product_id",
+        path: "items.productId",
         select: "name selling_price image_urls current_stock"
       })
       .lean();
@@ -139,17 +139,17 @@ exports.getCart = async (req, res) => {
     // Format response
     const formattedCart = {
       items: cart.items.map((item) => ({
-        product_id: item.product_id._id,
-        name: item.product_id.name,
+        productId: item.productId._id,
+        name: item.productId.name,
         image:
-          item.product_id.image_urls && item.product_id.image_urls.length > 0
-            ? item.product_id.image_urls[0]
+          item.productId.image_urls && item.productId.image_urls.length > 0
+            ? item.productId.image_urls[0]
             : null,
         price: item.price,
         quantity: item.quantity,
         subtotal: item.price * item.quantity,
-        in_stock: item.product_id.current_stock > 0,
-        available_stock: item.product_id.current_stock,
+        in_stock: item.productId.current_stock > 0,
+        available_stock: item.productId.current_stock,
       })),
       total_amount: cart.total_amount,
       total_items: cart.items.reduce((sum, item) => sum + item.quantity, 0),
@@ -174,18 +174,24 @@ exports.getCart = async (req, res) => {
  * Requires authentication
  *
  * Body: {
- *   guestItems: [{ product_id, quantity }],
+ *   guestItems: [{ productId, quantity }],
  *   overrideRemoteCart: Boolean (true = override server, false = use server)
  * }
  */
 exports.syncCart = async (req, res) => {
   try {
-    const { userId } = getAuth(req);
-    if (!userId) {
-      return res.status(401).json({
-        message: "Unauthenticated user",
+    //Received from Clerk auth
+    const userId = req.userId
+    const customer = await Customer.findOne({ clerkId: userId })
+      .select("_id")
+      .lean();
+    if (!customer) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Customer not found" 
       });
     }
+
     const { guestItems, overrideRemoteCart } = req.body;
 
     if (!Array.isArray(guestItems)) {
@@ -199,16 +205,6 @@ exports.syncCart = async (req, res) => {
         success: false,
         message: "Cart can't have more than 10 items at once",
       });
-    }
-
-    // Find existing cart on server
-    const customer = await Customer.findOne({ clerkId: userId })
-      .select("_id")
-      .lean();
-    if (!customer) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Customer not found" });
     }
 
     const customerId = customer._id;
@@ -227,12 +223,10 @@ exports.syncCart = async (req, res) => {
     //MAIN LOGIC
     //PATH 1: OVERRIDE THE REMOTE VERSION WITH LOCAL ONE
     if (overrideRemoteCart) {
-      cart.items = [];
-
       //Filter cart items with non-zero quantity and get their ids
       const validGuestItems = guestItems.filter((item) => item.quantity > 0);
       const localCartItemIds = validGuestItems.map((item) =>
-        String(item.product_id)
+        String(item.productId)
       );
       if (localCartItemIds.length === 0) {
         return res.status(200).json({
@@ -265,15 +259,15 @@ exports.syncCart = async (req, res) => {
       }
 
       for (const guestItem of validGuestItems) {
-        const p = availableProdMap.get(String(guestItem.product_id));
+        const p = availableProdMap.get(String(guestItem.productId));
         if (p) {
           cart.items.push({
-            product_id: p._id,
+            productId: p._id,
             quantity: Math.min(p.current_stock, guestItem.quantity),
             price: p.selling_price,
           });
         } else {
-          droppedProducts.push(guestItem.product_id);
+          droppedProducts.push(guestItem.productId);
         }
       }
 
@@ -294,7 +288,7 @@ exports.syncCart = async (req, res) => {
     //PATH 2: USE THE REMOTE VERSION
     else if (cart.items.length > 0) {
       //Get the ids. No quantity filter, because remote version ones are guaranteed to be non-zero
-      const remoteCartItemIds = cart.items.map((item) => String(item.product_id));
+      const remoteCartItemIds = cart.items.map((item) => String(item.productId));
       if (remoteCartItemIds.length === 0) {
         return res.status(200).json({
           success: true,
@@ -327,15 +321,15 @@ exports.syncCart = async (req, res) => {
 
       const updatedProdList = [];
       for (const item of cart.items) {
-        const p = availableProdMap.get(String(item.product_id));
+        const p = availableProdMap.get(String(item.productId));
         if (p) {
           updatedProdList.push({
-            product_id: p._id,
+            productId: p._id,
             quantity: Math.min(p.current_stock, item.quantity),
             price: p.selling_price,
           });
         } else {
-          droppedProducts.push(item.product_id);
+          droppedProducts.push(item.productId);
         }
       }
       cart.items = updatedProdList;

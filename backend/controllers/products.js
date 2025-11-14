@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
-const Product = require('../models/Products')
-const ProductType = require('../models/ProductTypes')
-const ProductCategory = require('../models/ProductCategories')
-const Brand = require('../models/Brands')
-const Attribute = require('../models/Attributes')
+const mongoose = require("mongoose");
+const Product = require("../models/Products");
+const ProductType = require("../models/ProductTypes");
+const ProductCategory = require("../models/ProductCategories");
+const Brand = require("../models/Brands");
+const Attribute = require("../models/Attributes");
 /**
  * Query Parameters:
  * - page: Page number (default: 1)
@@ -16,27 +16,31 @@ const Attribute = require('../models/Attributes')
  * - price_max: Maximum selling price
  * - q: Search query (product name or SKU)
  * - stock: Filter by stock status ("available" or "all")
- * - sortBy: Sort criterion 
+ * - sortBy: Sort criterion
  * - sortOrder: 'asc' or 'desc', default to 'asc'
  */
 exports.searchAndFilterProducts = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1
-    const limit = Math.min(parseInt(req.query.limit) || 20, 50)
-    const skip = (page - 1) * limit
-    
-    const filter = {}
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 50);
+    const skip = (page - 1) * limit;
+
+    const filter = {};
 
     if (req.query.category) {
-      const categorySlug = req.query.category.toLowerCase().trim()
+      const categorySlug = req.query.category.toLowerCase().trim();
       const category = await ProductCategory.findOne({
-        category_name: { $regex: new RegExp('^' + categorySlug.replace(/-/g, ' '), 'i') }
-      })
-      
+        category_name: {
+          $regex: new RegExp("^" + categorySlug.replace(/-/g, " "), "i"),
+        },
+      });
+
       if (category) {
-        const productTypes = await ProductType.find({ category_id: category._id }).select('_id')
-        const typeIds = productTypes.map(pt => pt._id)
-        filter.type_id = { $in: typeIds }
+        const productTypes = await ProductType.find({
+          category_id: category._id,
+        }).select("_id");
+        const typeIds = productTypes.map((pt) => pt._id);
+        filter.type_id = { $in: typeIds };
       } else {
         return res.status(200).json({
           success: true,
@@ -48,20 +52,20 @@ exports.searchAndFilterProducts = async (req, res) => {
             total_items: 0,
             total_pages: 0,
             has_next_page: false,
-            has_prev_page: false
-          }
-        })
+            has_prev_page: false,
+          },
+        });
       }
     }
 
     if (req.query.type) {
-      const typeSlug = req.query.type.toLowerCase().trim()
+      const typeSlug = req.query.type.toLowerCase().trim();
       const productType = await ProductType.findOne({
-        name: { $regex: new RegExp('^' + typeSlug.replace(/-/g, ' '), 'i') }
-      })
-      
+        name: { $regex: new RegExp("^" + typeSlug.replace(/-/g, " "), "i") },
+      });
+
       if (productType) {
-        filter.type_id = productType._id
+        filter.type_id = productType._id;
       } else {
         return res.status(200).json({
           success: true,
@@ -73,20 +77,20 @@ exports.searchAndFilterProducts = async (req, res) => {
             total_items: 0,
             total_pages: 0,
             has_next_page: false,
-            has_prev_page: false
-          }
-        })
+            has_prev_page: false,
+          },
+        });
       }
     }
 
     if (req.query.brand) {
-      const brandSlug = req.query.brand.toLowerCase().trim()
+      const brandSlug = req.query.brand.toLowerCase().trim();
       const brand = await Brand.findOne({
-        name: { $regex: new RegExp('^' + brandSlug.replace(/-/g, ' '), 'i') }
-      })
-      
+        name: { $regex: new RegExp("^" + brandSlug.replace(/-/g, " "), "i") },
+      });
+
       if (brand) {
-        filter.brand_id = brand._id
+        filter.brand_id = brand._id;
       } else {
         return res.status(200).json({
           success: true,
@@ -99,45 +103,45 @@ exports.searchAndFilterProducts = async (req, res) => {
             total_items: 0,
             total_pages: 0,
             has_next_page: false,
-            has_prev_page: false
-          }
-        })
+            has_prev_page: false,
+          },
+        });
       }
     }
 
     if (req.query.price_min || req.query.price_max) {
-      filter.selling_price = {}
+      filter.selling_price = {};
       if (req.query.price_min) {
-        filter.selling_price.$gte = parseFloat(req.query.price_min)
+        filter.selling_price.$gte = parseFloat(req.query.price_min);
       }
       if (req.query.price_max) {
-        filter.selling_price.$lte = parseFloat(req.query.price_max)
+        filter.selling_price.$lte = parseFloat(req.query.price_max);
       }
     }
 
-    if (req.query.stock === 'available') {
-      filter.current_stock = { $gt: 0 }
+    if (req.query.stock === "available") {
+      filter.current_stock = { $gt: 0 };
     }
 
     if (req.query.q) {
-      const searchTerm = req.query.q.trim()
-      filter.$or = [
-        { slug: { $regex: searchTerm, $options: 'i' } },
-      ]
+      const searchTerm = req.query.q.trim();
+      filter.$or = [{ slug: { $regex: searchTerm, $options: "i" } }];
     }
 
     if (req.query.attributes) {
-      const attributeSlugs = req.query.attributes.split(',').map(a => a.trim().toLowerCase())
+      const attributeSlugs = req.query.attributes
+        .split(",")
+        .map((a) => a.trim().toLowerCase());
       const attributes = await Attribute.find({
         slug: {
-          $in: attributeSlugs
-        }
-      }).select('_id')
-      
-      const attributeIds = attributes.map(a => a._id)
-      
+          $in: attributeSlugs,
+        },
+      }).select("_id");
+
+      const attributeIds = attributes.map((a) => a._id);
+
       if (attributeIds.length > 0) {
-        filter.attributes = { $all: attributeIds }
+        filter.attributes = { $all: attributeIds };
       } else {
         return res.status(200).json({
           success: true,
@@ -149,42 +153,44 @@ exports.searchAndFilterProducts = async (req, res) => {
             total_items: 0,
             total_pages: 0,
             has_next_page: false,
-            has_prev_page: false
-          }
-        })
+            has_prev_page: false,
+          },
+        });
       }
     }
 
-    let sort = {}
-    const sortOrder = (req.query.sortOrder === 'asc' ? 1 : - 1) || 1
+    let sort = {};
+    const sortOrder = (req.query.sortOrder === "asc" ? 1 : -1) || 1;
     switch (req.query.sortBy) {
-      case 'price':
-        sort.selling_price = sortOrder
-        break
-      case 'name':
-        sort.name = sortOrder
-        break
+      case "price":
+        sort.selling_price = sortOrder;
+        break;
+      case "name":
+        sort.name = sortOrder;
+        break;
     }
 
     const products = await Product.find(filter)
       .populate({
-        path: 'type_id',
-        select: 'name category_id',
+        path: "type_id",
+        select: "name category_id",
         populate: {
-          path: 'category_id',
-          select: 'category_name'
-        }
+          path: "category_id",
+          select: "category_name",
+        },
       })
-      .populate('brand_id', 'name')
-      .populate('attributes', 'description')
+      .populate("brand_id", "name")
+      .populate("attributes", "description")
       .sort(sort)
       .skip(skip)
       .limit(limit)
-      .lean()
+      .lean();
 
-    const formattedProducts = products.map(product => {
-      const formattedSize = product.size ? parseFloat(product.size.toString()) : null
-      
+    const formattedProducts = products.map((product) => {
+      const formattedSize = product.size
+        ? parseFloat(product.size.toString())
+        : null;
+
       return {
         _id: product._id,
         sku: product.SKU,
@@ -196,31 +202,42 @@ exports.searchAndFilterProducts = async (req, res) => {
         stock: product.current_stock,
         in_stock: product.current_stock > 0,
         images: product.image_urls[0] || null,
-        category: product.type_id?.category_id ? {
-          _id: product.type_id.category_id._id,
-          name: product.type_id.category_id.category_name,
-          slug: product.type_id.category_id.category_name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and')
-        } : null,
-        type: product.type_id ? {
-          _id: product.type_id._id,
-          name: product.type_id.name,
-          slug: product.type_id.name.toLowerCase().replace(/\s+/g, '-')
-        } : null,
-        brand: product.brand_id ? {
-          _id: product.brand_id._id,
-          name: product.brand_id.name,
-          slug: product.brand_id.name.toLowerCase().replace(/\s+/g, '-')
-        } : null,
-        attributes: product.attributes ? product.attributes.map(attr => ({
-          _id: attr._id,
-          name: attr.description,
-          slug: attr.description.toLowerCase().replace(/\s+/g, '-')
-        })) : [],
-      }
-    })
+        category: product.type_id?.category_id
+          ? {
+              _id: product.type_id.category_id._id,
+              name: product.type_id.category_id.category_name,
+              slug: product.type_id.category_id.category_name
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/&/g, "and"),
+            }
+          : null,
+        type: product.type_id
+          ? {
+              _id: product.type_id._id,
+              name: product.type_id.name,
+              slug: product.type_id.name.toLowerCase().replace(/\s+/g, "-"),
+            }
+          : null,
+        brand: product.brand_id
+          ? {
+              _id: product.brand_id._id,
+              name: product.brand_id.name,
+              slug: product.brand_id.name.toLowerCase().replace(/\s+/g, "-"),
+            }
+          : null,
+        attributes: product.attributes
+          ? product.attributes.map((attr) => ({
+              _id: attr._id,
+              name: attr.description,
+              slug: attr.description.toLowerCase().replace(/\s+/g, "-"),
+            }))
+          : [],
+      };
+    });
 
-    const totalItems = await Product.countDocuments(filter)
-    const totalPages = Math.ceil(totalItems / limit)
+    const totalItems = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / limit);
 
     res.status(200).json({
       success: true,
@@ -231,51 +248,49 @@ exports.searchAndFilterProducts = async (req, res) => {
         total_items: totalItems,
         total_pages: totalPages,
         has_next_page: page < totalPages,
-        has_prev_page: page > 1
+        has_prev_page: page > 1,
       },
-    })
-
+    });
   } catch (error) {
-    console.error('Error fetching products:', error)
+    console.error("Error fetching products:", error);
     res.status(500).json({
       success: false,
-      message: 'Error fetching products',
-      error: error.message
-    })
+      message: "Error fetching products",
+      error: error.message,
+    });
   }
-}
-
+};
 
 exports.getSingleProductDetails = async (req, res) => {
   try {
-    const id = req.params.id
+    const id = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: 'Invalid product id' })
+      return res.status(400).json({ message: "Invalid product id" });
     }
-    const productId = new mongoose.Types.ObjectId(id)
+    const productId = new mongoose.Types.ObjectId(id);
 
     // 1. FETCH PRODUCT WITH POPULATED FIELDS
     const product = await Product.findById(productId)
       .populate({
-        path: 'type_id',
-        select: 'name category_id',
+        path: "type_id",
+        select: "name category_id",
         populate: {
-          path: 'category_id',
-          select: 'category_name'
-        }
+          path: "category_id",
+          select: "category_name",
+        },
       })
-      .populate('brand_id', 'name')
-      .populate('attributes', 'description')
+      .populate("brand_id", "name")
+      .populate("attributes", "description")
       .lean();
 
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: 'Product not found'
+        message: "Product not found",
       });
     }
 
-    const size = product.size ? parseFloat(product.size.toString()) : null
+    const size = product.size ? parseFloat(product.size.toString()) : null;
 
     const productDetails = {
       _id: product._id,
@@ -288,37 +303,98 @@ exports.getSingleProductDetails = async (req, res) => {
       stock: product.current_stock,
       in_stock: product.current_stock > 0,
       images: product.image_urls,
-      category: product.type_id?.category_id ? {
-        _id: product.type_id.category_id._id,
-        name: product.type_id.category_id.category_name,
-      } : null,
-      
-      type: product.type_id ? {
-        _id: product.type_id._id,
-        name: product.type_id.name,
-      } : null,
-      
-      brand: product.brand_id ? {
-        _id: product.brand_id._id,
-        name: product.brand_id.name,
-      } : null,
-      
-      attributes: product.attributes ? product.attributes.map(attr => ({
-        _id: attr._id,
-        name: attr.description,
-      })) : [],
-    }
+      category: product.type_id?.category_id
+        ? {
+            _id: product.type_id.category_id._id,
+            name: product.type_id.category_id.category_name,
+          }
+        : null,
+
+      type: product.type_id
+        ? {
+            _id: product.type_id._id,
+            name: product.type_id.name,
+          }
+        : null,
+
+      brand: product.brand_id
+        ? {
+            _id: product.brand_id._id,
+            name: product.brand_id.name,
+          }
+        : null,
+
+      attributes: product.attributes
+        ? product.attributes.map((attr) => ({
+            _id: attr._id,
+            name: attr.description,
+          }))
+        : [],
+    };
 
     res.status(200).json({
       success: true,
-      data: productDetails
-    })
-
+      data: productDetails,
+    });
   } catch (error) {
-    console.error('Error fetching product detail:', error);
+    console.error("Error fetching product detail:", error);
     res.status(500).json({
-      message: 'Error fetching product detail',
-      error: error.message
-    })
+      message: "Error fetching product detail",
+      error: error.message,
+    });
   }
-}
+};
+
+exports.bulkFetchProducts = async (req, res) => {
+  try {
+    const { productIds } = req.body;
+    if (!Array.isArray(productIds)) {
+      return res.status(400).json({
+        success: false,
+        message: "product IDs must be an array",
+      });
+    }
+    if (productIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No product to refresh",
+      });
+    }
+    if (productIds.length > 10) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot request more than 10 products",
+      });
+    }
+    if (!productIds.every((id) => mongoose.Types.ObjectId.isValid(id))) {
+      return res.status(400).json({
+        success: false,
+        message: "Some product IDs are in invalid format",
+      });
+    }
+
+    const uniqueIds = [...new Set(productIds)].map(id => new mongoose.Types.ObjectId(id));
+    const products = await Product.find({ _id: { $in: uniqueIds } })
+      .select("_id name selling_price current_stock image_urls")
+      .lean();
+
+    const formattedResponse = products.map((p) => {
+      return {
+        productId: p._id,
+        name: p.name,
+        price: p.selling_price,
+        stock: p.current_stock,
+        image: p.image_urls[0],
+      };
+    });
+    return res.status(200).json({
+      success: true,
+      products: formattedResponse,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: "Error bulk fetching requested products",
+    });
+  }
+};

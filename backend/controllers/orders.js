@@ -131,15 +131,8 @@ exports.placeOrder = async (req, res) => {
  * */
 exports.getOrders = async (req, res) => {
   try {
-    const { userId } = getAuth(req);
+    const { userId } = req.userId;
     const { orderStatus, paymentStatus, dateBegin, dateEnd } = req.query;
-
-    //Search for userId from Clerk
-    if (!userId) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Authentication required" });
-    }
 
     //Match clerkId with DB user
     const customer = await Customer.findOne({ clerkId: userId })

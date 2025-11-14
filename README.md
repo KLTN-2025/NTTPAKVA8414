@@ -49,7 +49,8 @@ npm install
 ```bash
 cd backend
 cp .env.example .env
-node scripts/seedProduct.js 
+node scripts/syncUsers.js
+node scripts/seedProducts.js 
 node scripts/computeRecommendation.js
 node server.js
 ```

@@ -35,11 +35,11 @@
           >
             <div class="col-product item-details">
               <img :src="buildImagePath(item.image)" :alt="item.name" class="item-image" />
-              <span class="item-name">{{ item.name }}</span>
+              <span class="item-name">{{ formatProductName(item.name) }}</span>
             </div>
 
             <div class="col-price item-price">
-              {{ item.price }}đ
+              {{ formatPrice(item.price) }}
             </div>
 
             <div class="col-quantity item-quantity">
@@ -58,7 +58,7 @@
             </div>
 
             <div class="col-subtotal item-subtotal">
-              {{ item.price * item.quantity }}đ
+              {{ formatPrice(item.price * item.quantity) }}
             </div>
 
             <div class="col-remove">
@@ -93,16 +93,16 @@
           <h3>Cart Total</h3>
           <div class="summary-row">
             <span>Subtotal:</span>
-            <span>{{ subtotal }}đ</span>
+            <span>{{ formatPrice(subtotal) }}</span>
           </div>
           <div class="summary-row">
             <span>Shipping:</span>
-            <span>{{ shippingFee === 0 ? 'Free' : shippingFee + 'đ' }}</span>
+            <span>{{ shippingFee === 0 ? 'Free' : formatPrice(shippingFee) }}</span>
           </div>
           <hr class="summary-divider" />
           <div class="summary-row total-row">
             <span>Total:</span>
-            <span>{{ subtotal + shippingFee }}đ</span>
+            <span>{{ formatPrice(subtotal + shippingFee) }}</span>
           </div>
           <button
             @click="goToCheckout"
@@ -122,7 +122,7 @@ import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import { useCartStore } from '@/stores/cartStore'
-import { buildImagePath } from '@/utilities/helper'
+import { buildImagePath, formatPrice } from '@/utilities/helper'
 
 const cartStore = useCartStore()
 const router = useRouter()
@@ -144,6 +144,14 @@ function removeItem(productId) {
 function goToCheckout() {
   if (cartStore.items.length > 0) router.push('/checkout')
 }
+
+function formatProductName (productName) {
+  return productName.length > 25 ? `${productName.slice(0, 24)}...` : productName
+}
+
+onMounted(()=> {
+  cartStore.refetchFromServer()
+})
 </script>
 
 <style scoped src="./Cart.css"></style>
