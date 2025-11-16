@@ -3,12 +3,15 @@ const ProductCategory = require("../models/ProductCategories");
 const ProductType = require("../models/ProductTypes");
 const Brand = require("../models/Brands");
 const Attribute = require("../models/Attributes");
+const { getAuth } = require('@clerk/express')
 
 exports.verifyAdminStatus = async (req, res) => {
   try {
-    const user = req.user
-    if (!user) {
-      return res.status(401).json({ isAdmin: false, message: 'Not authenticated' });
+    const { userId } = getAuth(req)
+    if (!userId) {
+      return res.status(401).json({ 
+        isAdmin: false, 
+        message: 'Not authenticated' });
     }
     return res.status(200).json({ 
       isAdmin: true, 
@@ -22,9 +25,7 @@ exports.verifyAdminStatus = async (req, res) => {
 };
 
 
-// ============================================
 // CATEGORY CONTROLLERS
-// ============================================
 
 // Get all categories
 exports.getAllCategories = async (req, res) => {

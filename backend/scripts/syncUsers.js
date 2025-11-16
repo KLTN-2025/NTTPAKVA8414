@@ -29,7 +29,7 @@ async function syncUsers() {
           phone: clerkUser.phoneNumbers[0]?.phoneNumber || '',
           image_url: clerkUser.imageUrl || '',
           account_status: clerkUser.banned ? 'banned' : 'active',
-          role: clerkUser.privateMetadata?.role || 'customer'
+          role: clerkUser.publicMetadata?.role || 'customer'
         };
 
         if (existingUser) {

@@ -12,8 +12,8 @@ const upload = createUpload({
 
 router.post(
   "/",
-  upload.array("images", 4),
   checkAdminRole,
+  upload.array("images", 4),
   productController.createProduct
 );
 
@@ -40,8 +40,8 @@ router.get(
 
 router.put(
   "/:id",
-  upload.array("images", 4),
   checkAdminRole,
+  upload.array("images", 4),
   productController.updateProduct
 );
 

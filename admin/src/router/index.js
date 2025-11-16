@@ -141,7 +141,6 @@ router.beforeEach(async (to, from, next) => {
       })
     })
   }
- 
   if (to.meta.requireAdmin && !isSignedIn.value) {
     return next('/login')
   }
@@ -152,28 +151,4 @@ router.beforeEach(async (to, from, next) => {
   
   next()
 })
-/*
-async function checkAdminRole(token) {
-  try {
-    if (!token) {
-      return false
-    }    
-    const response = await axios.get('/api/admin/verify', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      }
-    })
-
-    if (response.status !== 200) {
-      return false
-    }
-    const data = response.data
-    console.log('Data: ' + data)
-
-    return data?.isAdmin === true
-  } catch (error) {
-    console.error('Error checking admin role:', error)
-    return false
-  }
-}*/
 export default router

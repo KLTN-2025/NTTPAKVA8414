@@ -1,27 +1,33 @@
+//controllers/orders.js
 const mongoose = require("mongoose");
 const CustomerOrder = require("../models/CustomerOrders");
 const CustomerOrderItem = require("../models/CustomerOrderItems");
 const Product = require("../models/Products");
 const Customer = require("../models/Customers");
-const { getAuth } = require("@clerk/express");
-
+const { getAuth } = require('@clerk/express')
 const MAX_CART_SIZE = 10;
 
 /**
+ * POST /api/orders
  * Body:
  *  { items: [{ product_id, quantity }],
- *  shippingDetails: { shipping_address, shipping_note, payment_method } }
+ *  shippingDetails: { 
+ *    recipient_name, recipient_email, recipient_phone,
+ *    shipping_address, shipping_note, payment_method } 
+ *  }
+ * }
  */
 exports.placeOrder = async (req, res) => {
   try {
     /* Optional auth */
     let customer_id = null;
-    const { userId } = getAuth(req);
+    const { userId } = getAuth(req)
     if (userId) {
       const customer = await Customer.findOne({ clerkId: userId })
         .select("_id")
         .lean();
-      if (customer) customer_id = new mongoose.Types.ObjectId(customer._id);
+      if (customer) 
+        customer_id = new mongoose.Types.ObjectId(customer._id);
       else
         return res.status(404).json({
           success: false,
@@ -40,7 +46,7 @@ exports.placeOrder = async (req, res) => {
     if (items.length > MAX_CART_SIZE) {
       return res.status(400).json({
         success: false,
-        message: `Cart is too large (${items.length}/${MAX_CART_SIZE} items)`,
+        message: `Cart can\'t have more than ${MAX_CART_SIZE} items`,
       });
     }
 
@@ -87,8 +93,11 @@ exports.placeOrder = async (req, res) => {
     // Create order
     const newOrder = await CustomerOrder.create({
       customer_id: customer_id,
+      recipient_name: shippingDetails.recipient_name,
+      recipient_email: shippingDetails.recipient_email || '',
+      recipient_phone: shippingDetails.recipient_phone,
       payment_method:
-        shippingDetails.payment_method === "bank" ? "transfer" : "cod",
+        shippingDetails.payment_method === "transfer" ? "transfer" : "cod",
       shipping_address: shippingDetails.shipping_address,
       shipping_note: shippingDetails.shipping_note || "",
       total_amount: total,
@@ -125,23 +134,29 @@ exports.placeOrder = async (req, res) => {
 };
 
 /**
- * Get all orders made by a specific user;
- * Body: { orderStatus, paymentStatus, dateBegin, dateEnd, page, limit };
+ * GET /api/orders
+ * Get all orders made by a specific user with product preview
+ * Query params: { order_status, payment_status, dateBegin, dateEnd, page, limit }
  * Requires auth
- * */
+ * Returns: {
+ *    success: true | false,
+ *    data: list of Orders with first product info and item count,
+ *    pagination: { currentPage, perPage, totalItems, totalPages, hasNextPage, hasPrevPage }
+ * }
+ */
 exports.getOrders = async (req, res) => {
   try {
-    const { userId } = req.userId;
-    const { orderStatus, paymentStatus, dateBegin, dateEnd } = req.query;
+    const userId = req.userId;
+    const { order_status, payment_status, dateBegin, dateEnd } = req.query;
 
-    //Match clerkId with DB user
+    // Match clerkId with DB user
     const customer = await Customer.findOne({ clerkId: userId })
       .select("_id")
       .lean();
     if (!customer)
       return res.status(404).json({ success: false, message: "Invalid user" });
 
-    //Valid statuses to test against
+    // Valid statuses to test against
     const validOrderStatus = [
       "pending",
       "confirmed",
@@ -151,16 +166,16 @@ exports.getOrders = async (req, res) => {
     ];
     const validPaymentStatus = ["pending", "paid", "refunded", "failed"];
 
-    //Building filters
+    // Building filters
     const filters = {};
     filters.customer_id = customer._id;
 
-    if (orderStatus && validOrderStatus.includes(orderStatus)){
-      filters.order_status = orderStatus;
+    if (order_status && validOrderStatus.includes(order_status)) {
+      filters.order_status = order_status;
     }
 
-    if (paymentStatus && validPaymentStatus.includes(paymentStatus)){
-      filters.payment_status = paymentStatus;
+    if (payment_status && validPaymentStatus.includes(payment_status)) {
+      filters.payment_status = payment_status;
     }
 
     if (dateBegin || dateEnd) {
@@ -173,25 +188,50 @@ exports.getOrders = async (req, res) => {
       }
     }
 
-    //Pagination
+    // Pagination
     const page = parseInt(req.query.page) || 1;
     const limit = Math.min(parseInt(req.query.limit) || 5, 10);
     const skip = (page - 1) * limit;
 
-    //Perform query
+    // Perform query
     const foundOrders = await CustomerOrder.find(filters)
       .populate("customer_id", "name")
+      .sort({ order_date: -1 }) // Most recent first
       .skip(skip)
       .limit(limit)
       .lean();
 
-    //For frontend pagination purposes
+    // For each order, get item count and first product info
+    const ordersWithProducts = await Promise.all(
+      foundOrders.map(async (order) => {
+        // Get all items for this order
+        const orderItems = await CustomerOrderItem.find({ order_id: order._id })
+          .populate("product_id", "name image_urls")
+          .lean();
+
+        // Get first product for preview
+        const firstProduct = orderItems.length > 0 ? orderItems[0].product_id : null;
+        
+        return {
+          ...order,
+          itemCount: orderItems.length,
+          previewProduct: firstProduct ? {
+            name: firstProduct.name,
+            image: firstProduct.image_urls && firstProduct.image_urls.length > 0 
+              ? firstProduct.image_urls[0] 
+              : null
+          } : null
+        };
+      })
+    );
+
+    // For frontend pagination purposes
     const totalItems = await CustomerOrder.countDocuments(filters);
     const totalPages = Math.ceil(totalItems / limit);
 
     return res.status(200).json({
       success: true,
-      data: foundOrders,
+      data: ordersWithProducts,
       pagination: {
         currentPage: page,
         perPage: limit,
@@ -202,37 +242,25 @@ exports.getOrders = async (req, res) => {
       },
     });
   } catch (err) {
+    console.error('getOrders error:', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
 /**
- * Get the item list in a specific order
- * Requires auth
- * Requires the client's _id to match the order's customer_id, otherwise block access.
+ * GET /api/orders/:id
+ * Get the complete order details including all order fields and item list
+ * Returns: {
+ *  success: true | false,
+ *  order: { full order object with all fields },
+ *  items: [{
+ *    order_id, product_id (populated), price, quantity, discount, subtotal
+ *  }]
+ * }
  */
 exports.getOrderDetails = async (req, res) => {
   try {
-    const { userId } = getAuth(req);
-
-    //Check authentication
-    if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Authentication required" 
-      });
-    }
-
-    //Validate order id format
-    const reqOrderId = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(reqOrderId)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid order ID format'
-      });
-    }
-
-    //Get customer ID
+    const userId = req.userId;
     const customer = await Customer.findOne({ clerkId: userId })
       .select("_id")
       .lean();
@@ -244,12 +272,20 @@ exports.getOrderDetails = async (req, res) => {
       });
     }
 
-    //Find order
+    // Validate order id format
+    const reqOrderId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(reqOrderId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid order ID format'
+      });
+    }
+
+    // Find order
     const order = await CustomerOrder.findOne({
       _id: reqOrderId,
       customer_id: customer._id
     })
-    .select('total_amount')
     .lean();
 
     if (!order) {
@@ -259,13 +295,13 @@ exports.getOrderDetails = async (req, res) => {
       });
     }
 
-    //Get order items
+    // Get order items with full product details
     const itemList = await CustomerOrderItem.find({ order_id: reqOrderId })
       .select('-createdAt -updatedAt -__v')
-      .populate('product_id', 'name')
+      .populate('product_id', 'name image_urls SKU')
       .lean();
 
-    //Add a subtotal field to each item in the list
+    // Add subtotal field to each item
     const formattedResult = itemList.map(item => ({
       ...item,
       subtotal: item.price * item.quantity * (1 - item.discount / 100)
@@ -273,11 +309,12 @@ exports.getOrderDetails = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      items: formattedResult,
-      total: order.total_amount
+      order: order,  // Return complete order object
+      items: formattedResult
     });
 
   } catch (err) {
+    console.error('getOrderDetails error:', err);
     return res.status(500).json({ 
       success: false, 
       message: "Server error occurred" 
@@ -287,26 +324,25 @@ exports.getOrderDetails = async (req, res) => {
 
 
 /**
+ * PUT /api/orders/:id/cancel
  * Cancel an order;
  * Requires auth;
  * Only allows cancellation if order status is 'pending' or 'confirmed';
- * Restores product stock quantities & updates statuses appropriately.
  */
 exports.cancelOrder = async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
-    const { userId } = getAuth(req);
-
-    //Check authentication
-    if (!userId) {
-      return res.status(401).json({ 
+    const userId = req.userId;
+    const customer = await Customer.findOne({ clerkId: userId })
+      .select("_id")
+      .lean()
+    
+    if (!customer) {
+      return res.status(404).json({ 
         success: false, 
-        message: "Authentication required" 
+        message: "User not found" 
       });
     }
-
+    
     //Validate ObjectId format
     const reqOrderId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(reqOrderId)) {
@@ -316,39 +352,22 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    //Get customer ID
-    const customer = await Customer.findOne({ clerkId: userId })
-      .select("_id")
-      .lean()
-      .session(session);
-    
-    if (!customer) {
-      await session.abortTransaction();
-      return res.status(404).json({ 
-        success: false, 
-        message: "User not found" 
-      });
-    }
-
     //Find order with authorization and status check
     const order = await CustomerOrder.findOne({
       _id: reqOrderId,
       customer_id: customer._id
     })
     .select('order_status payment_status')
-    .session(session);
 
     if (!order) {
-      await session.abortTransaction();
       return res.status(404).json({ 
         success: false, 
-        message: "Order not found or unauthorized" 
+        message: "Order not found" 
       });
     }
 
     //Check if order can be cancelled
     if (!['pending', 'confirmed'].includes(order.order_status)) {
-      await session.abortTransaction();
       return res.status(400).json({
         success: false,
         message: `Cannot cancel order with status '${order.order_status}'`
@@ -358,18 +377,16 @@ exports.cancelOrder = async (req, res) => {
     //Get order items 
     const orderItems = await CustomerOrderItem.find({ order_id: reqOrderId })
       .select('product_id quantity')
-      .session(session);
 
     //Restore stock for each product
     for (const item of orderItems) {
       const updateResult = await Product.findByIdAndUpdate(
         item.product_id,
         { $inc: { current_stock: item.quantity } },
-        { session, new: true }
+        { new: true }
       );
 
       if (!updateResult) {
-        await session.abortTransaction();
         return res.status(404).json({
           success: false,
           message: `Product not found: ${item.product_id}`
@@ -388,10 +405,7 @@ exports.cancelOrder = async (req, res) => {
     //Update order status
     order.order_status = 'cancelled';
     order.payment_status = newPaymentStatus;
-    await order.save({ session });
-
-    //Commit transaction
-    await session.commitTransaction();
+    await order.save();
 
     return res.status(200).json({
       success: true,
@@ -404,13 +418,10 @@ exports.cancelOrder = async (req, res) => {
     });
 
   } catch (err) {
-    await session.abortTransaction();
     console.error('cancelOrder error:', err);
     return res.status(500).json({ 
       success: false, 
       message: "Server error occurred" 
     });
-  } finally {
-    session.endSession();
   }
 };

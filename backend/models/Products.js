@@ -69,7 +69,7 @@ const ProductSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-//Slugify
+//Slugify (IGNORE THIS)
 ProductSchema.pre('insertMany', async (next, docs) => {
   try {
     docs.forEach(doc => {
@@ -103,7 +103,7 @@ ProductSchema.pre('save', async function(next) {
   next();
 });
 
-
+//Indexing
 ProductSchema.index({ type_id: 1, name: 1 }, { unique: true });
 ProductSchema.index({ slug: 1 }, { unique: true });
 

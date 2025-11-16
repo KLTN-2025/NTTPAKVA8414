@@ -21,3 +21,7 @@ export function buildImagePath (imageUrl) {
   imageUrl : 
   `http://localhost:5000${imageUrl}`
 }
+
+export function removeExtraSpaces (strToFormat) {
+  return strToFormat.trim().replace(/\s+/g, ' ')
+}
