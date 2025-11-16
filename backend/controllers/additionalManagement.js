@@ -4,6 +4,7 @@ const ProductType = require("../models/ProductTypes");
 const Brand = require("../models/Brands");
 const Attribute = require("../models/Attributes");
 const { getAuth } = require('@clerk/express')
+const { redis } = require('../config/redis')
 
 exports.verifyAdminStatus = async (req, res) => {
   try {
@@ -13,13 +14,14 @@ exports.verifyAdminStatus = async (req, res) => {
         isAdmin: false, 
         message: 'Not authenticated' });
     }
+    //Set it in the cache
+    await redis.sAdd("adminlist", userId)
     return res.status(200).json({ 
       isAdmin: true, 
       userId: user.id,
       });
   } catch (err) {
     console.error('verifyAdminStatus error:', err.stack || err);
-    // safe debug payload for dev only
     return res.status(500).json({ isAdmin: false, error: String(err.message || err) });
   }
 };

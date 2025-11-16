@@ -71,12 +71,6 @@ const routes = [
         meta: { requireAdmin: true, title: 'Order Management' }
       },
       {
-        path: 'orders/new',
-        name: 'admin-order-new',
-        component: OrderForm,
-        meta: { requireAdmin: true, title: 'New Order' }
-      },
-      {
         path: 'orders/edit/:id',
         name: 'admin-order-edit',
         component: OrderForm,
@@ -130,7 +124,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const { isLoaded, isSignedIn, getToken } = useAuth()
+  const { isLoaded, isSignedIn } = useAuth()
   if (!isLoaded.value) {
     await new Promise(resolve => {
       const unwatch = watch(isLoaded, (loaded) => {

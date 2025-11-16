@@ -18,7 +18,7 @@ router.post(
 );
 
 router.get(
-  "/",
+  "/", checkAdminRole,
   productController.getAllProducts
 );
 
@@ -30,11 +30,13 @@ router.delete(
 
 router.get(
   "/:id",
+  checkAdminRole,
   productController.getProductById
 );
 
 router.get(
   "/slug/:slug",
+  checkAdminRole,
   productController.getProductBySlug
 );
 

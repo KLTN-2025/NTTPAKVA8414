@@ -1,181 +1,204 @@
+<!--views/OrderList.vue-->
 <template>
   <div class="order-list-page">
     
+    <!-- HEADER WITH SEARCH AND ACTIONS -->
     <div class="list-header">
       <div class="search-bar">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search by Order ID, Customer name..." />
+        <input 
+          type="text" 
+          placeholder="Search by Order ID, Customer name..." 
+          v-model="searchQuery"
+          @input="debounceSearch"
+        />
       </div>
       
       <div class="header-actions">
-        <button 
-          v-if="selectedOrders.length > 0" 
-          class="btn btn-danger-outline"
-          @click="openBulkDeleteModal"
-        >
-          <i class="fas fa-trash-alt"></i>
-          <span>Delete Selected ({{ selectedOrders.length }})</span>
-        </button>
-        
         <button class="btn btn-secondary" @click="isFilterVisible = true">
           <i class="fas fa-filter"></i>
           <span>Filter</span>
         </button>
-        <button class="btn btn-secondary" @click="exportToCSV">
+        <button class="btn btn-secondary" @click="exportOrders" :disabled="exporting">
           <i class="fas fa-file-export"></i>
-          <span>Export</span>
+          <span>{{ exporting ? 'Exporting...' : 'Export' }}</span>
         </button>
-        <router-link to="/orders/new" class="btn btn-primary">
-          <i class="fas fa-plus"></i>
-          <span>New Order</span>
-        </router-link>
       </div>
     </div>
 
+    <!-- STATUS TABS -->
     <nav class="status-tabs">
       <button 
-        v-for="status in statuses" 
-        :key="status.slug"
-        :class="['tab-btn', { 'active': activeTab === status.slug }]"
-        @click="activeTab = status.slug"
+        v-for="tab in statusTabs" 
+        :key="tab.value"
+        :class="['tab-btn', { 'active': activeTab === tab.value }]"
+        @click="changeTab(tab.value)"
       >
-        {{ status.name }} ({{ status.count }})
+        {{ tab.label }}
       </button>
     </nav>
 
-    <div class="table-container">
+    <!-- LOADING STATE -->
+    <div v-if="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading orders...</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div v-else-if="error" class="error-container">
+      <p>{{ error }}</p>
+      <button @click="fetchOrders" class="btn btn-secondary">Try Again</button>
+    </div>
+
+    <!-- ORDERS TABLE -->
+    <div v-else class="table-container">
       <table class="order-table">
         <thead>
           <tr>
-            <th>
-              <input 
-                type="checkbox" 
-                v-model="selectAllModel" 
-                :indeterminate="isIndeterminate" 
-              />
+            <th @click="handleSort('_id')" class="sortable">
+              Orders <i :class="getSortIcon('_id')"></i>
             </th>
-            <th @click="handleSort('id')" class="sortable">
-              Orders <i :class="getSortIcon('id')"></i>
+            <th @click="handleSort('recipient_name')" class="sortable">
+              Customer <i :class="getSortIcon('recipient_name')"></i>
             </th>
-            <th @click="handleSort('customer')" class="sortable">
-              Customer <i :class="getSortIcon('customer')"></i>
+            <th @click="handleSort('total_amount')" class="sortable">
+              Total <i :class="getSortIcon('total_amount')"></i>
             </th>
-            <th @click="handleSort('total')" class="sortable">
-              Total <i :class="getSortIcon('total')"></i>
+            <th @click="handleSort('order_date')" class="sortable">
+              Date <i :class="getSortIcon('order_date')"></i>
             </th>
-            <th @click="handleSort('date')" class="sortable">
-              Date <i :class="getSortIcon('date')"></i>
-            </th>
-            <th @click="handleSort('payment')" class="sortable">
-              Payment <i :class="getSortIcon('payment')"></i>
-            </th>
-            <th @click="handleSort('status')" class="sortable">
-              Status <i :class="getSortIcon('status')"></i>
-            </th>
+            <th>Payment</th>
+            <th>Status</th>
             <th class="action-header">Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="order in sortedOrders" :key="order.id">
-            <td>
-              <input type="checkbox" v-model="selectedOrders" :value="order.id" />
-            </td>
+          <tr v-for="order in orders" :key="order._id">
             <td>
               <div class="product-cell">
-                <img :src="order.image" :alt="order.productName" />
+                <img 
+                  :src="buildImagePath(order.previewProduct.image)" 
+                  :alt="order.previewProduct?.name || 'Order'"
+                />
                 <div class="product-info">
-                  <span class="order-id">#{{ order.id }}</span>
-                  <span class="product-name">{{ order.productName }}</span>
+                  <p style="text-align: left;" class="order-id">#{{ formatOrderId(order._id) }}</p>
+                  <span style="text-align: left;" class="product-name">
+                    {{ order.previewProduct?.name || 'Order' }}
+                    <span v-if="order.itemCount > 1">({{ order.itemCount }} items)</span>
+                  </span>
                 </div>
               </div>
             </td>
-            <td>{{ order.customer }}</td>
-            <td>{{ order.total }}</td>
+            <td>{{ order.recipient_name }}</td>
+            <td>{{ formatPrice(order.total_amount) }}</td>
             <td>
               <div class="date-cell">
-                <span>{{ order.date }}</span>
-                <span>{{ order.time }}</span>
+                <span>{{ formatDate(order.order_date) }}</span>
+                <span>{{ formatTime(order.order_date) }}</span>
               </div>
             </td>
             <td>
               <span 
                 class="status-badge" 
-                :class="order.payment === 'Paid' ? 'paid' : 'unpaid'"
+                :class="getPaymentStatusClass(order.payment_status)"
               >
-                {{ order.payment }}
+                {{ formatStatus(order.payment_status) }}
               </span>
             </td>
             <td>
               <span 
                 class="status-badge" 
-                :class="getStatusClass(order.status)"
+                :class="getOrderStatusClass(order.order_status)"
               >
-                {{ order.status }}
+                {{ formatStatus(order.order_status) }}
               </span>
             </td>
             <td>
               <div class="action-buttons">
-                <router-link :to="'/orders/view/' + order.id" class="action-btn">
+                <router-link :to="'/admin/orders/view/' + order._id" class="action-btn">
                   <i class="fas fa-eye"></i>
                 </router-link>
-                <router-link :to="'/orders/edit/' + order.id" class="action-btn">
+                <router-link :to="'/admin/orders/edit/' + order._id" class="action-btn">
                   <i class="fas fa-pencil-alt"></i>
                 </router-link>
                 <button 
                   class="action-btn btn-delete"
-                  @click="openSingleDeleteModal(order.id, order.customer)"
+                  @click="openDeleteModal(order._id, order.recipient_name)"
+                  :disabled="!canDelete(order.order_status)"
                 >
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
             </td>
           </tr>
+
+          <tr v-if="orders.length === 0">
+            <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+              No orders found
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="pagination-footer">
-      <span>1 - 8 of 441 Orders</span>
+    <!-- PAGINATION -->
+    <div v-if="!loading && !error && pagination.totalPages > 0" class="pagination-footer">
+      <span>
+        {{ (pagination.currentPage - 1) * pagination.perPage + 1 }} - 
+        {{ Math.min(pagination.currentPage * pagination.perPage, pagination.totalItems) }} 
+        of {{ pagination.totalItems }} Orders
+      </span>
       <div class="page-controls">
         <span>The page on</span>
-        <select>
-          <option value="1">1</option>
+        <select v-model="pagination.currentPage" @change="fetchOrders">
+          <option v-for="page in pagination.totalPages" :key="page" :value="page">
+            {{ page }}
+          </option>
         </select>
-        <button><i class="fas fa-chevron-left"></i></button>
-        <button><i class="fas fa-chevron-right"></i></button>
+        <button 
+          @click="goToPage(pagination.currentPage - 1)"
+          :disabled="!pagination.hasPrevPage"
+        >
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button 
+          @click="goToPage(pagination.currentPage + 1)"
+          :disabled="!pagination.hasNextPage"
+        >
+          <i class="fas fa-chevron-right"></i>
+        </button>
       </div>
     </div>
 
+    <!-- DELETE CONFIRMATION MODAL -->
     <div v-if="isDeleteModalVisible" class="modal-overlay" @click.self="closeDeleteModal">
       <div class="modal-card">
         <div class="modal-header">
           <i class="fas fa-exclamation-triangle warning-icon"></i>
-          <h3>{{ isBulkDelete ? 'Delete Orders' : 'Delete Order' }}</h3>
+          <h3>Delete Order</h3>
           <button @click="closeDeleteModal" class="close-btn">&times;</button>
         </div>
         <div class="modal-body">
-          <p v-if="isBulkDelete">
-            Are you sure you want to delete the 
-            <strong>{{ selectedOrders.length }} selected orders</strong>?
-            This action cannot be undone.
+          <p>
+            Are you sure you want to delete order
+            <strong>#{{ formatOrderId(orderToDelete.id) }} (Customer: {{ orderToDelete.name }})</strong>?
           </p>
-          <p v-else>
-            Are you sure you want to delete the order
-            <strong>#{{ orderToDeleteId }} (Customer: {{ orderToDeleteName }})</strong>?
-            This action cannot be undone.
+          <p style="margin-top: 1rem; color: var(--text-light);">
+            This will restore product stock and set the order status to cancelled.
           </p>
         </div>
         <div class="modal-footer">
           <button @click="closeDeleteModal" class="btn btn-secondary">
             Cancel
           </button>
-          <button @click="confirmDelete" class="btn btn-danger">
-            Delete
+          <button @click="confirmDelete" class="btn btn-danger" :disabled="deleting">
+            {{ deleting ? 'Deleting...' : 'Delete' }}
           </button>
         </div>
       </div>
     </div>
     
+    <!-- FILTER PANEL -->
     <Teleport to="body">
       <div 
         class="filter-panel-overlay" 
@@ -190,33 +213,53 @@
           <div class="filter-body">
             <div class="filter-group">
               <label>Payment Status</label>
-              <select>
+              <select v-model="filters.payment_status">
                 <option value="">All</option>
-                <option value="Paid">Paid</option>
-                <option value="Unpaid">Unpaid</option>
+                <option value="pending">Pending</option>
+                <option value="paid">Paid</option>
+                <option value="refunded">Refunded</option>
+                <option value="failed">Failed</option>
               </select>
             </div>
             <div class="filter-group">
               <label>Order Status</label>
-              <select>
+              <select v-model="filters.order_status">
                 <option value="">All</option>
-                <option value="Shipping">Shipping</option>
-                <option value="Completed">Completed</option>
-                <option value="Cancelled">Cancelled</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
               </select>
             </div>
-             <div class="filter-group">
+            <div class="filter-group">
               <label>Order Date</label>
               <div class="date-inputs">
-                <input type="date" placeholder="Start Date" />
+                <input type="date" v-model="filters.dateBegin" />
                 <span>-</span>
-                <input type="date" placeholder="End Date" />
+                <input type="date" v-model="filters.dateEnd" />
+              </div>
+            </div>
+            <div class="filter-group">
+              <label>Price Range</label>
+              <div class="price-inputs">
+                <input 
+                  type="number" 
+                  v-model="filters.priceMin" 
+                  placeholder="Min"
+                />
+                <span>-</span>
+                <input 
+                  type="number" 
+                  v-model="filters.priceMax" 
+                  placeholder="Max"
+                />
               </div>
             </div>
           </div>
           <div class="filter-footer">
-            <button class="btn btn-secondary" @click="isFilterVisible = false">Cancel</button>
-            <button class="btn btn-primary">Apply Filters</button>
+            <button class="btn btn-secondary" @click="clearFilters">Clear</button>
+            <button class="btn btn-primary" @click="applyFilters">Apply Filters</button>
           </div>
         </div>
       </div>
@@ -226,163 +269,323 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { useAuth } from '@clerk/vue'
+const { getToken } = useAuth()
+import { useToast } from 'vue-toastification'
+import { formatDate, formatPrice, formatTime, buildImagePath } from '@/utilities/helper'
+const toast = useToast()
+const router = useRouter()
 
-// --- DỮ LIỆU GIẢ LẬP MỚI CHO HEALTHYCRAVE ---
-const statuses = ref([
-  { name: 'All Orders', count: 441, slug: 'all' },
-  { name: 'Shipping', count: 100, slug: 'shipping' },
-  { name: 'Completed', count: 300, slug: 'completed' },
-  { name: 'Cancelled', count: 41, slug: 'cancel' },
-]);
-const activeTab = ref('all');
+// State
+const orders = ref([])
+const loading = ref(false)
+const error = ref(null)
+const exporting = ref(false)
+const deleting = ref(false)
+const searchQuery = ref('')
+const activeTab = ref('all')
 
-// Hàm format tiền tệ VNĐ
-const formatter = new Intl.NumberFormat('vi-VN', {
-  style: 'currency',
-  currency: 'VND',
-});
+// Filters
+const filters = reactive({
+  order_status: '',
+  payment_status: '',
+  dateBegin: '',
+  dateEnd: '',
+  priceMin: '',
+  priceMax: ''
+})
 
-const orders = ref([
-  { id: 'HC1022', productName: 'Bông Cải Xanh, Ức Gà,... (3 items)', image: 'https://picsum.photos/300/27ae60/ffffff?text=V', customer: 'Trần Văn An', total: formatter.format(250000), date: '11/11/25', time: 'at 8:30 AM', payment: 'Paid', status: 'Shipping', price: 250000 },
-  { id: 'HC1021', productName: 'Bánh Mì Keto (2 items)', image: 'https://picsum.photos/300/e67e22/ffffff?text=B', customer: 'Nguyễn Thị Bích', total: formatter.format(120000), date: '11/11/25', time: 'at 8:00 AM', payment: 'Unpaid', status: 'Cancelled', price: 120000 },
-  { id: 'HC1020', productName: 'Sữa Hạnh Nhân (1 item)', image: 'https://picsum.photos/300/3498db/ffffff?text=D', customer: 'Leslie Alexander', total: formatter.format(85000), date: '11/10/25', time: 'at 5:00 PM', payment: 'Paid', status: 'Completed', price: 85000 },
-  { id: 'HC1019', productName: 'Set ăn kiêng 1 tuần (5 items)', image: 'https://picsum.photos/300/f1c40f/ffffff?text=M', customer: 'Phạm Hùng', total: formatter.format(550000), date: '11/10/25', time: 'at 4:00 PM', payment: 'Paid', status: 'Shipping', price: 550000 },
-  { id: 'HC1018', productName: 'Quả Bơ, Hạt Chia (2 items)', image: 'https://picsum.photos/300/1abc9c/ffffff?text=F', customer: 'Guy Hawkins', total: formatter.format(310000), date: '11/09/25', time: 'at 2:00 PM', payment: 'Unpaid', status: 'Cancelled', price: 310000 },
-  { id: 'HC1017', productName: 'Cải Bó Xôi (1 item)', image: 'https://picsum.photos/300/2ecc71/ffffff?text=V', customer: 'Lê Thị Lanh', total: formatter.format(75000), date: '11/09/25', time: 'at 1:00 PM', payment: 'Paid', status: 'Completed', price: 75000 },
-  { id: 'HC1016', productName: 'Hạt Chia, Kombucha (2 items)', image: 'https://picsum.photos/300/9b59b6/ffffff?text=S', customer: 'Jane Cooper', total: formatter.format(190000), date: '11/08/25', time: 'at 3:00 PM', payment: 'Paid', status: 'Completed', price: 190000 },
-]);
+// Sorting
+const sortBy = ref('order_date')
+const sortOrder = ref('desc')
 
-// === LOGIC "SELECT ALL" ===
-const selectedOrders = ref([]);
-const isIndeterminate = computed(() => 
-  selectedOrders.value.length > 0 && 
-  selectedOrders.value.length < orders.value.length
-);
-const selectAllModel = computed({
-  get() {
-    return orders.value.length > 0 && 
-           selectedOrders.value.length === orders.value.length;
-  },
-  set(value) {
-    if (value) {
-      selectedOrders.value = orders.value.map(o => o.id);
-    } else {
-      selectedOrders.value = [];
+// Pagination
+const pagination = reactive({
+  currentPage: 1,
+  perPage: 10,
+  totalItems: 0,
+  totalPages: 0,
+  hasNextPage: false,
+  hasPrevPage: false
+})
+
+// Status tabs
+const statusTabs = ref([
+  { label: 'All Orders', value: 'all' },
+  { label: 'Pending', value: 'pending' },
+  { label: 'Confirmed', value: 'confirmed' },
+  { label: 'Shipping', value: 'shipped' },
+  { label: 'Completed', value: 'delivered' },
+  { label: 'Cancelled', value: 'cancelled' }
+])
+
+// Delete modal
+const isDeleteModalVisible = ref(false)
+const orderToDelete = reactive({ id: null, name: '' })
+
+// Filter panel
+const isFilterVisible = ref(false)
+
+
+// Debounce timer
+let searchTimeout = null
+
+// Fetch orders from API
+async function fetchOrders() {
+  loading.value = true
+  error.value = null
+
+  try {
+    const params = {
+      page: pagination.currentPage,
+      limit: pagination.perPage,
+      sortBy: sortBy.value,
+      sortOrder: sortOrder.value
     }
-  }
-});
 
-// === LOGIC SẮP XẾP (SORTING) ===
-const sortKey = ref('date'); 
-const sortDirection = ref('desc'); 
-function getSortIcon(key) {
-  if (sortKey.value !== key) { return 'fas fa-sort'; }
-  if (sortDirection.value === 'asc') { return 'fas fa-sort-up active-sort'; }
-  return 'fas fa-sort-down active-sort';
-}
-function handleSort(key) {
-  if (sortKey.value === key) {
-    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
-  } else {
-    sortKey.value = key;
-    sortDirection.value = 'asc'; 
-  }
-}
-const sortedOrders = computed(() => {
-  const key = sortKey.value;
-  const direction = sortDirection.value === 'asc' ? 1 : -1;
-  return [...orders.value].sort((a, b) => {
-    let valA = a[key]; let valB = b[key];
+    // Add search
+    if (searchQuery.value) params.search = searchQuery.value
+
+    // Add filters
+    if (activeTab.value !== 'all') {
+      params.order_status = activeTab.value
+    } else if (filters.order_status) {
+      params.order_status = filters.order_status
+    }
     
-    if (key === 'total') {
-      valA = a['price']; // Dùng trường 'price' (số)
-      valB = b['price'];
-    } else if (key === 'date') {
-      valA = new Date(valA);
-      valB = new Date(valB);
-    } else if (typeof valA === 'string') {
-      valA = valA.toLowerCase();
-      valB = valB.toLowerCase();
+    if (filters.payment_status) params.payment_status = filters.payment_status
+    if (filters.dateBegin) params.dateBegin = filters.dateBegin
+    if (filters.dateEnd) params.dateEnd = filters.dateEnd
+    if (filters.priceMin) params.priceMin = filters.priceMin
+    if (filters.priceMax) params.priceMax = filters.priceMax
+
+    const token = await getToken.value() //CORRECT CALL AS REQUIRED BY DOCS
+    const response = await axios.get('/api/admin/orders', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      params: params,
+      withCredentials: true
+    })
+
+    if (response.data.success) {
+      orders.value = response.data.data
+      Object.assign(pagination, response.data.pagination)
+    
+    } else {
+      throw new Error(response.data.message || 'Failed to fetch orders')
     }
 
-    if (valA < valB) return -1 * direction;
-    if (valA > valB) return 1 * direction;
-    return 0;
-  });
-});
-
-// === LOGIC MODAL XÓA ===
-const isDeleteModalVisible = ref(false);
-const orderToDeleteId = ref(null);
-const orderToDeleteName = ref('');
-const isBulkDelete = ref(false); 
-
-function openSingleDeleteModal(id, customerName) {
-  isBulkDelete.value = false;
-  orderToDeleteId.value = id;
-  orderToDeleteName.value = customerName; // Lấy tên khách hàng
-  isDeleteModalVisible.value = true;
-}
-function openBulkDeleteModal() {
-  isBulkDelete.value = true;
-  isDeleteModalVisible.value = true;
-}
-function closeDeleteModal() {
-  isDeleteModalVisible.value = false;
-  isBulkDelete.value = false;
-  orderToDeleteId.value = null;
-  orderToDeleteName.value = '';
-}
-function confirmDelete() {
-  if (isBulkDelete.value) {
-    orders.value = orders.value.filter(
-      (order) => !selectedOrders.value.includes(order.id)
-    );
-    selectedOrders.value = [];
-  } else {
-    orders.value = orders.value.filter(
-      (order) => order.id !== orderToDeleteId.value
-    );
+  } catch (err) {
+    toast.error('Error fetching orders:')
+    if (err.response) {
+      error.value = err.response.data.message || 'Failed to load orders'
+    } else if (err.request) {
+      error.value = 'Network error. Please check your connection.'
+    } else {
+      error.value = err.message || 'Failed to load orders'
+    }
+  } finally {
+    loading.value = false
   }
-  closeDeleteModal();
 }
 
-// === LOGIC FILTER PANEL ===
-const isFilterVisible = ref(false);
 
-// === LOGIC EXPORT ===
-function exportToCSV() {
-  const headers = ['Order ID', 'Customer', 'Total', 'Date', 'Payment', 'Status'];
-  let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
-  orders.value.forEach(order => {
-    const row = [
-      order.id,
-      `"${order.customer}"`, 
-      order.total,
-      order.date,
-      order.payment,
-      order.status
-    ];
-    csvContent += row.join(",") + "\n";
-  });
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "order_export.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+// Debounce search
+function debounceSearch() {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    pagination.currentPage = 1
+    fetchOrders()
+  }, 500)
 }
 
-// === HÀM HELPER CHO STATUS ===
-function getStatusClass(status) {
-  if (status === 'Shipping') return 'shipping';
-  if (status === 'Cancelled') return 'cancelled';
-  if (status === 'Completed') return 'completed';
-  return '';
+// Change tab
+function changeTab(tab) {
+  activeTab.value = tab
+  pagination.currentPage = 1
+  fetchOrders()
 }
 
+// Sorting
+function getSortIcon(field) {
+  if (sortBy.value !== field) return 'fas fa-sort'
+  return sortOrder.value === 'asc' ? 'fas fa-sort-up active-sort' : 'fas fa-sort-down active-sort'
+}
+
+function handleSort(field) {
+  if (sortBy.value === field) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortBy.value = field
+    sortOrder.value = 'asc'
+  }
+  fetchOrders()
+}
+
+// Pagination
+function goToPage(page) {
+  if (page < 1 || page > pagination.totalPages) return
+  pagination.currentPage = page
+  fetchOrders()
+}
+
+// Filters
+function applyFilters() {
+  pagination.currentPage = 1
+  isFilterVisible.value = false
+  fetchOrders()
+}
+
+function clearFilters() {
+  filters.order_status = ''
+  filters.payment_status = ''
+  filters.dateBegin = ''
+  filters.dateEnd = ''
+  filters.priceMin = ''
+  filters.priceMax = ''
+  applyFilters()
+}
+
+// Delete order
+function canDelete(status) {
+  return ['pending', 'confirmed'].includes(status)
+}
+
+function openDeleteModal(id, name) {
+  orderToDelete.id = id
+  orderToDelete.name = name
+  isDeleteModalVisible.value = true
+}
+
+function closeDeleteModal() {
+  isDeleteModalVisible.value = false
+  orderToDelete.id = null
+  orderToDelete.name = ''
+}
+
+async function confirmDelete() {
+  if (deleting.value || !orderToDelete.id) return
+  
+  deleting.value = true
+
+  try {
+    const token = await getToken.value()
+    const response = await axios.delete(`/api/admin/orders/${orderToDelete.id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      withCredentials: true
+    })
+
+    if (response.data.success) {
+      await fetchOrders()
+      closeDeleteModal()
+      toast.success('Order deleted successfully')
+    } else {
+      throw new Error(response.data.message || 'Failed to delete order')
+    }
+
+  } catch (err) {
+    console.error('Error deleting order:', err)
+    alert(err.response?.data?.message || 'Failed to delete order')
+  } finally {
+    deleting.value = false
+  }
+}
+
+// Export orders
+async function exportOrders() {
+  if (exporting.value) return
+  
+  exporting.value = true
+
+  try {
+    const params = {}
+
+    // Add search
+    if (searchQuery.value) params.search = searchQuery.value
+
+    // Add filters
+    if (activeTab.value !== 'all') {
+      params.order_status = activeTab.value
+    } else if (filters.order_status) {
+      params.order_status = filters.order_status
+    }
+    
+    if (filters.payment_status) params.payment_status = filters.payment_status
+    if (filters.dateBegin) params.dateBegin = filters.dateBegin
+    if (filters.dateEnd) params.dateEnd = filters.dateEnd
+    if (filters.priceMin) params.priceMin = filters.priceMin
+    if (filters.priceMax) params.priceMax = filters.priceMax
+
+    const token = await getToken.value()
+    const response = await axios.get('/api/admin/orders/export', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      params: params,
+      responseType: 'blob',
+      withCredentials: true
+    })
+
+    // Create download link
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `orders-export-${Date.now()}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+
+  } catch (err) {
+    console.error('Error exporting orders:', err)
+    alert('Failed to export orders')
+  } finally {
+    exporting.value = false
+  }
+}
+
+// Formatters
+function formatOrderId(id) {
+  if (!id) return 'N/A'
+  return id.slice(-6).toUpperCase()
+}
+
+function formatStatus(status) {
+  if (!status) return 'N/A'
+  return status.charAt(0).toUpperCase() + status.slice(1)
+}
+
+function getPaymentStatusClass(status) {
+  const statusMap = {
+    'pending': 'unpaid',
+    'paid': 'paid',
+    'refunded': 'cancelled',
+    'failed': 'cancelled'
+  }
+  return statusMap[status] || ''
+}
+
+function getOrderStatusClass(status) {
+  const statusMap = {
+    'pending': 'unpaid',
+    'confirmed': 'paid',
+    'shipped': 'shipping',
+    'delivered': 'completed',
+    'cancelled': 'cancelled'
+  }
+  return statusMap[status] || ''
+}
+
+// Load orders on mount
+onMounted(() => {
+  fetchOrders()
+})
 </script>
 
 <style scoped src="./OrderList.css"></style>
