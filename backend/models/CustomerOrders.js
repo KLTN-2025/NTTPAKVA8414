@@ -1,5 +1,6 @@
 // models/CustomerOrders.js
 const mongoose = require('mongoose')
+const validator = require('validator');
 
 const customerOrderSchema = new mongoose.Schema({
   customer_id: {
@@ -35,14 +36,36 @@ const customerOrderSchema = new mongoose.Schema({
     required: true,
     min: [0, 'Total amount cannot be negative']
   },
+  recipient_name: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 100
+  },
+  recipient_email: {
+    type: String,
+    lowercase: true,
+    trim: true,
+    validate: [validator.isEmail, 'Invalid email address'],
+    index: true,
+    maxlength: 100
+  },
+  recipient_phone: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 50
+  },
   shipping_address: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    maxlength: 500
   },
   shipping_note: {
     type: String,
-    trim: true
+    trim: true,
+    maxlength: 500
   }
 }, { timestamps: true });
 

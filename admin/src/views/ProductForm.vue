@@ -140,7 +140,7 @@
                   type="number" 
                   id="productSize" 
                   placeholder="e.g., 500"
-                  step="0.01"
+                  step="1"
                   v-model.number="product.size" 
                   :disabled="isViewMode"
                 />
@@ -432,7 +432,7 @@ const fetchProduct = async () => {
       type_id: data.type_id?._id || '',
       category_id: data.type_id?.category_id || '',
       brand_id: data.brand_id?._id || '',
-      size: data.size ? parseFloat(data.size.toString()) : null,
+      size: data.size ? data.size : null,
       unit: data.unit || '',
       cost_price: data.cost_price,
       selling_price: data.selling_price,

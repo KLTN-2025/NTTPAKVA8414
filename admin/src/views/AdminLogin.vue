@@ -54,8 +54,11 @@ const checkAdminAccess = async () => {
   isCheckingAccess.value = true
 
   try {
+    console.log('Activate sign-in...')
     const token = await getToken.value()
     if (!token) throw new Error('Token not available')
+    console.log(token)
+
 
     const response = await axios.get('/api/admin/verify', {
       headers: { Authorization: `Bearer ${token}` }

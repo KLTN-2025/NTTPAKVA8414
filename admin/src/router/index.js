@@ -71,12 +71,6 @@ const routes = [
         meta: { requireAdmin: true, title: 'Order Management' }
       },
       {
-        path: 'orders/new',
-        name: 'admin-order-new',
-        component: OrderForm,
-        meta: { requireAdmin: true, title: 'New Order' }
-      },
-      {
         path: 'orders/edit/:id',
         name: 'admin-order-edit',
         component: OrderForm,
@@ -130,7 +124,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const { isLoaded, isSignedIn, getToken } = useAuth()
+  const { isLoaded, isSignedIn } = useAuth()
   if (!isLoaded.value) {
     await new Promise(resolve => {
       const unwatch = watch(isLoaded, (loaded) => {
@@ -141,7 +135,6 @@ router.beforeEach(async (to, from, next) => {
       })
     })
   }
- 
   if (to.meta.requireAdmin && !isSignedIn.value) {
     return next('/login')
   }
@@ -152,28 +145,4 @@ router.beforeEach(async (to, from, next) => {
   
   next()
 })
-/*
-async function checkAdminRole(token) {
-  try {
-    if (!token) {
-      return false
-    }    
-    const response = await axios.get('/api/admin/verify', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      }
-    })
-
-    if (response.status !== 200) {
-      return false
-    }
-    const data = response.data
-    console.log('Data: ' + data)
-
-    return data?.isAdmin === true
-  } catch (error) {
-    console.error('Error checking admin role:', error)
-    return false
-  }
-}*/
 export default router

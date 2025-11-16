@@ -5,7 +5,8 @@ const pController = require("../../controllers/additionalManagement");
 const { checkAdminRole } = require("../../middleware/checkAdmin");
 
 
-router.get("/verify", checkAdminRole, pController.verifyAdminStatus);
+router.get("/verify", checkAdminRole, 
+  pController.verifyAdminStatus);
 
 // CATEGORY ROUTES
 router.get(

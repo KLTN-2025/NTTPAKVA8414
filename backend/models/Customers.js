@@ -18,7 +18,8 @@ const CustomerSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
       validate: [validator.isEmail, 'Invalid email address'],
-      index: true
+      index: true,
+      maxlength: 100
     },
     name: {
       type: String,
@@ -40,7 +41,7 @@ const CustomerSchema = new mongoose.Schema(
     image_url: {
       type: String,
       trim: true,
-      maxlength: 255
+      maxlength: 500
     },
     is_deleted: {
       type: Boolean,

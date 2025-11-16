@@ -32,8 +32,8 @@
 
           <div class="form-row-grid">
             <div class="form-group">
-              <label for="email">Email Address *</label>
-              <input type="email" id="email" v-model="form.email" required />
+              <label for="email">Email Address</label>
+              <input type="email" id="email" v-model="form.email" />
             </div>
             <div class="form-group">
               <label for="phone">Phone *</label>
@@ -42,7 +42,7 @@
           </div>
 
           <div class="form-group">
-            <label for="address">Street Address *</label>
+            <label for="address">Address *</label>
             <input
               type="text"
               id="address"
@@ -53,16 +53,17 @@
           </div>
 
           <div class="form-group">
-            <label for="city">Town / City *</label>
+            <label for="city">City *</label>
             <input type="text" id="city" v-model="form.city" required />
           </div>
 
           <div class="form-group">
-            <label for="notes">Order notes (optional)</label>
+            <label for="notes">Notes (optional, max 500 characters)</label>
             <textarea
               id="notes"
               v-model="form.notes"
               placeholder="Notes about your order, e.g. special notes for delivery."
+              maxlength="500"
             ></textarea>
           </div>
         </div>
@@ -117,9 +118,9 @@
               <div class="payment-option">
                 <input
                   type="radio"
-                  id="bank"
+                  id="transfer"
                   name="payment"
-                  value="bank"
+                  value="transfer"
                   v-model="form.paymentMethod"
                 />
                 <label for="bank">Direct bank transfer</label>
@@ -139,7 +140,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { buildImagePath } from '@/utilities/helper'
+import { buildImagePath, removeExtraSpaces } from '@/utilities/helper'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import { useCartStore } from '@/stores/cartStore'
 import axios from 'axios' 
@@ -175,8 +176,11 @@ async function placeOrder() {
   try {
     const payload = {
       shippingDetails: {
-        shipping_address: `${form.value.address}, ${form.value.city}`,
-        shipping_note: form.value.notes,
+        recipient_name: `${removeExtraSpaces(form.value.lastName)} ${removeExtraSpaces(form.value.firstName)}`,
+        recipient_email: removeExtraSpaces(form.value.email) || '',
+        recipient_phone: removeExtraSpaces(form.value.phone),
+        shipping_address: `${removeExtraSpaces(form.value.address)}, ${removeExtraSpaces(form.value.city)}`,
+        shipping_note: removeExtraSpaces(form.value.notes),
         payment_method: form.value.paymentMethod,
       },
       items: cartItems.value.map((i) => ({

@@ -32,12 +32,14 @@ const routes = [
   {
     path: '/orders',
     name: 'orders',
-    component: OrderHistory
+    component: OrderHistory,
+    meta: { requiresAuth: true }
   },
   {
     path: '/orders/:id',
     name: 'order-detail',
-    component: UserOrderDetail
+    component: UserOrderDetail,
+    meta: { requiresAuth: true }
   },
   {
     path: '/checkout',

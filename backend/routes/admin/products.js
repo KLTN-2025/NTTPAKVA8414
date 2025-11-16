@@ -12,13 +12,13 @@ const upload = createUpload({
 
 router.post(
   "/",
-  upload.array("images", 4),
   checkAdminRole,
+  upload.array("images", 4),
   productController.createProduct
 );
 
 router.get(
-  "/",
+  "/", checkAdminRole,
   productController.getAllProducts
 );
 
@@ -30,18 +30,20 @@ router.delete(
 
 router.get(
   "/:id",
+  checkAdminRole,
   productController.getProductById
 );
 
 router.get(
   "/slug/:slug",
+  checkAdminRole,
   productController.getProductBySlug
 );
 
 router.put(
   "/:id",
-  upload.array("images", 4),
   checkAdminRole,
+  upload.array("images", 4),
   productController.updateProduct
 );
 
