@@ -1,10 +1,5 @@
 <template>
   <div class="dashboard-page">
-    
-    <div class="page-title-header">
-      <h2>Dashboard</h2>
-    </div>
-
     <div class="card sales-target-card">
       <div class="card-header">
         <h4>Sales Target</h4>

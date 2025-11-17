@@ -86,7 +86,7 @@ const routes = [
         path: 'customers',
         name: 'admin-customers',
         component: CustomerList,
-        meta: { requireAdmin: true, title: 'Customers' }
+        meta: { requireAdmin: true, title: 'Customers Management' }
       },
       {
         path: 'sales-report',
@@ -98,7 +98,7 @@ const routes = [
         path: 'settings',
         name: 'admin-settings',
         component: Settings,
-        meta: { requireAdmin: true, title: 'Account & Settings' }
+        meta: { requireAdmin: true, title: 'Settings' }
       },
       {
         path: 'help',

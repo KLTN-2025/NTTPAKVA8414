@@ -49,7 +49,7 @@
         <li>
           <router-link to="/admin/settings">
             <i class="fas fa-cog"></i>
-            <span>Account & Settings</span>
+            <span>Settings</span>
           </router-link>
         </li>
          <li>
@@ -64,9 +64,8 @@
     <div class="main-container">
       
       <header class="admin-topbar">
-        <div class="search-bar-wrapper">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search product..." />
+        <div class="topbar-left">
+          <h1>{{ $route.meta.title || 'Dashboard' }}</h1>
         </div>
         
         <div class="topbar-right">
@@ -78,10 +77,9 @@
             <i class="fas fa-comment-dots"></i>
           </button>
           
-          
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
       </header>
       
@@ -103,8 +101,6 @@ const isSidebarCollapsed = ref(false);
 function toggleSidebar() {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
 }
-
-
 </script>
 
 <style src="./AdminHome.css"></style>

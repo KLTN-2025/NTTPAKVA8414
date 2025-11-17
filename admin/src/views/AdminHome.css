@@ -1,18 +1,27 @@
 /* ----- BIẾN MÀU MỚI THEO THIẾT KẾ ----- */
 :root {
-  --admin-bg: #f9fafb;
-  --sidebar-bg: #ffffff;
-  --sidebar-width: 260px;
-  --sidebar-width-collapsed: 92px; /* Chiều rộng mới khi gọn */
+  /* Chế độ Sáng (Light Mode) - Mặc định */
+  --admin-bg: #F9FAFB; 
+  --sidebar-bg: #FFFFFF;
   --topbar-height: 80px;
   --text-dark: #111827;
-  --text-muted: #6b7280;
-  --text-light: #9ca3af;
+  --text-muted: #6B7280;
+  --text-light: #9CA3AF;
+  --border-color: #E5E7EB;
 
-  --primary-color: #4f46e5;
-  --primary-color-light: #eef2ff;
-  --border-color: #e5e7eb;
+  /* Chế độ Tối (Night Mode) - Sẽ được kích hoạt sau */
+  --dark-bg: #111827; /* Nền chính (đen) */
+  --dark-card-bg: #1F2937; /* Nền card (xám đậm) */
+  --dark-text-dark: #F9FAFB; /* Chữ chính (trắng) */
+  --dark-text-muted: #9CA3AF; /* Chữ phụ (xám nhạt) */
+  --dark-border-color: #374151; /* Viền (xám) */
 
+  /* Màu chung */
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 92px;
+  --primary-color: #4F46E5; 
+  --primary-color-light: #EEF2FF;
+  
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
@@ -20,47 +29,49 @@
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background-color: var(--admin-bg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--admin-bg); /* Sẽ thay đổi */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* ----- 1. SIDEBAR (Bên trái) ----- */
 .admin-sidebar {
   width: var(--sidebar-width);
-  background: var(--sidebar-bg);
-  border-right: 1px solid var(--border-color);
+  background: var(--sidebar-bg); /* Sẽ thay đổi */
+  border-right: 1px solid var(--border-color); /* Sẽ thay đổi */
   display: flex;
   flex-direction: column;
-  position: fixed;
+  position: fixed; 
   top: 0;
   left: 0;
   height: 100vh;
   padding: 1.5rem;
-  box-sizing: border-box;
-  transition: width 0.3s ease;
-  z-index: 100;
+  box-sizing: border-box; 
+  transition: width 0.3s ease, background-color 0.3s ease;
+  z-index: 100; 
 }
 
 .sidebar-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; 
   padding-bottom: 1.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-  height: 48px;
+  border-bottom: 1px solid var(--border-color); /* Sẽ thay đổi */
+  height: 48px; 
 }
+
+/* ĐÃ ĐIỀU CHỈNH LOGO Ở ĐÂY */
 .sidebar-header .logo {
-  height: 100%;
-  width: auto;
-  object-fit: contain;
+  height: 32px; /* Chiều cao cố định */
+  width: auto; /* Chiều rộng tự động điều chỉnh theo tỷ lệ */
+  object-fit: contain; 
   transition: opacity 0.3s ease;
 }
 
 .collapse-btn {
   background: none;
-  border: 1px solid var(--border-color);
-  color: var(--text-muted);
+  border: 1px solid var(--border-color); /* Sẽ thay đổi */
+  color: var(--text-muted); /* Sẽ thay đổi */
   width: 32px;
   height: 32px;
   border-radius: 8px;
@@ -79,6 +90,7 @@
   transition: transform 0.3s ease;
 }
 
+
 .nav-section-title {
   font-size: 0.75rem;
   font-weight: 600;
@@ -87,7 +99,7 @@
   letter-spacing: 0.5px;
   margin-bottom: 0.5rem;
   padding: 0 0.5rem;
-  white-space: nowrap;
+  white-space: nowrap; 
   opacity: 1;
   transition: opacity 0.3s ease;
 }
@@ -98,9 +110,12 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem; 
 }
-/* XÓA: .nav-links li */
+.nav-links li { 
+  display: flex;
+  flex-direction: column;
+}
 .nav-links a {
   display: flex;
   align-items: center;
@@ -109,17 +124,16 @@
   border-radius: 8px;
   text-decoration: none;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--text-muted); /* Sẽ thay đổi */
   transition: all 0.2s ease;
-  cursor: pointer;
+  cursor: pointer; 
   position: relative;
-  white-space: nowrap;
+  white-space: nowrap; 
 }
 .nav-links a i {
   width: 20px;
   text-align: center;
   font-size: 1.1rem;
-  flex-shrink: 0;
 }
 .nav-links a:hover {
   background-color: var(--primary-color-light);
@@ -131,109 +145,47 @@
   color: #fff;
 }
 
-/* === CÁC KHỐI CSS CHO DROPDOWN ĐÃ BỊ XÓA === */
-/* XÓA: .nav-links a .arrow */
-/* XÓA: .nav-links a .arrow-open */
-/* XÓA: .sub-menu */
-/* XÓA: .sub-menu.menu-open */
-/* XÓA: .sub-menu a */
-/* XÓA: .sub-menu a:hover */
-/* XÓA: .sub-menu a.router-link-exact-active */
-/* =========================================== */
-
 /* ----- 2. CONTAINER CHÍNH (Bên phải) ----- */
 .main-container {
   flex-grow: 1;
   margin-left: var(--sidebar-width);
   display: flex;
   flex-direction: column;
-  width: calc(100% - var(--sidebar-width));
+  width: calc(100% - var(--sidebar-width)); 
   transition: all 0.3s ease;
 }
 
 /* TOPBAR */
 .admin-topbar {
   height: var(--topbar-height);
-  background: var(--sidebar-bg);
-  border-bottom: 1px solid var(--border-color);
+  background: var(--sidebar-bg); /* Sẽ thay đổi */
+  border-bottom: 1px solid var(--border-color); /* Sẽ thay đổi */
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-  position: sticky;
+  position: sticky; 
   top: 0;
   z-index: 10;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
-/* (Các style còn lại của topbar giữ nguyên) */
-.search-bar-wrapper {
-  position: relative;
-}
-.search-bar-wrapper i {
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-light);
-}
-.search-bar-wrapper input {
-  background: var(--admin-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0.6rem 1rem 0.6rem 2.5rem;
-  font-size: 0.9rem;
-  min-width: 300px;
-}
-.search-bar-wrapper input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px var(--primary-color-light);
-}
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-.topbar-icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-muted);
-  font-size: 1.25rem;
-  position: relative;
-}
-.notification-badge {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 8px;
-  height: 8px;
-  background-color: #ef4444;
-  border-radius: 50%;
-  border: 1px solid white;
-}
-.admin-profile {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.admin-profile img {
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-}
-.admin-info {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.4;
-}
-.admin-name {
+
+/* Tiêu đề trang (Mới) */
+.topbar-left h1 {
+  font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--text-dark); /* Sẽ thay đổi */
+  margin: 0;
 }
-.admin-role {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
+
+.topbar-right { display: flex; align-items: center; gap: 1.5rem; }
+.topbar-icon-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 1.25rem; position: relative; }
+.notification-badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; border: 1px solid white; }
+.admin-profile { display: flex; align-items: center; gap: 0.75rem; }
+.admin-profile img { border-radius: 50%; width: 40px; height: 40px; }
+.admin-info { display: flex; flex-direction: column; line-height: 1.4; }
+.admin-name { font-weight: 600; color: var(--text-dark); } /* Sẽ thay đổi */
+.admin-role { font-size: 0.8rem; color: var(--text-muted); } /* Sẽ thay đổi */
 
 /* NỘI DUNG CHÍNH (scrollable) */
 .admin-content {
@@ -252,13 +204,13 @@
 }
 .admin-layout.sidebar-collapsed .sidebar-header .logo {
   opacity: 0;
-  display: none; /* Ẩn logo */
+  display: none; 
 }
 .admin-layout.sidebar-collapsed .sidebar-header {
-  justify-content: center; /* Căn giữa button */
+  justify-content: center; 
 }
 .admin-layout.sidebar-collapsed .collapse-btn i {
-  transform: rotate(180deg); /* Xoay icon */
+  transform: rotate(180deg); 
 }
 .admin-layout.sidebar-collapsed .nav-section-title {
   opacity: 0;
@@ -267,8 +219,134 @@
   margin: 0;
 }
 .admin-layout.sidebar-collapsed .nav-links a span {
-  display: none; /* Ẩn text */
+  display: none; 
 }
 .admin-layout.sidebar-collapsed .nav-links a {
-  justify-content: center; /* Căn giữa icon */
+  justify-content: center; 
+}
+
+/* =========================================
+ === KHỐI CSS NIGHT MODE ===
+ =========================================
+*/
+html.dark-mode {
+  /* Ghi đè các biến màu gốc */
+  --admin-bg: var(--dark-bg);
+  --sidebar-bg: var(--dark-card-bg);
+  --text-dark: var(--dark-text-dark);
+  --text-muted: var(--dark-text-muted);
+  --border-color: var(--dark-border-color);
+}
+
+/* Áp dụng cho các component con (Dashboard, Products, v.v.) */
+/* Bất kỳ .card nào cũng sẽ đổi màu */
+html.dark-mode .card {
+  background-color: var(--dark-card-bg);
+  border-color: var(--dark-border-color);
+}
+/* Bất kỳ tiêu đề h2/h3/h4 nào */
+html.dark-mode h1,
+html.dark-mode h2,
+html.dark-mode h3,
+html.dark-mode h4,
+html.dark-mode h5 {
+  color: var(--dark-text-dark);
+}
+/* Bất kỳ text phụ nào */
+html.dark-mode span,
+html.dark-mode p,
+html.dark-mode a,
+html.dark-mode .admin-role {
+  color: var(--dark-text-muted);
+}
+
+/* Tinh chỉnh lại các link sidebar */
+html.dark-mode .nav-links a {
+  color: var(--dark-text-muted);
+}
+html.dark-mode .nav-links a:hover {
+  background-color: var(--primary-color-light);
+  color: var(--primary-color);
+}
+html.dark-mode .nav-links a.router-link-exact-active,
+html.dark-mode .nav-links a.active-parent {
+  background-color: var(--primary-color);
+  color: #fff; /* Giữ nguyên */
+}
+html.dark-mode .collapse-btn {
+  border-color: var(--dark-border-color);
+  color: var(--dark-text-muted);
+}
+/* Tinh chỉnh topbar */
+html.dark-mode .admin-name {
+  color: var(--dark-text-dark);
+}
+html.dark-mode .search-bar-wrapper input {
+  background: var(--dark-bg);
+  border-color: var(--dark-border-color);
+  color: var(--dark-text-dark);
+}
+html.dark-mode .search-bar-wrapper input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color-light);
+}
+
+/* Tinh chỉnh bảng (ProductList, OrderList...) */
+html.dark-mode .table-container {
+  background: var(--dark-card-bg);
+  border-color: var(--dark-border-color);
+}
+html.dark-mode .product-table td,
+html.dark-mode .order-table td,
+html.dark-mode .customer-table td {
+  color: var(--dark-text-dark);
+  border-bottom: 1px solid var(--dark-border-color);
+}
+html.dark-mode .product-table th,
+html.dark-mode .order-table th,
+html.dark-mode .customer-table th {
+  color: var(--dark-text-muted);
+  border-bottom: 1px solid var(--dark-border-color);
+}
+html.dark-mode .product-table tbody tr:hover,
+html.dark-mode .order-table tbody tr:hover,
+html.dark-mode .customer-table tbody tr:hover {
+  background-color: var(--dark-bg);
+}
+html.dark-mode .product-cell .product-name,
+html.dark-mode .customer-name {
+  color: var(--dark-text-dark);
+}
+
+/* Tinh chỉnh form (ProductForm, Settings...) */
+html.dark-mode .form-group label {
+  color: var(--dark-text-dark);
+}
+html.dark-mode .form-group input[type="text"],
+html.dark-mode .form-group input[type="number"],
+html.dark-mode .form-group textarea,
+html.dark-mode .form-group select {
+  background-color: var(--dark-bg);
+  border-color: var(--dark-border-color);
+  color: var(--dark-text-dark);
+}
+html.dark-mode .form-group input:focus,
+html.dark-mode .form-group textarea:focus,
+html.dark-mode .form-group select:focus {
+  background-color: var(--dark-card-bg);
+}
+html.dark-mode .form-group input:disabled {
+  background-color: var(--dark-bg);
+  color: var(--text-muted);
+}
+
+
+/* Tinh chỉnh các nút phụ */
+html.dark-mode .btn-secondary {
+  background-color: var(--dark-card-bg);
+  border-color: var(--dark-border-color);
+  color: var(--dark-text-dark);
+}
+html.dark-mode .btn-secondary:hover {
+  background-color: var(--dark-bg);
 }

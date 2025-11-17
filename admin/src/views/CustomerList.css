@@ -1,0 +1,491 @@
+/* ----- BỐ CỤC CHUNG ----- */
+.customer-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ----- 1. THANH HEADER ----- */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.search-bar {
+  position: relative;
+  flex-grow: 1;
+  max-width: 400px;
+}
+.search-bar i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+}
+.search-bar input {
+  background: var(--sidebar-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color-light);
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+/* Nút bấm chung */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+/* Nút phụ (Filter, Export) */
+.btn-secondary {
+  background-color: var(--sidebar-bg);
+  border-color: var(--border-color);
+  color: var(--text-dark);
+}
+.btn-secondary:hover {
+  background-color: var(--admin-bg);
+}
+/* Nút chính (Add Customer) */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* ----- 3. BẢNG KHÁCH HÀNG ----- */
+.table-container {
+  background: var(--sidebar-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden; 
+}
+.customer-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.customer-table th, .customer-table td {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+.customer-table th {
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.customer-table td {
+  color: var(--text-dark);
+  font-weight: 500;
+}
+.customer-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.customer-table tbody tr:hover {
+  background-color: var(--admin-bg);
+}
+
+/* Hàng bị khóa (MỚI) */
+.customer-table tbody tr.locked td {
+  color: var(--text-light); /* Làm mờ text */
+  background-color: #fafafa; /* Nền xám nhẹ */
+}
+.customer-table tbody tr.locked .customer-name {
+  color: var(--text-light);
+}
+.customer-table tbody tr.locked .contact-cell span:first-child {
+  color: var(--text-light);
+}
+/* Đã xóa selector .customer-table tbody tr.locked .customer-cell img {...} */
+
+
+/* Cột Customer */
+.customer-cell {
+  /* Thuộc tính flex (display, align-items, gap) đã được xóa
+     vì không còn avatar bên cạnh tên. */
+}
+
+/* Đã xóa selector .customer-cell img {...} */
+
+/* Đã xóa selector .customer-cell .customer-info {...} */
+
+.customer-id {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  font-weight: 600;
+}
+.customer-name {
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+/* Cột Contact */
+.contact-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.contact-cell span:first-child {
+  font-weight: 500;
+  color: var(--text-dark);
+}
+.contact-cell span:last-child {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+
+/* Cột Action (ĐÃ SỬA) */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.action-btn i {
+  font-size: 0.75rem;
+}
+
+/* Nút Mở khóa (MỚI) */
+.action-btn.btn-unlock {
+  border-color: #16a34a; /* Màu xanh lá (giống web user) */
+  color: #16a34a;
+}
+.action-btn.btn-unlock:hover {
+  background-color: #f0fdf4;
+}
+
+/* Nút Khóa (MỚI) */
+.action-btn.btn-lock {
+  border-color: #ef4444; /* Màu đỏ */
+  color: #ef4444;
+}
+.action-btn.btn-lock:hover {
+  background-color: #fef2f2;
+}
+
+/* ----- 4. PHÂN TRANG ----- */
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+}
+.page-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.page-controls select {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+  font-weight: 500;
+}
+.page-controls button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--sidebar-bg);
+  cursor: pointer;
+}
+.page-controls button:hover {
+  background-color: var(--admin-bg);
+}
+
+/* ----- 5. MODAL CHUNG ----- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-card {
+  background: var(--sidebar-bg, #fff);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  overflow: hidden;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+.modal-header .warning-icon { /* Dùng cho modal Xóa */
+  font-size: 1.5rem;
+  color: #f59e0b; 
+  margin-right: 1rem;
+}
+/* Icon modal Khóa/Mở (MỚI) */
+.modal-header .info-icon {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-right: 1rem;
+}
+
+.modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark, #111827);
+  margin: 0;
+}
+.modal-header .close-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-light, #9ca3af);
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-body {
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted, #6b7280);
+  line-height: 1.6;
+}
+.modal-body strong {
+  color: var(--text-dark, #111827);
+  font-weight: 600;
+}
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background-color: var(--admin-bg, #f9fafb);
+  border-top: 1px solid var(--border-color, #e5e7eb);
+}
+/* Nút Đỏ (Delete/Lock) */
+.btn-danger {
+  background-color: #ef4444; 
+  color: #fff;
+}
+.btn-danger:hover {
+  background-color: #dc2626; 
+}
+/* Nút Xanh (Unlock) (MỚI) */
+.btn-success {
+  background-color: #16a34a; /* Màu xanh lá */
+  color: #fff;
+}
+.btn-success:hover {
+  background-color: #15803d;
+}
+
+
+/* ----- 6. FILTER PANEL ----- */
+.filter-panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.filter-panel-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+.filter-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 400px; 
+  height: 100%;
+  background: var(--sidebar-bg, #fff);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-out;
+}
+.filter-panel-overlay.open .filter-panel {
+  transform: translateX(0);
+}
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+.filter-header h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark, #111827);
+  margin: 0;
+}
+.filter-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+.filter-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+.filter-group select,
+.filter-group input[type="number"],
+.filter-group input[type="date"] { 
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  background-color: var(--admin-bg);
+  font-family: inherit; 
+}
+.price-inputs,
+.date-inputs { 
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.price-inputs span,
+.date-inputs span { 
+  color: var(--text-light);
+  padding: 0 0.25rem;
+}
+.filter-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+  background-color: var(--admin-bg, #f9fafb);
+}
+
+/* ----- 7. STYLE CHO SORTING (ĐÃ SỬA LỖI) ----- */
+.customer-table th.sortable {
+  cursor: pointer;
+  user-select: none; 
+  
+  /* === SỬA LỖI LỆCH HÀNG (LẦN 2) === */
+  white-space: nowrap; /* Ngăn text xuống hàng */
+  /* ================================= */
+}
+.customer-table th.sortable:hover {
+  color: var(--text-dark);
+}
+.customer-table th.sortable i {
+  margin-left: 0.5rem;
+  color: var(--text-light);
+  opacity: 0.5; 
+  width: 1em; /* Đảm bảo icon chiếm không gian cố định */
+  text-align: center;
+}
+.customer-table th.sortable:hover i {
+  opacity: 1; 
+}
+.customer-table th .active-sort {
+  color: var(--primary-color); 
+  opacity: 1;
+}
+
+/* ----- 8. NÚT XÓA HÀNG LOẠT (ĐÃ XÓA) ----- */
+/* .btn-danger-outline { ... } */
+
+/* ----- 9. TOAST NOTIFICATION ----- */
+@keyframes slideIn {
+  from {
+    transform: translate(100%, -50%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, -50%);
+    opacity: 1;
+  }
+}
+.toast-notification {
+  position: fixed;
+  top: 90px; /* Dưới Topbar (80px + 10px) */
+  right: 1.5rem;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid transparent;
+  animation: slideIn 0.3s ease-out forwards;
+}
+.toast-notification.success {
+  background-color: var(--primary-color-light, #EEF2FF);
+  border-color: var(--primary-color, #4F46E5);
+  color: var(--primary-color, #4F46E5);
+}
+.toast-notification.error {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+.toast-notification i {
+  font-size: 1.25rem;
+}
+.toast-notification span {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
