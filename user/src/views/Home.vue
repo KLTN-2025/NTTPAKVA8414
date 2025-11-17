@@ -1,12 +1,11 @@
 <template>
   <div class="home-page">
-    <!-- Banner chính -->
+
     <section class="banner-section">
       <img src="@/assets/images/Banner4.png" alt="Banner" class="banner-img" />
       <router-link to="/products" class="banner-btn">Shop Now</router-link>
     </section>
 
-    <!-- Các icon mô tả dịch vụ -->
     <section class="banner-icons-section">
       <div class="icon-item">
         <i class="fa-solid fa-truck"></i>
@@ -30,7 +29,6 @@
       </div>
     </section>
 
-    <!-- Featured Products -->
     <section v-if="!loading" class="featured-products">
       <h2>Featured Products</h2>
       <div class="products-grid">
@@ -42,8 +40,7 @@
       </div>
     </section>
 
-    <!-- Special Offers -->
-<section class="special-offers">
+    <section class="special-offers">
   <h2>Special Offers</h2>
   <div class="offers-container">
     <div
@@ -57,7 +54,6 @@
   </div>
 </section>
 
-    <!-- Customer Reviews -->
     <section class="customer-reviews">
       <h2>What our customers say</h2>
       <div class="reviews-grid">
