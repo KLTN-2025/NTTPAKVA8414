@@ -143,7 +143,7 @@ exports.getAllProducts = async (req, res) => {
   try {
     const {
       page = 1,
-      limit = 10,
+      limit = 1000,
       type_id,
       brand_id,
       category_id,
@@ -197,9 +197,11 @@ exports.getAllProducts = async (req, res) => {
     const products = await Product.find(filter)
       .select('-slug -size -unit -description -__v -createdAt')
       .populate('attributes', 'description')
+      .populate('brand_id', 'name')
       .sort(sort)
       .skip(skip)
-      .limit(parseInt(limit));
+      .limit(parseInt(limit))
+      .lean();
 
     const total = await Product.countDocuments(filter);
 

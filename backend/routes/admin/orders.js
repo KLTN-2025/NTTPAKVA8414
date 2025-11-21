@@ -8,10 +8,6 @@ router.get('/', checkAdminRole,
     orderController.getAllOrders
 )
 
-router.get('/exports', checkAdminRole,
-    orderController.exportOrders
-)
-
 router.get('/:id', checkAdminRole,
     orderController.getOrderById
 )

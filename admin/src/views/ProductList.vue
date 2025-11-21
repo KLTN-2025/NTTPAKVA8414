@@ -1,21 +1,20 @@
 <!--src/views/ProductList.vue-->
 <template>
   <div class="product-list-page">
-    
     <div class="product-list-header">
       <div class="search-bar">
         <i class="fas fa-search"></i>
-        <input 
-          type="text" 
-          placeholder="Search for SKU, name..." 
+        <input
+          type="text"
+          placeholder="Search for SKU, name..."
           v-model="searchQuery"
           @input="debounceSearch"
         />
       </div>
-      
+
       <div class="header-actions">
-        <button 
-          v-if="selectedProducts.length > 0" 
+        <button
+          v-if="selectedProducts.length > 0"
           class="btn btn-danger-outline"
           @click="openBulkDeleteModal"
         >
@@ -39,16 +38,16 @@
     </div>
 
     <nav class="product-tabs">
-      <button 
-        :class="['tab-btn', { 'active': !filters.category_id }]"
+      <button
+        :class="['tab-btn', { active: !filters.category_id }]"
         @click="setCategory(null)"
       >
         All Products
       </button>
-      <button 
-        v-for="cat in categories" 
+      <button
+        v-for="cat in categories"
         :key="cat._id"
-        :class="['tab-btn', { 'active': filters.category_id === cat._id }]"
+        :class="['tab-btn', { active: filters.category_id === cat._id }]"
         @click="setCategory(cat._id)"
       >
         {{ cat.category_name }}
@@ -63,7 +62,9 @@
     <div v-else-if="error" class="error-message">
       <i class="fas fa-exclamation-circle"></i>
       <span>{{ error }}</span>
-      <button @click="fetchProducts" class="btn btn-secondary btn-sm">Retry</button>
+      <button @click="fetchProducts" class="btn btn-secondary btn-sm">
+        Retry
+      </button>
     </div>
 
     <div v-else class="table-container">
@@ -71,18 +72,16 @@
         <thead>
           <tr>
             <th>
-              <input 
-                type="checkbox" 
-                v-model="selectAllModel" 
-                :indeterminate="isIndeterminate" 
+              <input
+                type="checkbox"
+                v-model="selectAllModel"
+                :indeterminate="isIndeterminate"
               />
             </th>
             <th @click="handleSort('name')" class="sortable">
               Product <i :class="getSortIcon('name')"></i>
             </th>
-            <th class="sortable">
-              Attributes
-            </th>
+            <th class="sortable">Attributes</th>
             <th @click="handleSort('selling_price')" class="sortable">
               Price <i :class="getSortIcon('selling_price')"></i>
             </th>
@@ -98,18 +97,22 @@
         </thead>
         <tbody>
           <tr v-if="products.length === 0">
-            <td colspan="7" style="text-align: center; padding: 2rem;">
+            <td colspan="7" style="text-align: center; padding: 2rem">
               No products found
             </td>
           </tr>
           <tr v-for="product in products" :key="product._id">
             <td>
-              <input type="checkbox" v-model="selectedProducts" :value="product._id" />
+              <input
+                type="checkbox"
+                v-model="selectedProducts"
+                :value="product._id"
+              />
             </td>
             <td>
               <div class="product-cell">
-                <img 
-                  :src="buildImagePath(product.image_urls[0])" 
+                <img
+                  :src="buildImagePath(product.image_urls[0])"
                   :alt="product.name"
                   @error="handleImageError"
                 />
@@ -120,9 +123,13 @@
               </div>
             </td>
             <td>
-              <span style="font-weight: 400;" v-for="attr in product.attributes" :key="attr._id">
-                {{ attr.description }} 
-                <br>
+              <span
+                style="font-weight: 400"
+                v-for="attr in product.attributes"
+                :key="attr._id"
+              >
+                {{ attr.description }}
+                <br />
               </span>
             </td>
             <td>
@@ -136,23 +143,31 @@
               </div>
             </td>
             <td>
-              <span 
-                class="status-badge" 
-                :class="product.current_stock > 0 ? 'available' : 'out-of-stock'"
+              <span
+                class="status-badge"
+                :class="
+                  product.current_stock > 0 ? 'available' : 'out-of-stock'
+                "
               >
-                {{ product.current_stock > 0 ? 'Available' : 'Out of Stock' }}
+                {{ product.current_stock > 0 ? "Available" : "Out of Stock" }}
               </span>
             </td>
             <td>
               <div class="action-buttons">
-                <router-link :to="'/admin/products/view/' + product._id" class="action-btn">
+                <router-link
+                  :to="'/admin/products/view/' + product._id"
+                  class="action-btn"
+                >
                   <i class="fas fa-eye"></i>
                 </router-link>
-                <router-link :to="'/admin/products/edit/' + product._id" class="action-btn">
+                <router-link
+                  :to="'/admin/products/edit/' + product._id"
+                  class="action-btn"
+                >
                   <i class="fas fa-pencil-alt"></i>
                 </router-link>
-                <button 
-                  class="action-btn btn-delete" 
+                <button
+                  class="action-btn btn-delete"
                   @click="openSingleDeleteModal(product._id, product.name)"
                 >
                   <i class="fas fa-trash"></i>
@@ -183,42 +198,54 @@
     </div>
 
     <!-- Delete Modal -->
-    <div v-if="isDeleteModalVisible" class="modal-overlay" @click.self="closeDeleteModal">
+    <div
+      v-if="isDeleteModalVisible"
+      class="modal-overlay"
+      @click.self="closeDeleteModal"
+    >
       <div class="modal-card">
         <div class="modal-header">
           <i class="fas fa-exclamation-triangle warning-icon"></i>
-          <h3>{{ isBulkDelete ? 'Delete Products' : 'Delete Product' }}</h3>
+          <h3>{{ isBulkDelete ? "Delete Products" : "Delete Product" }}</h3>
           <button @click="closeDeleteModal" class="close-btn"></button>
         </div>
         <div class="modal-body">
           <p v-if="isBulkDelete">
-            Are you sure you want to delete 
+            Are you sure you want to delete
             <strong>{{ selectedProducts.length }} selected products</strong>?
             This action cannot be undone.
           </p>
           <p v-else>
             Are you sure you want to delete the product
-            <strong>"{{ productToDeleteName }}"</strong>?
-            This action cannot be undone.
+            <strong>"{{ productToDeleteName }}"</strong>? This action cannot be
+            undone.
           </p>
         </div>
         <div class="modal-footer">
-          <button @click="closeDeleteModal" class="btn btn-secondary" :disabled="deleting">
+          <button
+            @click="closeDeleteModal"
+            class="btn btn-secondary"
+            :disabled="deleting"
+          >
             Cancel
           </button>
-          <button @click="confirmDelete" class="btn btn-danger" :disabled="deleting">
+          <button
+            @click="confirmDelete"
+            class="btn btn-danger"
+            :disabled="deleting"
+          >
             <i v-if="deleting" class="fas fa-spinner fa-spin"></i>
-            <span>{{ deleting ? 'Deleting...' : 'Delete' }}</span>
+            <span>{{ deleting ? "Deleting..." : "Delete" }}</span>
           </button>
         </div>
       </div>
     </div>
-    
+
     <!-- Filter Panel -->
     <Teleport to="body">
-      <div 
-        class="filter-panel-overlay" 
-        :class="{ 'open': isFilterVisible }"
+      <div
+        class="filter-panel-overlay"
+        :class="{ open: isFilterVisible }"
         @click.self="isFilterVisible = false"
       >
         <div class="filter-panel">
@@ -231,7 +258,11 @@
               <label>Category</label>
               <select v-model="tempFilters.category_id">
                 <option value="">All Categories</option>
-                <option v-for="cat in categories" :key="cat._id" :value="cat._id">
+                <option
+                  v-for="cat in categories"
+                  :key="cat._id"
+                  :value="cat._id"
+                >
                   {{ cat.category_name }}
                 </option>
               </select>
@@ -240,7 +271,11 @@
               <label>Product Type</label>
               <select v-model="tempFilters.type_id">
                 <option value="">All Types</option>
-                <option v-for="type in productTypes" :key="type._id" :value="type._id">
+                <option
+                  v-for="type in productTypes"
+                  :key="type._id"
+                  :value="type._id"
+                >
                   {{ type.name }}
                 </option>
               </select>
@@ -249,7 +284,11 @@
               <label>Brand</label>
               <select v-model="tempFilters.brand_id">
                 <option value="">All Brands</option>
-                <option v-for="brand in brands" :key="brand._id" :value="brand._id">
+                <option
+                  v-for="brand in brands"
+                  :key="brand._id"
+                  :value="brand._id"
+                >
                   {{ brand.name }}
                 </option>
               </select>
@@ -265,21 +304,31 @@
             <div class="filter-group">
               <label>Price Range (VND)</label>
               <div class="price-inputs">
-                <input type="number" placeholder="Min" v-model.number="tempFilters.min_price" />
+                <input
+                  type="number"
+                  placeholder="Min"
+                  v-model.number="tempFilters.min_price"
+                />
                 <span>-</span>
-                <input type="number" placeholder="Max" v-model.number="tempFilters.max_price" />
+                <input
+                  type="number"
+                  placeholder="Max"
+                  v-model.number="tempFilters.max_price"
+                />
               </div>
             </div>
           </div>
           <div class="filter-footer">
-            <button class="btn btn-secondary" @click="clearFilters">Clear</button>
-            <button class="btn btn-primary" @click="applyFilters">Apply Filters</button>
+            <button class="btn btn-secondary" @click="clearFilters">
+              Clear
+            </button>
+            <button class="btn btn-primary" @click="applyFilters">
+              Apply Filters
+            </button>
           </div>
         </div>
       </div>
     </Teleport>
-
-
   </div>
 </template>
 
@@ -294,9 +343,9 @@ import axios from 'axios'
 import { useToast } from 'vue-toastification'
 const toast = useToast()
 
-import { 
-  formatDate, formatPrice, 
-  formatTime, buildImagePath } 
+import {
+  formatDate, formatPrice,
+  formatTime, buildImagePath }
   from '@/utilities/helper.js'
 
 // State
@@ -336,13 +385,13 @@ const sortField = ref('-createdAt')
 
 // Selection
 const selectedProducts = ref([])
-const isIndeterminate = computed(() => 
-  selectedProducts.value.length > 0 && 
+const isIndeterminate = computed(() =>
+  selectedProducts.value.length > 0 &&
   selectedProducts.value.length < products.value.length
 )
 const selectAllModel = computed({
   get() {
-    return products.value.length > 0 && 
+    return products.value.length > 0 &&
            selectedProducts.value.length === products.value.length
   },
   set(value) {
@@ -375,7 +424,7 @@ const fetchProducts = async () => {
       search: searchQuery.value || undefined,
       ...filters.value
     }
-    
+
     Object.keys(params).forEach(key => {
       if (params[key] === '' || params[key] === null || params[key] === undefined) {
         delete params[key]
@@ -491,7 +540,7 @@ const handleSort = (field) => {
     'createdAt': 'createdAt'
   }
   const mappedField = fieldMap[field]
-  
+
   if (sortField.value === mappedField) {
     sortField.value = `-${mappedField}`
   } else {
@@ -598,28 +647,63 @@ const clearFilters = () => {
 }
 
 // Export CSV
-const exportToCSV = () => {
-  const headers = ['SKU', 'Name', 'Price', 'Stock', 'Status']
-  let csvContent = "data:text/csvcharset=utf-8," + headers.join(",") + "\n"
-  
-  products.value.forEach(product => {
-    const row = [
-      product.SKU,
-      `"${product.name}"`,
-      product.selling_price,
-      product.current_stock,
-      product.current_stock > 0 ? 'Available' : 'Out of Stock'
-    ]
-    csvContent += row.join(",") + "\n"
-  })
-  
-  const encodedUri = encodeURI(csvContent)
-  const link = document.createElement("a")
-  link.setAttribute("href", encodedUri)
-  link.setAttribute("download", `products_export_${Date.now()}.csv`)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+async function exportToCSV () {
+  try{
+     const params = {
+      page: currentPage.value,
+      limit: 1000,
+      sort: sortField.value,
+      search: searchQuery.value || undefined,
+      ...filters.value
+    }
+
+    Object.keys(params).forEach(key => {
+      if (params[key] === '' || params[key] === null || params[key] === undefined) {
+        delete params[key]
+      }
+    })
+
+    const token = await getToken.value()
+    const response = await axios.get('/api/admin/products', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      params: params
+    })
+    if (response.data.success) {
+      const productData = response.data.data
+      const headers = ['SKU', 'Name', 'Brand', 'Attributes', 'Importing Price', 'Selling Price', 'Stock', 'Status']
+      let csvContent = "data:text/csvcharset=utf-8," + headers.join(",") + "\n"
+
+      productData.forEach(product => {
+        const row = [
+          product.SKU,
+          `"${product.name}"`,
+          product.brand_id.name,
+          `"${product.attributes.map(attr => {
+            return attr.description
+          }).join()
+          }"`,
+          product.cost_price,
+          product.selling_price,
+          product.current_stock,
+          product.current_stock > 0 ? 'Available' : 'Out of Stock'
+        ]
+        csvContent += row.join(",") + "\n"
+      })
+
+      const encodedUri = encodeURI(csvContent)
+      const link = document.createElement("a")
+      link.setAttribute("href", encodedUri)
+      link.setAttribute("download", `products_export_${Date.now()}.csv`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      toast.success('Successfully exporting products!')
+    }
+  } catch (error) {
+    toast.error('Failed to export products')
+  }
 }
 
 // Utilities

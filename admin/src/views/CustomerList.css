@@ -1,11 +1,11 @@
-/* ----- BỐ CỤC CHUNG ----- */
+/* ----- BASE STRUCTURE ----- */
 .customer-list-page {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-/* ----- 1. THANH HEADER ----- */
+/* ----- 1. HEADER ----- */
 .list-header {
   display: flex;
   justify-content: space-between;
@@ -42,7 +42,8 @@
   display: flex;
   gap: 0.75rem;
 }
-/* Nút bấm chung */
+
+/* Common Button Styles */
 .btn {
   display: flex;
   align-items: center;
@@ -56,31 +57,33 @@
   text-decoration: none;
   transition: all 0.2s ease;
 }
-/* Nút phụ (Filter, Export) */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .btn-secondary {
   background-color: var(--sidebar-bg);
   border-color: var(--border-color);
   color: var(--text-dark);
 }
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background-color: var(--admin-bg);
 }
-/* Nút chính (Add Customer) */
 .btn-primary {
   background-color: var(--primary-color);
   color: #fff;
 }
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   opacity: 0.9;
 }
 
-/* ----- 3. BẢNG KHÁCH HÀNG ----- */
+/* ----- 2. CUSTOMER TABLE ----- */
 .table-container {
   background: var(--sidebar-bg);
   border-radius: 12px;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
-  overflow: hidden; 
+  overflow: hidden;
 }
 .customer-table {
   width: 100%;
@@ -98,6 +101,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 .customer-table td {
   color: var(--text-dark);
@@ -110,58 +114,43 @@
   background-color: var(--admin-bg);
 }
 
-/* Hàng bị khóa (MỚI) */
+/* Locked row styling */
 .customer-table tbody tr.locked td {
-  color: var(--text-light); /* Làm mờ text */
-  background-color: #fafafa; /* Nền xám nhẹ */
+  color: var(--text-light);
+  background-color: #fafafa;
 }
 .customer-table tbody tr.locked .customer-name {
   color: var(--text-light);
 }
-.customer-table tbody tr.locked .contact-cell span:first-child {
-  color: var(--text-light);
-}
-/* Đã xóa selector .customer-table tbody tr.locked .customer-cell img {...} */
 
-
-/* Cột Customer */
-.customer-cell {
-  /* Thuộc tính flex (display, align-items, gap) đã được xóa
-     vì không còn avatar bên cạnh tên. */
-}
-
-/* Đã xóa selector .customer-cell img {...} */
-
-/* Đã xóa selector .customer-cell .customer-info {...} */
-
-.customer-id {
-  font-size: 0.8rem;
-  color: var(--text-light);
-  font-weight: 600;
-}
 .customer-name {
   font-weight: 500;
   color: var(--text-dark);
 }
 
-/* Cột Contact */
-.contact-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+/* Status Badge Styling */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
 }
-.contact-cell span:first-child {
-  font-weight: 500;
-  color: var(--text-dark);
+.status-active {
+  background-color: #d1fae5;
+  color: #065f46;
 }
-.contact-cell span:last-child {
-  font-size: 0.8rem;
-  color: var(--text-light);
-  font-weight: 400;
+.status-inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+.status-banned {
+  background-color: #fecaca;
+  color: #7f1d1d;
 }
 
-
-/* Cột Action (ĐÃ SỬA) */
+/* Action Column */
 .action-buttons {
   display: flex;
   gap: 0.5rem;
@@ -184,25 +173,25 @@
   font-size: 0.75rem;
 }
 
-/* Nút Mở khóa (MỚI) */
+/* Unlock Button */
 .action-btn.btn-unlock {
-  border-color: #16a34a; /* Màu xanh lá (giống web user) */
+  border-color: #16a34a;
   color: #16a34a;
 }
 .action-btn.btn-unlock:hover {
   background-color: #f0fdf4;
 }
 
-/* Nút Khóa (MỚI) */
+/* Lock Button */
 .action-btn.btn-lock {
-  border-color: #ef4444; /* Màu đỏ */
+  border-color: #ef4444;
   color: #ef4444;
 }
 .action-btn.btn-lock:hover {
   background-color: #fef2f2;
 }
 
-/* ----- 4. PHÂN TRANG ----- */
+/* ----- 3. PAGINATION ----- */
 .pagination-footer {
   display: flex;
   justify-content: space-between;
@@ -229,12 +218,17 @@
   border-radius: 6px;
   background: var(--sidebar-bg);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
-.page-controls button:hover {
+.page-controls button:hover:not(:disabled) {
   background-color: var(--admin-bg);
 }
+.page-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-/* ----- 5. MODAL CHUNG ----- */
+/* ----- 4. MODAL ----- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -261,18 +255,11 @@
   padding: 1.5rem;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
 }
-.modal-header .warning-icon { /* Dùng cho modal Xóa */
-  font-size: 1.5rem;
-  color: #f59e0b; 
-  margin-right: 1rem;
-}
-/* Icon modal Khóa/Mở (MỚI) */
 .modal-header .info-icon {
   font-size: 1.5rem;
   color: var(--primary-color);
   margin-right: 1rem;
 }
-
 .modal-header h3 {
   font-size: 1.25rem;
   font-weight: 600;
@@ -306,25 +293,22 @@
   background-color: var(--admin-bg, #f9fafb);
   border-top: 1px solid var(--border-color, #e5e7eb);
 }
-/* Nút Đỏ (Delete/Lock) */
 .btn-danger {
-  background-color: #ef4444; 
+  background-color: #ef4444;
   color: #fff;
 }
-.btn-danger:hover {
-  background-color: #dc2626; 
+.btn-danger:hover:not(:disabled) {
+  background-color: #dc2626;
 }
-/* Nút Xanh (Unlock) (MỚI) */
 .btn-success {
-  background-color: #16a34a; /* Màu xanh lá */
+  background-color: #16a34a;
   color: #fff;
 }
-.btn-success:hover {
+.btn-success:hover:not(:disabled) {
   background-color: #15803d;
 }
 
-
-/* ----- 6. FILTER PANEL ----- */
+/* ----- 5. FILTER PANEL ----- */
 .filter-panel-overlay {
   position: fixed;
   top: 0;
@@ -346,7 +330,7 @@
   top: 0;
   right: 0;
   width: 100%;
-  max-width: 400px; 
+  max-width: 400px;
   height: 100%;
   background: var(--sidebar-bg, #fff);
   display: flex;
@@ -386,8 +370,7 @@
   margin-bottom: 0.5rem;
 }
 .filter-group select,
-.filter-group input[type="number"],
-.filter-group input[type="date"] { 
+.filter-group input[type="date"] {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid var(--border-color);
@@ -395,18 +378,19 @@
   font-size: 0.9rem;
   box-sizing: border-box;
   background-color: var(--admin-bg);
-  font-family: inherit; 
+  font-family: inherit;
 }
-.price-inputs,
-.date-inputs { 
+.date-inputs {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.price-inputs span,
-.date-inputs span { 
+.date-inputs span {
   color: var(--text-light);
   padding: 0 0.25rem;
+}
+.date-inputs input {
+  flex: 1;
 }
 .filter-footer {
   display: flex;
@@ -417,37 +401,7 @@
   background-color: var(--admin-bg, #f9fafb);
 }
 
-/* ----- 7. STYLE CHO SORTING (ĐÃ SỬA LỖI) ----- */
-.customer-table th.sortable {
-  cursor: pointer;
-  user-select: none; 
-  
-  /* === SỬA LỖI LỆCH HÀNG (LẦN 2) === */
-  white-space: nowrap; /* Ngăn text xuống hàng */
-  /* ================================= */
-}
-.customer-table th.sortable:hover {
-  color: var(--text-dark);
-}
-.customer-table th.sortable i {
-  margin-left: 0.5rem;
-  color: var(--text-light);
-  opacity: 0.5; 
-  width: 1em; /* Đảm bảo icon chiếm không gian cố định */
-  text-align: center;
-}
-.customer-table th.sortable:hover i {
-  opacity: 1; 
-}
-.customer-table th .active-sort {
-  color: var(--primary-color); 
-  opacity: 1;
-}
-
-/* ----- 8. NÚT XÓA HÀNG LOẠT (ĐÃ XÓA) ----- */
-/* .btn-danger-outline { ... } */
-
-/* ----- 9. TOAST NOTIFICATION ----- */
+/* ----- 6. TOAST NOTIFICATION ----- */
 @keyframes slideIn {
   from {
     transform: translate(100%, -50%);
@@ -460,7 +414,7 @@
 }
 .toast-notification {
   position: fixed;
-  top: 90px; /* Dưới Topbar (80px + 10px) */
+  top: 90px;
   right: 1.5rem;
   z-index: 2000;
   display: flex;
