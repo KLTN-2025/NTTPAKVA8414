@@ -1,17 +1,3 @@
-/* ----- TIÊU ĐỀ TRANG ----- */
-.page-title-header {
-  margin-bottom: 1.5rem;
-}
-.page-title-header h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--text-dark);
-}
-.page-title-header span {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
 /* ----- CARD CHUNG ----- */
 .card {
   background-color: #fff;

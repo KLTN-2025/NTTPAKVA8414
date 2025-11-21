@@ -362,7 +362,7 @@ async function fetchOrders() {
     if (filters.priceMin) params.priceMin = filters.priceMin
     if (filters.priceMax) params.priceMax = filters.priceMax
 
-    const token = await getToken.value() //CORRECT CALL AS REQUIRED BY DOCS
+    const token = await getToken.value() 
     const response = await axios.get('/api/admin/orders', {
       headers: {
         Authorization: `Bearer ${token}`
@@ -499,17 +499,16 @@ async function confirmDelete() {
 
 // Export orders
 async function exportOrders() {
-  if (exporting.value) return
-  
-  exporting.value = true
-
   try {
-    const params = {}
+    const params = {
+      page: pagination.currentPage,
+      limit: pagination.perPage,
+      sortBy: sortBy.value,
+      sortOrder: sortOrder.value
+    }
 
-    // Add search
     if (searchQuery.value) params.search = searchQuery.value
 
-    // Add filters
     if (activeTab.value !== 'all') {
       params.order_status = activeTab.value
     } else if (filters.order_status) {
@@ -523,28 +522,57 @@ async function exportOrders() {
     if (filters.priceMax) params.priceMax = filters.priceMax
 
     const token = await getToken.value()
-    const response = await axios.get('/api/admin/orders/export', {
+    const response = await axios.get('/api/admin/orders', {
       headers: {
         Authorization: `Bearer ${token}`
       },
-      params: params,
-      responseType: 'blob',
-      withCredentials: true
+      params: params
     })
 
-    // Create download link
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `orders-export-${Date.now()}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
+    if (response.data.success) {
+      const orderData = response.data.data
+      const headers = [
+      'Order ID',
+      'Customer Name',
+      'Email',
+      'Phone',
+      'Shipping Address',
+      'Total Amount',
+      'Payment Method',
+      'Payment Status',
+      'Order Status',
+      'Order Date'
+    ]
+      let csvContent = "data:text/csvcharset=utf-8," + headers.join(",") + "\n"
 
+      orderData.forEach(order => {
+        const row = [
+          `"'${formatOrderId(order._id)}"`,
+          order.recipient_name,
+          order.recipient_email,
+          `"'${order.recipient_phone}"`,
+          `"${order.shipping_address}"`,
+          order.total_amount,
+          order.payment_method,
+          order.payment_status,
+          order.order_status,
+          formatDate(order.order_date)
+        ]
+        csvContent += row.join(",") + "\n"
+      })
+
+      const encodedUri = encodeURI(csvContent)
+      const link = document.createElement("a")
+      link.setAttribute("href", encodedUri)
+      link.setAttribute("download", `orders_export_${new Date().toISOString().split('T')[0]}.csv`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      toast.success('Orders exported successfully')
+    }
   } catch (err) {
     console.error('Error exporting orders:', err)
-    alert('Failed to export orders')
+    toast.error('Failed to export orders')
   } finally {
     exporting.value = false
   }

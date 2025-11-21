@@ -10,7 +10,12 @@ const CustomerSchema = new mongoose.Schema(
       unique: true,
       index: true  
     },
-
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true
+    },
     email: {
       type: String,
       required: true,
@@ -35,7 +40,7 @@ const CustomerSchema = new mongoose.Schema(
     },
     account_status: {
       type: String,
-      enum: ['active', 'inactive', 'banned'],
+      enum: ['active', 'inactive', 'locked'],
       default: 'active'
     },
     image_url: {

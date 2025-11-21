@@ -69,7 +69,7 @@ const ProductSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-//Slugify (IGNORE THIS)
+//Slugify
 ProductSchema.pre('insertMany', async (next, docs) => {
   try {
     docs.forEach(doc => {
@@ -102,6 +102,16 @@ ProductSchema.pre('save', async function(next) {
   doc.slug = slug;
   next();
 });
+
+ProductSchema.set('toJSON', {
+  transform(doc, ret) {
+    if (ret.size && typeof ret.size.toString === 'function') {
+      ret.size = ret.size.toString();
+    }
+    return ret;
+  }
+});
+
 
 //Indexing
 ProductSchema.index({ type_id: 1, name: 1 }, { unique: true });

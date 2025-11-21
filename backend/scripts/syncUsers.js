@@ -9,11 +9,11 @@ const Customer = require('../models/Customers')
 async function syncUsers() {
   try {
     await mongoose.connect(
-      process.env.MONGODB_URI
+      process.env.MONGO_URI
     );
     console.log('Connected to MongoDB');
 
-    const users = await clerkClient.users.getUserList({ limit: 100 });
+    const users = await clerkClient.users.getUserList({ limit: 20 });
 
     let synced = 0;
     let skipped = 0;
@@ -24,12 +24,14 @@ async function syncUsers() {
 
         const userData = {
           clerkId: clerkUser.id,
+          username: clerkUser.username || 'GUEST',
           email: clerkUser.emailAddresses[0]?.emailAddress || '',
           name: `${clerkUser.lastName || ''} ${clerkUser.firstName || ''}`.trim() || 'Unknown',
           phone: clerkUser.phoneNumbers[0]?.phoneNumber || '',
           image_url: clerkUser.imageUrl || '',
           account_status: clerkUser.banned ? 'banned' : 'active',
           role: clerkUser.publicMetadata?.role || 'customer'
+
         };
 
         if (existingUser) {
@@ -38,10 +40,8 @@ async function syncUsers() {
             userData,
             { new: true }
           );
-          console.log(`Updated user: ${userData.email}`);
         } else {
           await Customer.create(userData);
-          console.log(`Created user: ${userData.email}`);
         }
         synced++;
       } catch (err) {

@@ -89,12 +89,12 @@ exports.getAllOrders = async (req, res) => {
 
     // Pagination
     const pageNum = parseInt(page) || 1;
-    const limitNum = Math.min(parseInt(limit) || 10, 10); 
+    const limitNum = Math.min(parseInt(limit) || 10, 100); 
     const skip = (pageNum - 1) * limitNum;
 
     // Execute query
     const orders = await CustomerOrder.find(filters)
-      .select('_id customer_id, order_status order_date payment_status payment_method total_amount recipient_name item_count previewProduct')
+      .select('_id customer_id order_status order_date payment_status payment_method total_amount recipient_name recipient_email recipient_phone shipping_address item_count previewProduct')
       .populate('customer_id', 'name')
       .sort(sortOptions)
       .skip(skip)
@@ -272,7 +272,6 @@ exports.updateOrder = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Order updated successfully',
-      order
     });
 
   } catch (err) {
@@ -365,129 +364,4 @@ exports.deleteOrder = async (req, res) => {
       message: 'Internal server error'
     });
   }
-};
-
-/**
- * GET /api/admin/orders/export
- * Export orders to CSV
- */
-exports.exportOrders = async (req, res) => {
-  try {
-    const {
-      search,
-      order_status,
-      payment_status,
-      dateBegin,
-      dateEnd,
-      priceMin,
-      priceMax
-    } = req.query;
-
-    // Build filters
-    const filters = {};
-
-    if (search) {
-      filters.$or = [
-        { recipient_name: { $regex: search, $options: 'i' } }
-      ];
-      if (mongoose.Types.ObjectId.isValid(search)) {
-        filters.$or.push({ _id: new mongoose.Types.ObjectId(search) });
-      }
-    }
-
-    const validOrderStatus = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
-    if (order_status && validOrderStatus.includes(order_status)) {
-      filters.order_status = order_status;
-    }
-
-    const validPaymentStatus = ['pending', 'paid', 'refunded', 'failed'];
-    if (payment_status && validPaymentStatus.includes(payment_status)) {
-      filters.payment_status = payment_status;
-    }
-
-    if (dateBegin || dateEnd) {
-      filters.order_date = {};
-      if (dateBegin && !isNaN(Date.parse(dateBegin))) {
-        filters.order_date.$gte = new Date(dateBegin);
-      }
-      if (dateEnd && !isNaN(Date.parse(dateEnd))) {
-        filters.order_date.$lte = new Date(dateEnd);
-      }
-    }
-
-    if (priceMin || priceMax) {
-      filters.total_amount = {};
-      if (priceMin && !isNaN(priceMin)) {
-        filters.total_amount.$gte = parseFloat(priceMin);
-      }
-      if (priceMax && !isNaN(priceMax)) {
-        filters.total_amount.$lte = parseFloat(priceMax);
-      }
-    }
-
-    // Get all matching orders (no pagination for export)
-    const orders = await CustomerOrder.find(filters)
-      .populate('customer_id', 'name email')
-      .sort({ order_date: -1 })
-      .lean();
-
-    // Build CSV
-    const csvRows = [];
-    
-    // Header row
-    csvRows.push([
-      'Order ID',
-      'Customer Name',
-      'Email',
-      'Phone',
-      'Shipping Address',
-      'Total Amount',
-      'Payment Method',
-      'Payment Status',
-      'Order Status',
-      'Order Date'
-    ].join(','));
-
-    // Data rows
-    for (const order of orders) {
-      const row = [
-        order._id.toString(),
-        escapeCsvField(order.recipient_name || ''),
-        escapeCsvField(order.recipient_email || ''),
-        escapeCsvField(order.recipient_phone || ''),
-        escapeCsvField(order.shipping_address || ''),
-        order.total_amount || 0,
-        order.payment_method || '',
-        order.payment_status || '',
-        order.order_status || '',
-        new Date(order.order_date).toLocaleString('en-GB')
-      ];
-      csvRows.push(row.join(','));
-    }
-
-    const csvContent = csvRows.join('\n');
-
-    // Set headers for CSV download
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename=orders-export-${Date.now()}.csv`);
-    
-    return res.status(200).send(csvContent);
-
-  } catch (err) {
-    console.error('exportOrders error:', err);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-};
-
-// Helper function to escape CSV fields
-function escapeCsvField(field) {
-  if (field == null) return '';
-  const str = String(field);
-  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-    return `"${str.replace(/"/g, '""')}"`;
-  }
-  return str;
 }

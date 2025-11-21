@@ -48,34 +48,36 @@ router.post(
       switch (eventType) {
         // --- USER CREATED ---
         case 'user.created': {
-          const { id, email_addresses, first_name, last_name, image_url, phone_numbers, private_metadata } = evt.data;
+          const { id, username, email_addresses, first_name, last_name, image_url, phone_numbers, public_metadata } = evt.data;
 
           await Customer.create({
             clerkId: id,
+            username: username || null,
             email: email_addresses[0].email_address,
             name: `${first_name} ${last_name}`.trim(),
             phone: phone_numbers[0]?.phone_number || '',
             image_url: image_url,
             last_login: new Date(),
-            role: private_metadata.role || 'customer',
+            role: public_metadata?.role || 'customer',
           });
           break;
         }
 
         // --- USER UPDATED ---
         case 'user.updated': {
-          const { id, email_addresses, first_name, last_name, image_url, phone_numbers, private_metadata } = evt.data;
+          const { id, username, email_addresses, first_name, last_name, image_url, phone_numbers, public_metadata } = evt.data;
 
           await Customer.findOneAndUpdate(
             { clerkId: id },
             {
               $set: {
+                username: username || null,
                 email: email_addresses[0].email_address,
                 name: `${first_name} ${last_name}`.trim(),
                 phone: phone_numbers[0]?.phone_number || '',
                 image_url: image_url,
                 last_login: new Date(),
-                role: private_metadata.role || 'customer',
+                role: public_metadata?.role || 'customer',
               },
             }
           );
