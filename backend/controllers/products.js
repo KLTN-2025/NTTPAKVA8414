@@ -270,6 +270,7 @@ exports.searchAndFilterProducts = async (req, res) => {
               name: attr.description,
             }))
           : [],
+        rating: product.reviews_summary.avg_rating
       };
     });
 
@@ -378,6 +379,8 @@ exports.getSingleProductDetails = async (req, res) => {
             name: attr.description,
           }))
         : [],
+      
+      
     };
 
     await redis.set(cachedKey, JSON.stringify(productDetails), 'EX', 3600)

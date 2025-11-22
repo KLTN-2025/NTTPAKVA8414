@@ -7,37 +7,66 @@ const CustomerOrder = require('../models/CustomerOrders');
 const CustomerOrderItem = require('../models/CustomerOrderItems');
 const { getAuth } = require('@clerk/express');
 
-
-async function updateProductReviewSummary(productId) {
+/**Update a product's review summary. Has there possible updateMode:
+ * - create: New review created
+ * - update: Update review data
+ * - delete: Delete an existing review
+*/
+async function updateProductReviewSummary(productId, updateMode, newRating, oldRating = 0) {
   try {
-    // Get all reviews for this product
-    const reviews = await Review.find({ product_id: productId })
-      .select('rating')
-      .lean();
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      throw new Error('Invalid product ID format');
+    }
 
-    // Calculate breakdown
-    const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    let totalRating = 0;
+    // Build update operations
+    const updates = {};
 
+    if (updateMode === 'create') {
+      updates.$inc = {
+        'reviews_summary.total_reviews': 1,
+        'reviews_summary.total_rating_sum': newRating,
+        [`reviews_summary.breakdown.${newRating}`]: 1
+      };
+    } 
+    else if (updateMode === 'update') {
+      updates.$inc = {
+        'reviews_summary.total_rating_sum': (newRating - oldRating),
+        [`reviews_summary.breakdown.${newRating}`]: 1,
+        [`reviews_summary.breakdown.${oldRating}`]: -1
+      };
+    } 
+    else if (updateMode === 'delete') {
+      updates.$inc = {
+        'reviews_summary.total_reviews': -1,
+        'reviews_summary.total_rating_sum': -oldRating,
+        [`reviews_summary.breakdown.${oldRating}`]: -1
+      };
+    }
+    else {
+      throw new Error('Invalid review summary update mode');
+    }
 
-    reviews.forEach(review => {
-      breakdown[review.rating]++;
-      totalRating += review.rating;
-    });
+    const product = await Product.findByIdAndUpdate(
+      productId, 
+      updates, 
+      { new: true }
+    );
 
-    // Calculate average rating (rounded to 1 decimal place)
-    const avg_rating = reviews.length > 0 
-      ? Math.round((totalRating / reviews.length) * 10) / 10 
+    if (!product) {
+      throw new Error('Product not found');
+    }
+
+    const { total_reviews, total_rating_sum } = product.reviews_summary;
+    const avg_rating = total_reviews > 0 
+      ? Math.round((total_rating_sum / total_reviews) * 10) / 10 
       : 0;
 
-    // Update product
-    await Product.findByIdAndUpdate(productId, {
-      'reviews_summary.avg_rating': avg_rating,
-      'reviews_summary.total_reviews': reviews.length,
-      'reviews_summary.breakdown': breakdown
-    });
+    await Product.findByIdAndUpdate(
+      productId,
+      { 'reviews_summary.avg_rating': avg_rating }
+    );
 
-    return { avg_rating, total_reviews: reviews.length, breakdown };
+    return product.reviews_summary;
   } catch (error) {
     console.error('Error updating product review summary:', error);
     throw error;
@@ -152,7 +181,7 @@ exports.getProductReviews = async (req, res) => {
 /**
  * POST /api/products/:productId/reviews
  * Create a new review (requires authentication)
- * Body: { rating: 1-5, comment: "optional text" }
+ * Body: { rating: 1-5, comment: string (optional, maxlength: 500) }
  * Purchase verification: Customer must have purchased the product
  */
 exports.createReview = async (req, res) => {
@@ -245,17 +274,11 @@ exports.createReview = async (req, res) => {
     });
 
     // Update product review summary
-    await updateProductReviewSummary(productId);
+    await updateProductReviewSummary(productId, 'create', newReview.rating);
 
     return res.status(201).json({
       success: true,
       message: 'Review submitted successfully',
-      review: {
-        _id: newReview._id,
-        rating: newReview.rating,
-        comment: newReview.comment,
-        created_at: newReview.createdAt
-      }
     });
 
   } catch (error) {
@@ -279,7 +302,7 @@ exports.createReview = async (req, res) => {
 /**
  * PUT /api/products/:productId/reviews/:reviewId
  * Update an existing review (only by the review author)
- * Body: { rating: 1-5, comment: "optional text" }
+ * Body: { rating: 1-5, comment: string (optional, maxlength: 500) }
  */
 exports.updateReview = async (req, res) => {
   try {
@@ -344,6 +367,7 @@ exports.updateReview = async (req, res) => {
         message: 'Review not found or you do not have permission to edit it'
       });
     }
+    const oldRating = review.rating
 
     // Update review
     review.rating = rating;
@@ -351,17 +375,11 @@ exports.updateReview = async (req, res) => {
     await review.save();
 
     // Update product review summary
-    await updateProductReviewSummary(productId);
+    await updateProductReviewSummary(productId, 'update', rating, oldRating);
 
     return res.status(200).json({
       success: true,
       message: 'Review updated successfully',
-      review: {
-        _id: review._id,
-        rating: review.rating,
-        comment: review.comment,
-        updated_at: review.updatedAt
-      }
     });
 
   } catch (error) {
@@ -422,10 +440,11 @@ exports.deleteReview = async (req, res) => {
         message: 'Review not found or you do not have permission to delete it'
       });
     }
+    const oldRating = review.rating
 
     await Review.findByIdAndDelete(reviewId);
 
-    await updateProductReviewSummary(productId);
+    await updateProductReviewSummary(productId, 'delete', 0, oldRating);
 
     return res.status(200).json({
       success: true,
