@@ -5,6 +5,8 @@ const CustomerOrderItem = require("../models/CustomerOrderItems");
 const Product = require("../models/Products");
 const Customer = require("../models/Customers");
 const { getAuth } = require('@clerk/express')
+const { redis } = require('../config/redis');
+
 const MAX_CART_SIZE = 10;
 
 /**
@@ -134,14 +136,14 @@ exports.placeOrder = async (req, res) => {
 };
 
 /**
- * GET /api/orders
- * Get all orders made by a specific user with product preview
- * Query params: { order_status, payment_status, dateBegin, dateEnd, page, limit }
- * Requires auth
- * Returns: {
- *    success: true | false,
- *    data: list of Orders with first product info and item count,
- *    pagination: { currentPage, perPage, totalItems, totalPages, hasNextPage, hasPrevPage }
+ * - GET /api/orders
+ * - Get all orders made by a specific user with product preview
+ * - Query params: { order_status, payment_status, dateBegin, dateEnd, page, limit }
+ * - Requires auth
+ * - Returns: {
+ *   success: true | false,
+ *   data: list of Orders with first product info and item count,
+ *   pagination: { currentPage, perPage, totalItems, totalPages, hasNextPage, hasPrevPage }
  * }
  */
 exports.getOrders = async (req, res) => {
@@ -249,12 +251,12 @@ exports.getOrders = async (req, res) => {
 
 /**
  * GET /api/orders/:id
- * Get the complete order details including all order fields and item list
- * Returns: {
- *  success: true | false,
- *  order: { full order object with all fields },
- *  items: [{
- *    order_id, product_id (populated), price, quantity, discount, subtotal
+ * - Get the complete order details including all order fields and item list
+ * - Returns: {
+ * - success: true | false,
+ * - order: { full order object with all fields },
+ * - items: [{
+ *    order_id, product_id, price, quantity, discount, subtotal
  *  }]
  * }
  */
@@ -280,8 +282,22 @@ exports.getOrderDetails = async (req, res) => {
         message: 'Invalid order ID format'
       });
     }
+    const cachedKey = `orders:${reqOrderId}`
+    const cachedItemsKey = `orders:${reqOrderId}:items`
+    
+    // Find order in cache first
+    const cachedOrder = await redis.get(cachedKey)
+    const cachedOrderItems = await redis.get(cachedItemsKey)
 
-    // Find order
+    if (cachedOrder && cachedOrderItems) {
+      console.log('cache hit')
+      return res.status(200).json({
+        success: true,
+        order: JSON.parse(cachedOrder),
+        items: JSON.parse(cachedOrderItems)
+      })
+    }
+
     const order = await CustomerOrder.findOne({
       _id: reqOrderId,
       customer_id: customer._id
@@ -307,9 +323,13 @@ exports.getOrderDetails = async (req, res) => {
       subtotal: item.price * item.quantity * (1 - item.discount / 100)
     }));
 
+    //Set cache
+    await redis.set(cachedKey, JSON.stringify(order), 'EX', 3600)
+    await redis.set(cachedItemsKey, JSON.stringify(formattedResult), 'EX', 3600)
+
     return res.status(200).json({
       success: true,
-      order: order,  // Return complete order object
+      order: order, 
       items: formattedResult
     });
 
@@ -407,6 +427,12 @@ exports.cancelOrder = async (req, res) => {
     order.payment_status = newPaymentStatus;
     await order.save();
 
+    
+    //Invalidate cache
+    const cachedKey = `orders:${reqOrderId}`
+    const cachedItemsKey = `orders:${reqOrderId}:items`
+    await redis.del(cachedKey, cachedItemsKey)
+
     return res.status(200).json({
       success: true,
       message: "Order cancelled successfully",
@@ -416,6 +442,7 @@ exports.cancelOrder = async (req, res) => {
         payment_status: order.payment_status
       }
     });
+
 
   } catch (err) {
     console.error('cancelOrder error:', err);

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const cartController = require('../controllers/carts.js')
-const { checkMemberStatus } = require('../middleware/checkMember.js')
+const cartController = require('../../controllers/carts.js')
+const { checkMemberStatus } = require('../../middleware/checkMember.js')
 
 router.post('/validate', checkMemberStatus,
   cartController.validateCart

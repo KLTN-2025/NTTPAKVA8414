@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { requireAuth } = require('@clerk/express')
-const Customer = require('../models/Customers')
+const Customer = require('../../models/Customers')
 
 /**
  * @route   POST /api/auth/sync
@@ -10,7 +10,7 @@ const Customer = require('../models/Customers')
  */
 router.post('/sync', requireAuth(), async (req, res) => {
   try {
-    const { userId } = req.auth // Clerk user ID
+    const { userId } = req.auth 
     const { email, name, imageUrl, phone } = req.body
 
     if (!userId || !email || !name) {
@@ -20,7 +20,6 @@ router.post('/sync', requireAuth(), async (req, res) => {
     let customer = await Customer.findOne({ clerkId: userId })
 
     if (!customer) {
-      // Create new customer record
       customer = await Customer.create({
         clerkId: userId,
         email,
@@ -33,7 +32,6 @@ router.post('/sync', requireAuth(), async (req, res) => {
         customer,
       })
     } else {
-      // Update existing record (if needed)
       customer.last_login = new Date()
       await customer.save()
 
@@ -79,7 +77,6 @@ router.get('/me', requireAuth(), async (req, res) => {
  */
 router.post('/logout', requireAuth(), async (req, res) => {
   try {
-    // Clerk sessions are managed client-side. No DB session needed here
     res.status(200).json({ message: 'Logout handled by Clerk on frontend.' })
   } catch (error) {
     console.error('[LOGOUT ERROR]', error)

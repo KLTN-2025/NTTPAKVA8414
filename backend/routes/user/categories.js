@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ProductCategory = require('../models/ProductCategories');
+const ProductCategory = require('../../models/ProductCategories');
 /**
  * GET /api/categories
  * Retrieve all product categories
@@ -8,7 +8,7 @@ const ProductCategory = require('../models/ProductCategories');
 router.get('/', async (req, res) => {
   try {
     const categories = await ProductCategory.find()
-      .select('category_name description')
+      .select('_id category_name')
       .sort({ category_name: 1 })
       .lean();
 

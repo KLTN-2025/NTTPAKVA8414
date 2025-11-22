@@ -4,6 +4,85 @@ const ProductType = require("../models/ProductTypes");
 const ProductCategory = require("../models/ProductCategories");
 const Brand = require("../models/Brands");
 const Attribute = require("../models/Attributes");
+const { redis } = require('../config/redis');
+
+const getAllProducts = async () => {
+  try {
+    const cachedKey = 'products:all'
+    const cachedData = await redis.get(cachedKey)
+    if (cachedData) {
+      console.log('Get All Product cache hit')
+      return JSON.parse(cachedData)
+    }
+
+    console.log('Get All Product cache miss')
+    const products = await Product.find(filter)
+    .populate({
+      path: "type_id",
+      select: "name category_id",
+      populate: {
+        path: "category_id",
+        select: "category_name",
+      },
+    })
+    .populate("brand_id", "name")
+    .populate("attributes", "description")
+    .sort(sort)
+    .skip(skip)
+    .limit(limit)
+    .lean()
+
+    const formattedProducts = products.map((product) => {
+      const formattedSize = product.size
+        ? parseFloat(product.size.toString())
+        : null;
+
+      return {
+        _id: product._id,
+        sku: product.SKU,
+        name: product.name,
+        slug: product.slug,
+        size: formattedSize,
+        unit: product.unit,
+        price: product.selling_price,
+        stock: product.current_stock,
+        in_stock: product.current_stock > 0,
+        images: product.image_urls[0] || null,
+        category: product.type_id?.category_id
+          ? {
+              _id: product.type_id.category_id._id,
+              name: product.type_id.category_id.category_name,
+            }
+          : null,
+        type: product.type_id
+          ? {
+              _id: product.type_id._id,
+              name: product.type_id.name,
+            }
+          : null,
+        brand: product.brand_id
+          ? {
+              _id: product.brand_id._id,
+              name: product.brand_id.name,
+            }
+          : null,
+        attributes: product.attributes
+          ? product.attributes.map((attr) => ({
+              _id: attr._id,
+              name: attr.description,
+            }))
+          : [],
+      };
+    });
+
+    await redis.set(cachedKey, JSON.stringify(formattedProducts), 'EX', 3600)
+    return formattedProducts
+
+  } catch (err) {
+
+  }
+}
+
 /**
  * Query Parameters:
  * - page: Page number (default: 1)
@@ -27,24 +106,21 @@ exports.searchAndFilterProducts = async (req, res) => {
 
     const filter = {};
 
-    if (req.query.category) {
-      const categorySlug = req.query.category.toLowerCase().trim();
-      const category = await ProductCategory.findOne({
-        category_name: {
-          $regex: new RegExp("^" + categorySlug.replace(/-/g, " "), "i"),
-        },
-      });
+    if (req.query.category && mongoose.Types.ObjectId.isValid(req.query.category)) {
+      const cat = req.query.category
+      const category = await ProductCategory.findById(cat).select("_id").lean()
 
       if (category) {
         const productTypes = await ProductType.find({
           category_id: category._id,
-        }).select("_id");
+        }).select("_id").lean();
+
         const typeIds = productTypes.map((pt) => pt._id);
         filter.type_id = { $in: typeIds };
       } else {
         return res.status(200).json({
           success: true,
-          message: `No products found for category: ${req.query.category}`,
+          message: `No products found for category: ${cat}`,
           data: [],
           pagination: {
             current_page: page,
@@ -58,11 +134,9 @@ exports.searchAndFilterProducts = async (req, res) => {
       }
     }
 
-    if (req.query.type) {
-      const typeSlug = req.query.type.toLowerCase().trim();
-      const productType = await ProductType.findOne({
-        name: { $regex: new RegExp("^" + typeSlug.replace(/-/g, " "), "i") },
-      });
+    if (req.query.type && mongoose.Types.ObjectId.isValid(req.query.type)) {
+      const productType = await ProductType.findById(req.query.type)
+      .select('_id').lean();
 
       if (productType) {
         filter.type_id = productType._id;
@@ -70,32 +144,6 @@ exports.searchAndFilterProducts = async (req, res) => {
         return res.status(200).json({
           success: true,
           message: `No products found for type: ${req.query.type}`,
-          data: [],
-          pagination: {
-            current_page: page,
-            per_page: limit,
-            total_items: 0,
-            total_pages: 0,
-            has_next_page: false,
-            has_prev_page: false,
-          },
-        });
-      }
-    }
-
-    if (req.query.brand) {
-      const brandSlug = req.query.brand.toLowerCase().trim();
-      const brand = await Brand.findOne({
-        name: { $regex: new RegExp("^" + brandSlug.replace(/-/g, " "), "i") },
-      });
-
-      if (brand) {
-        filter.brand_id = brand._id;
-      } else {
-        return res.status(200).json({
-          success: true,
-          userRole: userRole,
-          message: `0 products found for brand: ${req.query.brand}`,
           data: [],
           pagination: {
             current_page: page,
@@ -129,14 +177,10 @@ exports.searchAndFilterProducts = async (req, res) => {
     }
 
     if (req.query.attributes) {
-      const attributeSlugs = req.query.attributes
-        .split(",")
-        .map((a) => a.trim().toLowerCase());
+      const attrArray = req.query.attributes.split(",")
       const attributes = await Attribute.find({
-        slug: {
-          $in: attributeSlugs,
-        },
-      }).select("_id");
+        _id: { $in: attrArray },
+      }).select("_id").lean();
 
       const attributeIds = attributes.map((a) => a._id);
 
@@ -145,7 +189,7 @@ exports.searchAndFilterProducts = async (req, res) => {
       } else {
         return res.status(200).json({
           success: true,
-          message: `0 products with attributes: ${req.query.attributes}`,
+          message: `0 products with attributes: ${attrArray}`,
           data: [],
           pagination: {
             current_page: page,
@@ -206,31 +250,24 @@ exports.searchAndFilterProducts = async (req, res) => {
           ? {
               _id: product.type_id.category_id._id,
               name: product.type_id.category_id.category_name,
-              slug: product.type_id.category_id.category_name
-                .toLowerCase()
-                .replace(/\s+/g, "-")
-                .replace(/&/g, "and"),
             }
           : null,
         type: product.type_id
           ? {
               _id: product.type_id._id,
               name: product.type_id.name,
-              slug: product.type_id.name.toLowerCase().replace(/\s+/g, "-"),
             }
           : null,
         brand: product.brand_id
           ? {
               _id: product.brand_id._id,
               name: product.brand_id.name,
-              slug: product.brand_id.name.toLowerCase().replace(/\s+/g, "-"),
             }
           : null,
         attributes: product.attributes
           ? product.attributes.map((attr) => ({
               _id: attr._id,
               name: attr.description,
-              slug: attr.description.toLowerCase().replace(/\s+/g, "-"),
             }))
           : [],
       };
@@ -239,7 +276,7 @@ exports.searchAndFilterProducts = async (req, res) => {
     const totalItems = await Product.countDocuments(filter);
     const totalPages = Math.ceil(totalItems / limit);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: formattedProducts,
       pagination: {
@@ -253,7 +290,7 @@ exports.searchAndFilterProducts = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching products:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error fetching products",
       error: error.message,
@@ -267,9 +304,20 @@ exports.getSingleProductDetails = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid product id" });
     }
+
+    //Try retrieving data from Redis first
+    const cachedKey = `product:${id}`
+    const cachedData = await redis.get(cachedKey)
+    if (cachedData) {
+      return res.status(200).json({
+        success: true,
+        data: JSON.parse(cachedData)
+      });
+    }
+
+    //Retrieving from MongoDB and set cache
     const productId = new mongoose.Types.ObjectId(id);
 
-    // 1. FETCH PRODUCT WITH POPULATED FIELDS
     const product = await Product.findById(productId)
       .populate({
         path: "type_id",
@@ -332,13 +380,15 @@ exports.getSingleProductDetails = async (req, res) => {
         : [],
     };
 
-    res.status(200).json({
+    await redis.set(cachedKey, JSON.stringify(productDetails), 'EX', 3600)
+
+    return res.status(200).json({
       success: true,
       data: productDetails,
     });
   } catch (error) {
     console.error("Error fetching product detail:", error);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error fetching product detail",
       error: error.message,
     });

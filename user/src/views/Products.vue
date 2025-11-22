@@ -31,11 +31,11 @@
                 <span class="label-text">All Categories</span>
               </label>
             </li>
-            <li v-for="cat in categories" :key="cat.slug">
+            <li v-for="cat in categories" :key="cat._id">
               <label>
-                <input type="radio" name="category" v-model="selectedCategory" :value="cat.name" @change="applyFilters" />
+                <input type="radio" name="category" v-model="selectedCategory" :value="cat._id" @change="applyFilters" />
                 <span class="custom-radio"></span>
-                <span class="label-text">{{ cat.name }}</span>
+                <span class="label-text">{{ cat.category_name }}</span>
               </label>
             </li>
           </ul>
@@ -69,12 +69,13 @@
           <div v-else class="tags">
             <span
               v-for="attr in attributes"
-              :key="attr.slug"
+              :key="attr._id"
+              
               class="tag"
-              :class="{ active: selectedAttributes.includes(attr.name) }"
-              @click="toggleAttribute(attr.name)"
+              :class="{ active: selectedAttributes.includes(attr._id) }"
+              @click="toggleAttribute(attr._id)"
             >
-              {{ attr.name }}
+              {{ attr.description }}
             </span>
           </div>
         </div>
@@ -278,11 +279,8 @@ async function fetchCategories() {
     const response = await axios.get('/api/categories')
     
     if (response.data.success) {
-      categories.value = response.data.data.map(cat => ({
-        name: cat.category_name,
-        slug: cat.category_name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and')
-      }))
-    }
+      categories.value = response.data.data
+      }
   } catch (err) {
     console.error('Error fetching categories:', err)
     // Fallback to empty array
@@ -296,10 +294,7 @@ async function fetchAttributes() {
     const response = await axios.get('/api/attributes')
     
     if (response.data.success) {
-      attributes.value = response.data.data.map(attr => ({
-        name: attr.description,
-        slug: attr.description.toLowerCase().replace(/\s+/g, '-')
-      }))
+      attributes.value = response.data.data
     }
   } catch (err) {
     console.error('Error fetching attributes:', err)
@@ -309,12 +304,12 @@ async function fetchAttributes() {
   }
 }
 
-function toggleAttribute(slug) {
-  const index = selectedAttributes.value.indexOf(slug)
+function toggleAttribute(id) {
+  const index = selectedAttributes.value.indexOf(id)
   if (index > -1) {
     selectedAttributes.value.splice(index, 1)
   } else {
-    selectedAttributes.value.push(slug)
+    selectedAttributes.value.push(id)
   }
   applyFilters()
 }

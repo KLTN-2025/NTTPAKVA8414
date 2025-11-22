@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Attribute = require('../models/Attributes');
+const Attribute = require('../../models/Attributes');
 
 /**
  * GET /api/attributes
@@ -9,7 +9,7 @@ const Attribute = require('../models/Attributes');
 router.get('/', async (req, res) => {
   try {
     const attributes = await Attribute.find()
-      .select('description')
+      .select('_id description')
       .sort({ description: 1 })
       .lean();
 

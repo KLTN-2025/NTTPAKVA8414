@@ -1,8 +1,8 @@
 const express = require('express')
-const { checkMemberStatus } = require('../middleware/checkMember')
+const { checkMemberStatus } = require('../../middleware/checkMember')
 const router = express.Router()
 
-const orderController = require('../controllers/orders')
+const orderController = require('../../controllers/orders')
 
 
 /**

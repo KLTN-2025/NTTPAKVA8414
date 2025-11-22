@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { requireAuth } = require('@clerk/express')
-const Customer = require('../models/Customers') 
+const Customer = require('../../models/Customers') 
 
 /**
  * @route   PUT /api/customers/me

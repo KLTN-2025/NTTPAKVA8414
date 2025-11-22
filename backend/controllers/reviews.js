@@ -1,123 +1,442 @@
-const mongoose = require("mongoose");
-const Product = require("../models/Products");
-const Customer = require("../models/Customers");
-const Review = require("../models/Reviews");
+// controllers/reviews.js
+const mongoose = require('mongoose');
+const Review = require('../models/Reviews');
+const Product = require('../models/Products');
+const Customer = require('../models/Customers');
+const CustomerOrder = require('../models/CustomerOrders');
+const CustomerOrderItem = require('../models/CustomerOrderItems');
+const { getAuth } = require('@clerk/express');
 
-exports.fetchSingleProductReviews = async (req, res) => {
+
+async function updateProductReviewSummary(productId) {
   try {
-    const { id } = req.params;
-    const page = Math.max(1, parseInt(req.query.page) || 1);
-    const limit = Math.max(1, parseInt(req.query.limit) || 5);
-    const skip = (page - 1) * limit;
+    // Get all reviews for this product
+    const reviews = await Review.find({ product_id: productId })
+      .select('rating')
+      .lean();
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid product id" });
-    }
-    const pid = new mongoose.Types.ObjectId(id);
+    // Calculate breakdown
+    const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let totalRating = 0;
 
-    const agg = await Review.aggregate([
-      { $match: { product_id: pid } },
 
-      {
-        $facet: {
-          // overall stats (avg rating and total count)
-          stats: [
-            {
-              $group: {
-                _id: null,
-                avgRating: { $avg: "$rating" },
-                totalReviews: { $sum: 1 },
-              },
-            },
-          ],
-
-          // breakdown by rating value (1..5)
-          breakdown: [
-            {
-              $group: {
-                _id: "$rating",
-                count: { $sum: 1 },
-              },
-            },
-            { $project: { _id: 0, rating: "$_id", count: 1 } },
-            { $sort: { rating: -1 } },
-          ],
-
-          // paginated recent reviews
-          reviews: [
-            { $sort: { createdAt: -1 } },
-            { $skip: skip },
-            { $limit: limit },
-
-            {
-              $lookup: {
-                from: "Customer",
-                localField: "customer_id",
-                foreignField: "_id",
-                as: "customer",
-              },
-            },
-            {
-              $unwind: { path: "$customer", preserveNullAndEmptyArrays: true },
-            },
-
-            {
-              $project: {
-                _id: 1,
-                rating: 1,
-                comment: 1,
-                createdAt: 1,
-                "customer._id": 1,
-                "customer.name": 1,
-              },
-            },
-          ],
-        },
-      },
-
-      {
-        $project: {
-          stats: { $arrayElemAt: ["$stats", 0] },
-          breakdown: 1,
-          reviews: 1,
-        },
-      },
-    ]);
-
-    const doc = (agg && agg[0]) || {};
-    const stats = doc.stats || { avgRating: null, totalReviews: 0 };
-    const breakdownArray = doc.breakdown || [];
-    const reviews = doc.reviews || [];
-
-    const breakdown = {
-      '5': 0,
-      '4': 0,
-      '3': 0,
-      '2': 0,
-      '1': 0,
-    };
-    breakdownArray.forEach((item) => {
-      const key = String(item.rating);
-      if (breakdown.hasOwnProperty(key)) breakdown[key] = item.count;
+    reviews.forEach(review => {
+      breakdown[review.rating]++;
+      totalRating += review.rating;
     });
 
-    const totalReviews = stats.totalReviews || 0;
-    const totalPages = Math.max(1, Math.ceil(totalReviews / limit));
+    // Calculate average rating (rounded to 1 decimal place)
+    const avg_rating = reviews.length > 0 
+      ? Math.round((totalRating / reviews.length) * 10) / 10 
+      : 0;
+
+    // Update product
+    await Product.findByIdAndUpdate(productId, {
+      'reviews_summary.avg_rating': avg_rating,
+      'reviews_summary.total_reviews': reviews.length,
+      'reviews_summary.breakdown': breakdown
+    });
+
+    return { avg_rating, total_reviews: reviews.length, breakdown };
+  } catch (error) {
+    console.error('Error updating product review summary:', error);
+    throw error;
+  }
+}
+
+
+async function hasCustomerPurchasedProduct(customerId, productId) {
+  try {
+    const orderItems = await CustomerOrderItem.findOne({
+      product_id: productId
+    })
+      .populate({
+        path: 'order_id',
+        match: { 
+          customer_id: customerId,
+          order_status: { $in: ['confirmed', 'shipped', 'delivered'] }
+        }
+      })
+      .lean();
+
+    return orderItems && orderItems.order_id !== null;
+  } catch (error) {
+    console.error('Error checking purchase history:', error);
+    return false;
+  }
+}
+
+/**
+ * GET /api/products/:productId/reviews
+ * Get all reviews for a product with pagination
+ * Query params: page (default: 1), limit (default: 10)
+ * Returns: {
+ *   success: true,
+ *   avgRating, totalReviews, breakdown,
+ *   reviews: [...],
+ *   page, limit, total_pages
+ * }
+ */
+exports.getProductReviews = async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID format'
+      });
+    }
+
+    const product = await Product.findById(productId)
+      .select('reviews_summary')
+      .lean();
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(parseInt(req.query.limit) || 10, 50); 
+    const skip = (page - 1) * limit;
+
+    // Get paginated reviews
+    const reviews = await Review.find({ product_id: productId })
+      .populate('customer_id', 'name')
+      .select('-__v')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    // Format reviews for frontend
+    const formattedReviews = reviews.map(review => ({
+      _id: review._id,
+      reviewer: {
+        name: review.customer_id?.name || 'Anonymous'
+      },
+      rating: review.rating,
+      comment: review.comment,
+      created_at: review.createdAt,
+      updated_at: review.updatedAt
+    }));
+
+    // Calculate pagination metadata
+    const totalReviews = product.reviews_summary.total_reviews;
+    const totalPages = Math.ceil(totalReviews / limit);
 
     return res.status(200).json({
       success: true,
-      productId: id,
-      avgRating:
-        stats.avgRating === null ? 0 : Math.round(stats.avgRating * 10) / 10,
-      totalReviews,
-      breakdown,
+      avgRating: product.reviews_summary.avg_rating,
+      totalReviews: totalReviews,
+      breakdown: product.reviews_summary.breakdown,
+      reviews: formattedReviews,
       page,
       limit,
-      totalPages,
-      reviews,
+      total_pages: totalPages
     });
-  } catch (err) {
-    console.error("GET reviews error", err);
-    return res.status(500).json({ message: "Server error" });
+
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error occurred'
+    });
+  }
+};
+
+/**
+ * POST /api/products/:productId/reviews
+ * Create a new review (requires authentication)
+ * Body: { rating: 1-5, comment: "optional text" }
+ * Purchase verification: Customer must have purchased the product
+ */
+exports.createReview = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { rating, comment } = req.body;
+
+    // Require authentication
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
+    }
+
+    // Get customer
+    const customer = await Customer.findOne({ clerkId: userId })
+      .select('_id')
+      .lean();
+
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Customer account not found'
+      });
+    }
+
+    // Validate product ID
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID format'
+      });
+    }
+
+    // Check if product exists
+    const product = await Product.findById(productId).select('_id name');
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Validate rating
+    if (!rating || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({
+        success: false,
+        message: 'Rating must be an integer between 1 and 5'
+      });
+    }
+
+    // Validate comment length
+    if (comment && comment.length > 500) {
+      return res.status(400).json({
+        success: false,
+        message: 'Comment cannot exceed 500 characters'
+      });
+    }
+
+    // Purchase verification
+    const hasPurchased = await hasCustomerPurchasedProduct(customer._id, productId);
+    if (!hasPurchased) {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only review products you have purchased'
+      });
+    }
+
+    // Check if customer already reviewed this product
+    const existingReview = await Review.findOne({
+      product_id: productId,
+      customer_id: customer._id
+    });
+
+    if (existingReview) {
+      return res.status(409).json({
+        success: false,
+        message: 'Already reviewed on this product. Edit your review instead'
+      });
+    }
+
+    // Create review
+    const newReview = await Review.create({
+      product_id: productId,
+      customer_id: customer._id,
+      rating,
+      comment: comment || null
+    });
+
+    // Update product review summary
+    await updateProductReviewSummary(productId);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Review submitted successfully',
+      review: {
+        _id: newReview._id,
+        rating: newReview.rating,
+        comment: newReview.comment,
+        created_at: newReview.createdAt
+      }
+    });
+
+  } catch (error) {
+    console.error('Error creating review:', error);
+    
+    // Handle duplicate review error
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: 'You have already reviewed this product'
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: 'Server error occurred'
+    });
+  }
+};
+
+/**
+ * PUT /api/products/:productId/reviews/:reviewId
+ * Update an existing review (only by the review author)
+ * Body: { rating: 1-5, comment: "optional text" }
+ */
+exports.updateReview = async (req, res) => {
+  try {
+    const { productId, reviewId } = req.params;
+    const { rating, comment } = req.body;
+
+    // Require authentication
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
+    }
+
+    // Get customer
+    const customer = await Customer.findOne({ clerkId: userId })
+      .select('_id')
+      .lean();
+
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Customer account not found'
+      });
+    }
+
+    // Validate IDs
+    if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(reviewId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid ID format'
+      });
+    }
+
+    // Validate rating
+    if (!rating || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({
+        success: false,
+        message: 'Rating must be an integer between 1 and 5'
+      });
+    }
+
+    // Validate comment length
+    if (comment && comment.length > 500) {
+      return res.status(400).json({
+        success: false,
+        message: 'Comment cannot exceed 500 characters'
+      });
+    }
+
+    // Find review 
+    const review = await Review.findOne({
+      _id: reviewId,
+      product_id: productId,
+      customer_id: customer._id
+    });
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: 'Review not found or you do not have permission to edit it'
+      });
+    }
+
+    // Update review
+    review.rating = rating;
+    review.comment = comment || null;
+    await review.save();
+
+    // Update product review summary
+    await updateProductReviewSummary(productId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Review updated successfully',
+      review: {
+        _id: review._id,
+        rating: review.rating,
+        comment: review.comment,
+        updated_at: review.updatedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('Error updating review:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error occurred'
+    });
+  }
+};
+
+/**
+ * DELETE /api/products/:productId/reviews/:reviewId
+ * Delete a review
+ */
+exports.deleteReview = async (req, res) => {
+  try {
+    const { productId, reviewId } = req.params;
+
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
+    }
+
+    // Get customer
+    const customer = await Customer.findOne({ clerkId: userId })
+      .select('_id')
+      .lean();
+
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Customer account not found'
+      });
+    }
+
+    // Validate IDs
+    if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(reviewId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid ID format'
+      });
+    }
+
+    // Find review
+    const review = await Review.findOne({
+      _id: reviewId,
+      product_id: productId,
+      customer_id: customer._id
+    });
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: 'Review not found or you do not have permission to delete it'
+      });
+    }
+
+    await Review.findByIdAndDelete(reviewId);
+
+    await updateProductReviewSummary(productId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Review deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Error deleting review:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error occurred'
+    });
   }
 };

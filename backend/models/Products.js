@@ -65,6 +65,26 @@ const ProductSchema = new mongoose.Schema(
       default: []
     },
     attributes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Attribute' }],
+    reviews_summary: {
+      avg_rating: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 5
+      },
+      total_reviews: {
+        type: Number,
+        default: 0,
+        min: 0
+      },
+      breakdown: {
+        1: { type: Number, default: 0, min: 0 },
+        2: { type: Number, default: 0, min: 0 },
+        3: { type: Number, default: 0, min: 0 },
+        4: { type: Number, default: 0, min: 0 },
+        5: { type: Number, default: 0, min: 0 }
+      }
+    }
   },
   { timestamps: true }
 );
