@@ -82,7 +82,7 @@ npm install
 cd backend
 cp .env.example .env
 node scripts/syncUsers.js
-node scripts/seedProducts.js 
+node scripts/init.js 
 node scripts/computeRecommendation.js
 node server.js
 ```

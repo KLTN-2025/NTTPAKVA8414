@@ -686,27 +686,28 @@ async function seedDatabase() {
     const Brand = require('../models/Brands')
     const Attribute = require('../models/Attributes')
     const Product = require('../models/Products')
-    
+    const Review = require('../models/Reviews')
+    const CO = require('../models/CustomerOrders')
+    const COI = require('../models/CustomerOrderItems')
+    const SO = require('../models/SupplyOrders')
+    const SOI = require('../models/SupplyOrderItems')
+
+    await Review.deleteMany({})
     await Product.deleteMany({})
     await ProductType.deleteMany({})
     await ProductCategory.deleteMany({})
     await Brand.deleteMany({})
     await Attribute.deleteMany({})
-    
+    await CO.deleteMany({})
+    await COI.deleteMany({})
+    await SO.deleteMany({})
+    await SOI.deleteMany({})
+
     await ProductCategory.insertMany(productCategories)
-    console.log(`Inserted ${productCategories.length} categories`)
-    
     await ProductType.insertMany(productTypes)
-    console.log(`Inserted ${productTypes.length} product types`)
-    
     await Brand.insertMany(brands)
-    console.log(`Inserted ${brands.length} brands`)
-    
     await Attribute.insertMany(attributes)
-    console.log(`Inserted ${attributes.length} attributes`)
-    
-    await Product.insertMany(products)
-    console.log(`Inserted ${products.length} products`)
+    await Product.create(products)
 
     
     console.log('\nDatabase seeded successfully!')

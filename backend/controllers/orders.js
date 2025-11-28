@@ -290,7 +290,6 @@ exports.getOrderDetails = async (req, res) => {
     const cachedOrderItems = await redis.get(cachedItemsKey)
 
     if (cachedOrder && cachedOrderItems) {
-      console.log('cache hit')
       return res.status(200).json({
         success: true,
         order: JSON.parse(cachedOrder),

@@ -9,13 +9,6 @@ const { redis } = require('../config/redis');
 const getAllProducts = async () => {
   try {
     const cachedKey = 'products:all'
-    const cachedData = await redis.get(cachedKey)
-    if (cachedData) {
-      console.log('Get All Product cache hit')
-      return JSON.parse(cachedData)
-    }
-
-    console.log('Get All Product cache miss')
     const products = await Product.find(filter)
     .populate({
       path: "type_id",
@@ -306,16 +299,6 @@ exports.getSingleProductDetails = async (req, res) => {
       return res.status(400).json({ message: "Invalid product id" });
     }
 
-    //Try retrieving data from Redis first
-    const cachedKey = `product:${id}`
-    const cachedData = await redis.get(cachedKey)
-    if (cachedData) {
-      return res.status(200).json({
-        success: true,
-        data: JSON.parse(cachedData)
-      });
-    }
-
     //Retrieving from MongoDB and set cache
     const productId = new mongoose.Types.ObjectId(id);
 
@@ -383,7 +366,6 @@ exports.getSingleProductDetails = async (req, res) => {
       
     };
 
-    await redis.set(cachedKey, JSON.stringify(productDetails), 'EX', 3600)
 
     return res.status(200).json({
       success: true,

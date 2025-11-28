@@ -1,6 +1,7 @@
 //models/Customers.js
 const mongoose = require('mongoose');
 const validator = require('validator');
+const { isValidPhoneNumber } = require('libphonenumber-js');
 
 const CustomerSchema = new mongoose.Schema(
   {
@@ -36,7 +37,11 @@ const CustomerSchema = new mongoose.Schema(
       type: String,
       required: false,
       trim: true,
-      maxlength: 50
+      maxlength: 50,
+      validate: {
+        validator: (v) => isValidPhoneNumber(v, 'VN') || isValidPhoneNumber(v),
+        message: 'Invalid phone number format'
+      },
     },
     account_status: {
       type: String,

@@ -36,6 +36,7 @@
             <label for="supplier-phone">Phone <span class="required">*</span></label>
             <input
               id="supplier-phone"
+              pattern="(\+84|0)\d{9,10}"
               v-model="form.phone"
               type="tel"
               placeholder="Enter phone number"

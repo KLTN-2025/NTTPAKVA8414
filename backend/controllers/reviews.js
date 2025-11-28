@@ -160,13 +160,15 @@ exports.getProductReviews = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      avgRating: product.reviews_summary.avg_rating,
-      totalReviews: totalReviews,
-      breakdown: product.reviews_summary.breakdown,
-      reviews: formattedReviews,
-      page,
-      limit,
-      total_pages: totalPages
+      data: {
+        avgRating: product.reviews_summary.avg_rating,
+        totalReviews: totalReviews,
+        breakdown: product.reviews_summary.breakdown,
+        reviews: formattedReviews,
+        page,
+        limit,
+        total_pages: totalPages
+      }
     });
 
   } catch (error) {
@@ -249,19 +251,6 @@ exports.createReview = async (req, res) => {
       return res.status(403).json({
         success: false,
         message: 'You can only review products you have purchased'
-      });
-    }
-
-    // Check if customer already reviewed this product
-    const existingReview = await Review.findOne({
-      product_id: productId,
-      customer_id: customer._id
-    });
-
-    if (existingReview) {
-      return res.status(409).json({
-        success: false,
-        message: 'Already reviewed on this product. Edit your review instead'
       });
     }
 

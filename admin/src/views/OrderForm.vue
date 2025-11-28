@@ -50,7 +50,8 @@
               <div class="form-group">
                 <label>Phone</label>
                 <input 
-                  type="text" 
+                  type="tel"
+                  pattern="(\+84|0)\d{9,10}" 
                   v-model="formData.recipient_phone"
                   required
                 />

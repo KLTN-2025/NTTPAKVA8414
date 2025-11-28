@@ -21,12 +21,12 @@
         <div class="billing-details-column">
           <div class="form-row-grid">
             <div class="form-group">
-              <label for="firstname">First Name *</label>
-              <input type="text" id="firstname" v-model="form.firstName" required />
+              <label for="firstname">Họ *</label>
+              <input type="text" id="firstname" v-model="form.lastName" required />
             </div>
             <div class="form-group">
-              <label for="lastname">Last Name *</label>
-              <input type="text" id="lastname" v-model="form.lastName" required />
+              <label for="lastname">Tên *</label>
+              <input type="text" id="lastname" v-model="form.firstName" required />
             </div>
           </div>
 
@@ -37,7 +37,7 @@
             </div>
             <div class="form-group">
               <label for="phone">Phone *</label>
-              <input type="tel" id="phone" v-model="form.phone" required />
+              <input type="tel" id="phone" pattern="(\+84|0)\d{9,10}" v-model="form.phone" required />
             </div>
           </div>
 

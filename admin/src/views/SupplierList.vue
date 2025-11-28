@@ -191,7 +191,8 @@
             <div class="filter-group">
               <label>Phone</label>
               <input 
-                type="text" 
+                type="tel" 
+                pattern="(\+84|0)\d{9,10}"
                 v-model="filters.phone" 
                 placeholder="Filter by phone"
               />
