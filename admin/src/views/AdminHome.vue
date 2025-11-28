@@ -23,7 +23,12 @@
             <span>Product</span>
           </router-link>
         </li>
-
+        <li>
+          <router-link to="/admin/suppliers">
+            <i class="fa-solid fa-truck"></i>            
+            <span>Suppliers</span>
+          </router-link>
+        </li>
         <li>
           <router-link to="/admin/orders">
             <i class="fas fa-file-alt"></i>

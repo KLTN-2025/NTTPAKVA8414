@@ -10,6 +10,7 @@ import AdminHome from '@/views/AdminHome.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import ProductList from '@/views/ProductList.vue'
 import OrderList from '@/views/OrderList.vue' 
+import SupplierList from '@/views/SupplierList.vue'
 
 const ProductForm = () => import('@/views/ProductForm.vue') 
 const OrderDetailView = () => import('@/views/OrderDetailView.vue') 
@@ -20,6 +21,9 @@ const SalesReport = () => import('@/views/SalesReport.vue')
 const Settings = () => import('@/views/Settings.vue')
 const Help = () => import('@/views/Help.vue')
 
+const SupplierOrdersPage = () => import('@/views/SupplierOrdersPage.vue')
+const SupplyOrderForm = () => import('@/views/SupplyOrderForm.vue')
+const SupplierOrderDetails = () => import('@/views/SupplierOrderDetails.vue')
 
 const routes = [
   {
@@ -39,6 +43,7 @@ const routes = [
         component: Dashboard,
         meta: { requireAdmin: true, title: 'Dashboard' }
       },
+      //Product management
       {
         path: 'products',
         name: 'admin-products',
@@ -63,7 +68,38 @@ const routes = [
         component: ProductForm,
         meta: { requireAdmin: true, title: 'Product Details' }
       },
-      
+      //Supply management
+      {
+        path: 'suppliers',
+        name: 'admin-suppliers',
+        component: SupplierList,
+        meta: { requireAdmin: true, title: 'Supplier Management' }
+      },
+      {
+        path: 'suppliers/:supplierId/orders',
+        name: 'admin-supplier-orders',
+        component: SupplierOrdersPage,
+        meta: { requireAdmin: true, title: 'Supplier Orders' }
+      },
+      {
+        path: 'supply-orders/new',
+        name: 'admin-supply-order-new',
+        component: SupplyOrderForm,
+        meta: { requireAdmin: true, title: 'New Supply Order' }
+      },
+      {
+        path: 'supply-orders/edit/:id',
+        name: 'admin-supply-order-edit',
+        component: SupplyOrderForm,
+        meta: { requireAdmin: true, title: 'Edit Supply Order' }
+      },
+      {
+        path: 'supply-orders/view/:id',
+        name: 'admin-supply-order-view',
+        component: SupplierOrderDetails,
+        meta: { requireAdmin: true, title: 'Supply Order Details' }
+      },
+      //Customer order management
       {
         path: 'orders',
         name: 'admin-orders',

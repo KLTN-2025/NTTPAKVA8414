@@ -4,6 +4,8 @@ const router = express.Router()
 router.use('/orders', require('./orders'))
 router.use('/products', require('./products'))
 router.use('/customers', require('./customers'))
+router.use('/suppliers', require('./suppliers'))
+router.use('/supply-orders', require('./supply-orders'))
 router.use('/', require('./additional'))
 
 module.exports = router;

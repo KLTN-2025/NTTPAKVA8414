@@ -1,0 +1,382 @@
+/* SupplierOrdersPage.css */
+
+/* ----- PAGE LAYOUT ----- */
+.supplier-orders-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ----- PAGE HEADER ----- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--primary-color);
+}
+
+.page-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.supplier-badge {
+  display: inline-flex;
+  padding: 0.35rem 0.75rem;
+  background-color: var(--primary-color-light);
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 6px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* ----- BUTTONS ----- */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.btn-secondary {
+  background-color: var(--sidebar-bg);
+  border-color: var(--border-color);
+  color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+  background-color: var(--admin-bg);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* ----- FILTERS BAR ----- */
+.filters-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background-color: var(--sidebar-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+.filters-bar .filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.filters-bar .filter-group label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filters-bar .filter-group select,
+.filters-bar .filter-group input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background-color: var(--admin-bg);
+  min-width: 140px;
+}
+
+.filters-bar .filter-group select:focus,
+.filters-bar .filter-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* ----- TABLE CONTAINER ----- */
+.table-container {
+  background: var(--sidebar-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.table-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem;
+  color: var(--text-light);
+}
+
+/* ----- ORDERS TABLE ----- */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+.orders-table th {
+  background-color: var(--admin-bg);
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+}
+
+.orders-table td {
+  color: var(--text-dark);
+}
+
+.orders-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.orders-table tbody tr:hover {
+  background-color: var(--admin-bg);
+}
+
+.col-actions {
+  width: 240px;
+}
+
+/* ----- ORDER INFO ----- */
+.order-id {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-family: monospace;
+}
+
+.order-date {
+  color: var(--text-muted);
+}
+
+.order-cost {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.received-cost {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+/* ----- STATUS BADGE ----- */
+.status-badge {
+  display: inline-flex;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.status-draft {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-ordered {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-received {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* ----- ACTION BUTTONS ----- */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.action-btn i {
+  font-size: 0.7rem;
+}
+
+.btn-edit {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-edit:hover {
+  background-color: var(--primary-color-light);
+}
+
+.btn-view {
+  color: var(--text-muted);
+}
+
+.btn-view:hover {
+  background-color: var(--admin-bg);
+}
+
+.btn-status {
+  color: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-status:hover {
+  background-color: #eff6ff;
+}
+
+.btn-receive {
+  color: #16a34a;
+  border-color: #16a34a;
+}
+
+.btn-receive:hover {
+  background-color: #f0fdf4;
+}
+
+.btn-cancel {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.btn-cancel:hover {
+  background-color: #fef2f2;
+}
+
+/* ----- EMPTY STATE ----- */
+.empty-state {
+  text-align: center;
+  padding: 3rem !important;
+  color: var(--text-light);
+}
+
+.empty-state i {
+  display: block;
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.5;
+}
+
+/* ----- PAGINATION ----- */
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+}
+
+.page-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.page-controls select {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+  font-weight: 500;
+  background-color: var(--sidebar-bg);
+}
+
+.page-controls button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--sidebar-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.page-controls button:hover:not(:disabled) {
+  background-color: var(--admin-bg);
+}
+
+.page-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

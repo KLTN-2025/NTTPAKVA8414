@@ -29,9 +29,8 @@ router.delete(
 );
 
 router.get(
-  "/:id",
-  checkAdminRole,
-  productController.getProductById
+  '/search',
+  productController.searchProducts
 );
 
 router.get(
@@ -39,6 +38,13 @@ router.get(
   checkAdminRole,
   productController.getProductBySlug
 );
+
+router.get(
+  "/:id",
+  checkAdminRole,
+  productController.getProductById
+);
+
 
 router.put(
   "/:id",
@@ -64,5 +70,4 @@ router.patch(
   checkAdminRole,
   productController.setInventory
 );
-
 module.exports = router;

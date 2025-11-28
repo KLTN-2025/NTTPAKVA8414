@@ -680,45 +680,36 @@ async function seedDatabase() {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
-    
-    console.log('Connected to MongoDB')
-    
+        
     const ProductCategory = require('../models/ProductCategories')
     const ProductType = require('../models/ProductTypes')
     const Brand = require('../models/Brands')
     const Attribute = require('../models/Attributes')
     const Product = require('../models/Products')
     
-    console.log('Clearing existing data...')
     await Product.deleteMany({})
     await ProductType.deleteMany({})
     await ProductCategory.deleteMany({})
     await Brand.deleteMany({})
     await Attribute.deleteMany({})
     
-    console.log('Seeding ProductCategories...')
     await ProductCategory.insertMany(productCategories)
-    console.log(`✓ Inserted ${productCategories.length} categories`)
+    console.log(`Inserted ${productCategories.length} categories`)
     
-    console.log('Seeding ProductTypes...')
     await ProductType.insertMany(productTypes)
-    console.log(`✓ Inserted ${productTypes.length} product types`)
+    console.log(`Inserted ${productTypes.length} product types`)
     
-    console.log('Seeding Brands...')
     await Brand.insertMany(brands)
-    console.log(`✓ Inserted ${brands.length} brands`)
+    console.log(`Inserted ${brands.length} brands`)
     
-    console.log('Seeding Attributes...')
     await Attribute.insertMany(attributes)
-    console.log(`✓ Inserted ${attributes.length} attributes`)
+    console.log(`Inserted ${attributes.length} attributes`)
     
-    console.log('Seeding Products...')
     await Product.insertMany(products)
-    console.log(`✓ Inserted ${products.length} products`)
+    console.log(`Inserted ${products.length} products`)
 
     
-    console.log('\n✅ Database seeded successfully!')
-    console.log('\nSummary:')
+    console.log('\nDatabase seeded successfully!')
     console.log(`- ${productCategories.length} Product Categories`)
     console.log(`- ${productTypes.length} Product Types`)
     console.log(`- ${brands.length} Brands`)

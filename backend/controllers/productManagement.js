@@ -672,3 +672,41 @@ exports.setInventory = async (req, res) => {
     });
   }
 };
+
+//Search products by SKU or name for autocomplete
+exports.searchProducts = async (req, res) => {
+  try {
+    const { q } = req.query;
+    const limit = Math.min(parseInt(req.query.limit) || 10, 50);
+
+    if (!q || q.trim().length < 1) {
+      return res.status(200).json({
+        success: true,
+        data: []
+      });
+    }
+
+    const searchTerm = q.trim();
+
+    // Search by SKU (exact prefix match) or name (partial match)
+    const products = await Product.find({
+      $or: [
+        { SKU: { $regex: `^${searchTerm}`, $options: 'i' } },
+        { name: { $regex: searchTerm, $options: 'i' } }
+      ]
+    })
+      .select('_id name SKU cost_price current_stock')
+      .limit(limit)
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      data: products
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
