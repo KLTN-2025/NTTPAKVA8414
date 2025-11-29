@@ -282,6 +282,7 @@ exports.getOrderDetails = async (req, res) => {
         message: 'Invalid order ID format'
       });
     }
+    /*
     const cachedKey = `orders:${reqOrderId}`
     const cachedItemsKey = `orders:${reqOrderId}:items`
     
@@ -295,7 +296,7 @@ exports.getOrderDetails = async (req, res) => {
         order: JSON.parse(cachedOrder),
         items: JSON.parse(cachedOrderItems)
       })
-    }
+    }*/
 
     const order = await CustomerOrder.findOne({
       _id: reqOrderId,
@@ -323,9 +324,10 @@ exports.getOrderDetails = async (req, res) => {
     }));
 
     //Set cache
+    /*
     await redis.set(cachedKey, JSON.stringify(order), 'EX', 3600)
     await redis.set(cachedItemsKey, JSON.stringify(formattedResult), 'EX', 3600)
-
+    */
     return res.status(200).json({
       success: true,
       order: order, 
