@@ -38,10 +38,6 @@ const CustomerSchema = new mongoose.Schema(
       required: false,
       trim: true,
       maxlength: 50,
-      validate: {
-        validator: (v) => isValidPhoneNumber(v, 'VN') || isValidPhoneNumber(v),
-        message: 'Invalid phone number format'
-      },
     },
     account_status: {
       type: String,

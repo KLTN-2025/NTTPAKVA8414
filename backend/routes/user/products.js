@@ -3,6 +3,9 @@ const router = express.Router()
 const productController = require('../../controllers/products')
 const reviewController = require('../../controllers/reviews');
 const { checkMemberStatus } = require('../../middleware/checkMember')
+const {
+  getRecommendations,
+} = require('../../controllers/recommendation');
 
 /**
  * Search and filter products
@@ -57,5 +60,9 @@ router.delete('/products/:productId/reviews/:reviewId',
 router.get('/:id', 
   productController.getSingleProductDetails
 );
+
+router.get('/:productId/recommendation', 
+  getRecommendations
+)
 
 module.exports = router

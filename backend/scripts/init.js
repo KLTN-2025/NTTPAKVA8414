@@ -118,6 +118,12 @@ const brands = [
   { _id: new mongoose.Types.ObjectId(), name: 'VitaGreen' }
 ]
 
+const suppliers = [
+  {_id: new mongoose.Types.ObjectId(), name: 'Lazada', email: 'lazada@gmail.com', phone: '0123456789' },
+  {_id: new mongoose.Types.ObjectId(), name: 'Shopee', email: 'shopee@gmail.com', phone: '0987654321' },
+  {_id: new mongoose.Types.ObjectId(), name: 'Công ty TNHH ABC', email: 'abc@gmail.com', phone: '0123987654' }
+]
+
 // ============================================
 // 4. ATTRIBUTES
 // ============================================
@@ -672,43 +678,28 @@ const products = [
 ]
 
 
+
 //Seeding method
 async function seedDatabase() {
   try {
     // Connect to MongoDB
-    await mongoose.connect('mongodb://localhost:27017/HealthyCrave', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
+    await mongoose.connect('mongodb://localhost:27017/HealthyCrave')
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.syncIndexes();
         
     const ProductCategory = require('../models/ProductCategories')
     const ProductType = require('../models/ProductTypes')
     const Brand = require('../models/Brands')
     const Attribute = require('../models/Attributes')
     const Product = require('../models/Products')
-    const Review = require('../models/Reviews')
-    const CO = require('../models/CustomerOrders')
-    const COI = require('../models/CustomerOrderItems')
-    const SO = require('../models/SupplyOrders')
-    const SOI = require('../models/SupplyOrderItems')
-
-    await Review.deleteMany({})
-    await Product.deleteMany({})
-    await ProductType.deleteMany({})
-    await ProductCategory.deleteMany({})
-    await Brand.deleteMany({})
-    await Attribute.deleteMany({})
-    await CO.deleteMany({})
-    await COI.deleteMany({})
-    await SO.deleteMany({})
-    await SOI.deleteMany({})
+    const Supplier = require('../models/Suppliers')
 
     await ProductCategory.insertMany(productCategories)
     await ProductType.insertMany(productTypes)
     await Brand.insertMany(brands)
     await Attribute.insertMany(attributes)
-    await Product.create(products)
-
+    await Product.insertMany(products)
+    await Supplier.insertMany(suppliers)
     
     console.log('\nDatabase seeded successfully!')
     console.log(`- ${productCategories.length} Product Categories`)
@@ -716,7 +707,7 @@ async function seedDatabase() {
     console.log(`- ${brands.length} Brands`)
     console.log(`- ${attributes.length} Attributes`)
     console.log(`- ${products.length} Products`)
-    
+    console.log(`${suppliers.length} suppliers`)
   } catch (error) {
     console.error('Error seeding database:', error)
   } finally {

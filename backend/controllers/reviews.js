@@ -6,6 +6,7 @@ const Customer = require('../models/Customers');
 const CustomerOrder = require('../models/CustomerOrders');
 const CustomerOrderItem = require('../models/CustomerOrderItems');
 const { getAuth } = require('@clerk/express');
+const { redis } = require('../config/redis');
 
 /**Update a product's review summary. Has there possible updateMode:
  * - create: New review created
@@ -79,16 +80,19 @@ async function hasCustomerPurchasedProduct(customerId, productId) {
     const orderItems = await CustomerOrderItem.findOne({
       product_id: productId
     })
-      .populate({
+    .select('order_id')
+    .populate({
         path: 'order_id',
         match: { 
           customer_id: customerId,
           order_status: { $in: ['confirmed', 'shipped', 'delivered'] }
-        }
+        },
+        select: '_id'
       })
       .lean();
 
-    return orderItems && orderItems.order_id !== null;
+    const hasPurchased = orderItems && orderItems.order_id !== null
+    return hasPurchased;
   } catch (error) {
     console.error('Error checking purchase history:', error);
     return false;

@@ -75,5 +75,6 @@ const customerOrderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 customerOrderSchema.index({ customer_id: 1, order_date: -1 });
+customerOrderSchema.index({ customer_id: 1, order_status: 1 });
 
 module.exports = mongoose.model('CustomerOrder', customerOrderSchema);

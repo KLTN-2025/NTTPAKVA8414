@@ -78,6 +78,7 @@ const ProductSchema = new mongoose.Schema(
             4: { type: Number, default: 0, min: 0 },
             5: { type: Number, default: 0, min: 0 },
           },
+          _id: false,
           default: () => ({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }),
         },
       },
