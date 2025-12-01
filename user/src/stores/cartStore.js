@@ -1,6 +1,6 @@
 // src/stores/cartStore.js
 import { defineStore } from 'pinia'
-import { ref, computed, watch, hydrate } from 'vue'
+import { ref, computed, watch } from 'vue'
 import axios from 'axios'
 import { useAuth } from '@clerk/vue'
 import { useToast } from 'vue-toastification'
@@ -10,13 +10,15 @@ const toast = useToast()
 
 export const useCartStore = defineStore('cart', () => {
   const MAX_CART_SIZE = 10  // Prevent server overloading
+
   const items = ref([])     // [{ productId, name, price, image, stock, quantity }]
+  
   const { getToken, isLoaded, isSignedIn } = useAuth()
 
   const itemCount = computed(() => items.value.reduce((acc, it) => acc + (it.quantity || 0), 0))
   const totalPrice = computed(() => {
     return items.value.reduce((acc, it) => {
-      return acc + price * (it.quantity || 0)
+      return acc + it.price * (it.quantity || 0)
     }, 0)
   })
 

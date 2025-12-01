@@ -38,8 +38,6 @@ const CartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-CartSchema.index({ customer_id: 1 });
-
 CartSchema.methods.calculateTotal = function() {
   this.total_amount = this.items.reduce((total, item) => {
     return total + (item.price * item.quantity);

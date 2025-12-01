@@ -4,12 +4,14 @@ const ProductType = require("../models/ProductTypes");
 const ProductCategory = require("../models/ProductCategories");
 const Brand = require("../models/Brands");
 const Attribute = require("../models/Attributes");
-const { redis } = require('../config/redis');
 
-const getAllProducts = async () => {
+/**
+ * GET /api/products/all
+ * Get all products in the database
+ */
+exports.getAllProducts = async () => {
   try {
-    const cachedKey = 'products:all'
-    const products = await Product.find(filter)
+    const products = await Product.find({})
     .populate({
       path: "type_id",
       select: "name category_id",
@@ -20,9 +22,6 @@ const getAllProducts = async () => {
     })
     .populate("brand_id", "name")
     .populate("attributes", "description")
-    .sort(sort)
-    .skip(skip)
-    .limit(limit)
     .lean()
 
     const formattedProducts = products.map((product) => {
@@ -68,15 +67,16 @@ const getAllProducts = async () => {
       };
     });
 
-    await redis.set(cachedKey, JSON.stringify(formattedProducts), 'EX', 3600)
     return formattedProducts
 
   } catch (err) {
-
+    throw new Error('Unable to fetch products')
   }
 }
 
 /**
+ * GET /api/products/search
+ * Search for products with filtering and pagination
  * Query Parameters:
  * - page: Page number (default: 1)
  * - limit: Items per page (default: 20, max: 50)
@@ -292,6 +292,10 @@ exports.searchAndFilterProducts = async (req, res) => {
   }
 };
 
+/**
+ * GET /api/products/:id
+ * Get single product details
+ */
 exports.getSingleProductDetails = async (req, res) => {
   try {
     const id = req.params.id;
@@ -380,6 +384,11 @@ exports.getSingleProductDetails = async (req, res) => {
   }
 };
 
+/**
+ * GET /api/products/bulk-fetch
+ * Batch fetch products based on supplied product IDs
+ * Used for frontend cart
+ */
 exports.bulkFetchProducts = async (req, res) => {
   try {
     const { productIds } = req.body;

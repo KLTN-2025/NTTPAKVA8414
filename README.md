@@ -18,6 +18,9 @@
 * Clerk
 ### Caching
 * Redis / Memurai
+### Third-party API:
+* Chatbot: OpenAI API (GPT 4o-mini)
+* Tìm thưc đơn: Spoonacular API
 
 ## Yêu cầu cấu hình
 | Tool | Version | Mô tả |
@@ -81,6 +84,11 @@ npm install
 ```bash
 cd backend
 cp .env.example .env
+```
+Điền key vào: **OPENAI_API_KEY**, **CLERK_SECRET_KEY**, **SPOONACULAR_API_KEY**<br>
+Sau đó chạy:
+
+```bash
 node scripts/syncUsers.js
 node scripts/init.js 
 node server.js

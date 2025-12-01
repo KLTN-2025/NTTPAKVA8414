@@ -8,5 +8,6 @@ router.use('/attributes', require('./attributes'))
 router.use('/categories', require('./categories'))
 router.use('/carts', require('./carts'))
 router.use('/orders', require('./orders'))
+router.use('/chatbot', require('./chatbot'))
 
 module.exports = router;

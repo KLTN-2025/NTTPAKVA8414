@@ -29,8 +29,7 @@ const startServer = async () => {
   try {
     await connectRedis()
     
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/HealthyCrave', 
-      { useNewUrlParser: true, useUnifiedTopology: true })
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/HealthyCrave') 
     console.log('MongoDB connected')
     
     const port = process.env.PORT || 5000

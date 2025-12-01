@@ -29,6 +29,3 @@ app.use(Toast, {
   showCloseButtonOnHover: false,
 })
 app.mount('#app')
-
-const cart = useCartStore()
-cart.refetchFromServer()
