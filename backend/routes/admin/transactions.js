@@ -4,6 +4,7 @@ const router = express.Router();
 const transactionController = require('../../controllers/transactionController');
 const { checkAdminRole } = require("../../middleware/checkAdmin");
 
+router.use(checkAdminRole)
 
 /**
  * GET /api/admin/transactions/summary
@@ -11,12 +12,10 @@ const { checkAdminRole } = require("../../middleware/checkAdmin");
  * Query: chartPeriod (today, week, month, year)
  */
 router.get('/summary', 
-  /*checkAdminRole*/
   transactionController.getSummaryAndChart
 );
 
 router.post('/summary/refresh', 
-  /*checkAdminRole*/
   transactionController.refreshSummary
 );
 
@@ -26,7 +25,6 @@ router.post('/summary/refresh',
  * Query: type (inflow, outflow, or empty for all)
  */
 router.get('/categories',
-  /*checkAdminRole*/
   transactionController.getManualCategories
 );
 
@@ -35,7 +33,6 @@ router.get('/categories',
  * Get available payment methods
  */
 router.get('/methods',
-  /*checkAdminRole*/
   transactionController.getPaymentMethods
 );
 
@@ -44,7 +41,6 @@ router.get('/methods',
  * Get customer order preview for modal
  */
 router.get('/preview/order/:id',
-  /*checkAdminRole*/
   transactionController.getOrderPreview
 );
 
@@ -53,7 +49,6 @@ router.get('/preview/order/:id',
  * Get supply order preview for modal
  */
 router.get('/preview/supply-order/:id',
-  /*checkAdminRole*/
   transactionController.getSupplyOrderPreview
 );
 
@@ -63,7 +58,6 @@ router.get('/preview/supply-order/:id',
  * Query: page, limit, type, dateFrom, dateTo
  */
 router.get('/',
-  /*checkAdminRole*/
   transactionController.getTransactions
 );
 
@@ -73,7 +67,6 @@ router.get('/',
  * Body: { date, type, category, amount, method, description }
  */
 router.post('/',
-  /*checkAdminRole*/
   transactionController.createTransaction
 );
 
@@ -82,7 +75,6 @@ router.post('/',
  * Soft delete a transaction (manual only)
  */
 router.delete('/:id',
-  /*checkAdminRole*/
   transactionController.deleteTransaction
 );
 
