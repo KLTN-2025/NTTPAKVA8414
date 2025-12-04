@@ -28,7 +28,6 @@ app.get('/', (_, res) => res.send('HealthyCrave API'))
 const startServer = async () => {
   try {
     await connectRedis()
-    
     await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/HealthyCrave') 
     console.log('MongoDB connected')
     

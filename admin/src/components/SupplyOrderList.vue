@@ -219,7 +219,7 @@ defineExpose({ refresh })
   padding: 0.5rem 0.875rem;
   font-size: 0.8rem;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 4px;
   border: none;
   cursor: pointer;
   text-decoration: none;
@@ -279,7 +279,7 @@ defineExpose({ refresh })
   padding: 0.75rem 1rem;
   background-color: var(--sidebar-bg, #fff);
   border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 8px;
+  border-radius: 4px;
   transition: box-shadow 0.2s ease;
 }
 

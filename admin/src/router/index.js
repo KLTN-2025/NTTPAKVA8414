@@ -17,6 +17,7 @@ const OrderDetailView = () => import('@/views/OrderDetailView.vue')
 const OrderForm = () => import('@/views/OrderForm.vue') 
 
 const CustomerList = () => import('@/views/CustomerList.vue')
+const TransactionPage = () => import('@/views/TransactionManagement.vue')
 const SalesReport = () => import('@/views/SalesReport.vue')
 const Settings = () => import('@/views/Settings.vue')
 const Help = () => import('@/views/Help.vue')
@@ -117,6 +118,12 @@ const routes = [
         name: 'admin-order-view',
         component: OrderDetailView,
         meta: { requireAdmin: true, title: 'Order Details' }
+      },
+      {
+        path: 'transactions',
+        name: 'admin-transactions',
+        component: TransactionPage,
+        meta: { requireAdmin: true, title: 'Transaction Management' }
       },
       {
         path: 'customers',

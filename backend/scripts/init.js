@@ -684,8 +684,8 @@ async function seedDatabase() {
   try {
     // Connect to MongoDB
     await mongoose.connect('mongodb://localhost:27017/HealthyCrave')
-    await mongoose.connection.dropDatabase();
-    await mongoose.connection.syncIndexes();
+    //await mongoose.connection.dropDatabase();
+    //await mongoose.connection.syncIndexes();
         
     const ProductCategory = require('../models/ProductCategories')
     const ProductType = require('../models/ProductTypes')
@@ -694,20 +694,14 @@ async function seedDatabase() {
     const Product = require('../models/Products')
     const Supplier = require('../models/Suppliers')
 
+    /*
     await ProductCategory.insertMany(productCategories)
     await ProductType.insertMany(productTypes)
     await Brand.insertMany(brands)
     await Attribute.insertMany(attributes)
     await Product.insertMany(products)
     await Supplier.insertMany(suppliers)
-    
-    console.log('\nDatabase seeded successfully!')
-    console.log(`- ${productCategories.length} Product Categories`)
-    console.log(`- ${productTypes.length} Product Types`)
-    console.log(`- ${brands.length} Brands`)
-    console.log(`- ${attributes.length} Attributes`)
-    console.log(`- ${products.length} Products`)
-    console.log(`${suppliers.length} suppliers`)
+    */
   } catch (error) {
     console.error('Error seeding database:', error)
   } finally {

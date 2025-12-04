@@ -716,7 +716,7 @@ async function handleRecipeFallback(state) {
   
   if (!result.success) {
     return {
-      reply: `Sorry, I couldn't find a recipe for "${state.dishName}". Would you like to try a different dish?`,
+      reply: `Sorry, I couldn't find a recipe for "${state.dishName}". Want to try a different dish?`,
       currentFlow: 'recipe',
       flowState: { currentStep: 'dish' },
     };
@@ -726,7 +726,7 @@ async function handleRecipeFallback(state) {
   
   if (!parsed || !parsed.ingredients) {
     return {
-      reply: `Sorry, I couldn't generate a recipe for "${state.dishName}". Would you like to try a different dish?`,
+      reply: `Sorry, I couldn't generate a recipe for "${state.dishName}". Want to try a different dish?`,
       currentFlow: 'recipe',
       flowState: { currentStep: 'dish' },
     };
@@ -835,7 +835,10 @@ async function handleOwnedIngredients(message, state, req) {
   let replyMessage = `I found these items in our store:\n\n`;
   
   matchResult.products.forEach((product, idx) => {
-    replyMessage += `${idx + 1}. ${product.name} (${product.size}${product.unit}) - ${formatPrice(product.price)}\n`;
+    subtotal = product.price * product.quantity
+    replyMessage += `${idx + 1}. ${product.name} (${product.size}${product.unit}):
+     ${formatPrice(product.price)} x ${product.quantity} \n= ${formatPrice(subtotal)}
+    \n`;
     if (product.note) {
       replyMessage += `   ${product.note}\n`;
     }

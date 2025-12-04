@@ -90,7 +90,8 @@ Sau đó chạy:
 
 ```bash
 node scripts/syncUsers.js
-node scripts/init.js 
+node scripts/init.js
+node scripts/createTrx.js
 node server.js
 ```
 

@@ -72,6 +72,7 @@ export const useChatStore = defineStore('chat', () => {
     try {
       isLoading.value = true
       
+      
       const response = await chatbotApi.sendMessage({
         message: trimmedText,
         conversationHistory: conversationHistory.value.slice(-MAX_MESSAGES),
@@ -110,50 +111,28 @@ export const useChatStore = defineStore('chat', () => {
   
   async function handleCartAction(action) {
     const cartStore = useCartStore()
-    
-    let addedCount = 0
-    let skippedItems = []
     let failedItems = []
     
     for (const product of action.products) {
-      const existingIndex = cartStore.items.findIndex(
-        item => String(item.productId) === String(product.productId)
-      )
-      
-      if (existingIndex >= 0) {
-        skippedItems.push(product.name)
-        continue
-      }
-      
       if (cartStore.items.length >= 10) {
         failedItems.push(product.name)
         continue
       }
       
-      const success = cartStore.addItemToCart({
+      cartStore.addItemToCart({
         _id: product.productId,
         name: product.name,
         price: product.price,
         stock: product.stock || 999,
         images: [product.image]
       }, product.quantity)
-      
-      if (success) {
-        addedCount++
-      } else {
-        failedItems.push(product.name)
-      }
     }
     
     let message = ''
     
     if (addedCount > 0) {
       const total = cartStore.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-      message += `Added ${addedCount} items to your cart! Cart total: ${formatPrice(total)}`
-    }
-    
-    if (skippedItems.length > 0) {
-      message += `\n${skippedItems.join(', ')} already in your cart.`
+      message += `Your cart has been updated! Cart total: ${formatPrice(total)}`
     }
     
     if (failedItems.length > 0) {

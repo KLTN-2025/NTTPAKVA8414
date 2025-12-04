@@ -1,6 +1,5 @@
 <template>
   <div class="supplier-list-page">
-
     <!-- Actions Bar -->
     <div class="actions-bar">
       <div class="search-bar">

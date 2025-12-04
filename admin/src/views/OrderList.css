@@ -26,7 +26,7 @@
 .search-bar input {
   background: var(--sidebar-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 0.75rem 1rem 0.75rem 2.75rem;
   font-size: 0.9rem;
   width: 100%;
@@ -50,7 +50,7 @@
   padding: 0.65rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
@@ -97,7 +97,7 @@
 /* ----- 3. BẢNG ĐƠN HÀNG ----- */
 .table-container {
   background: var(--sidebar-bg);
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   overflow: hidden; 
@@ -150,7 +150,7 @@ input[type="checkbox"] {
 .product-cell img {
   width: 40px;
   height: 40px;
-  border-radius: 6px;
+  border-radius: 4px;
   object-fit: cover;
   border: 1px solid var(--border-color);
 }
@@ -223,7 +223,7 @@ input[type="checkbox"] {
   color: var(--text-muted);
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 6px;
+  border-radius: 4px;
   transition: all 0.2s ease;
   display: inline-block;
   line-height: 1; 
@@ -253,7 +253,7 @@ input[type="checkbox"] {
 }
 .page-controls select {
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   padding: 0.4rem 0.5rem;
   font-weight: 500;
 }
@@ -261,7 +261,7 @@ input[type="checkbox"] {
   width: 32px;
   height: 32px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   background: var(--sidebar-bg);
   cursor: pointer;
 }
@@ -284,7 +284,7 @@ input[type="checkbox"] {
 }
 .modal-card {
   background: var(--sidebar-bg, #fff);
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 450px;
@@ -408,7 +408,7 @@ input[type="checkbox"] {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 0.9rem;
   box-sizing: border-box;
   background-color: var(--admin-bg);

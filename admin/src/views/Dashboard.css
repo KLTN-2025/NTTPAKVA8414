@@ -1,7 +1,7 @@
 /* ----- CARD CHUNG ----- */
 .card {
   background-color: #fff;
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
   padding: 1.5rem;
@@ -173,7 +173,7 @@
   justify-content: center;
   height: 250px;
   background-color: var(--admin-bg);
-  border-radius: 8px;
+  border-radius: 4px;
   color: var(--text-light);
   font-weight: 500;
 }
@@ -205,7 +205,7 @@
 .product-cell img {
   width: 40px;
   height: 40px;
-  border-radius: 6px;
+  border-radius: 4px;
   object-fit: cover;
 }
 .product-info {
@@ -224,7 +224,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   padding: 4px 8px;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 .status-badge.success {
   background-color: #f0fdf4;

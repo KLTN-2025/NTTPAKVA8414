@@ -6,7 +6,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const DEFAULT_MODEL = 'gpt-4o-mini';
+const DEFAULT_MODEL = 'gpt-4.1-mini';
 const DEFAULT_MAX_TOKENS = 1500;
 const DEFAULT_TEMPERATURE = 0.7;
 
@@ -166,6 +166,7 @@ Respond in JSON format:
   const result = await chat({
     systemPrompt,
     messages: [{ role: 'user', content: message }],
+    model: 'gpt-4.1-nano',
     temperature: 0.3,
     maxTokens: 150,
     jsonMode: true,

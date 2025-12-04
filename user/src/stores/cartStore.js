@@ -44,7 +44,7 @@ export const useCartStore = defineStore('cart', () => {
         return true
       }
       else {
-        toast.error('Stock exceeded, can\'t increase quantity!')
+        toast.error('Stock limit reached!')
         return false
       }
     }
@@ -87,7 +87,7 @@ export const useCartStore = defineStore('cart', () => {
       return true
     }
     else {
-      toast.error('Stock exceeded, can\'t increase quantity!')
+        toast.error('Stock limit reached!')
       return false
     }
   }

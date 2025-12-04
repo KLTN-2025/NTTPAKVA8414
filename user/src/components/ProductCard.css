@@ -1,6 +1,6 @@
 .product-card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -65,7 +65,7 @@
   background: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 14px;
   font-weight: 600;
   z-index: 1;
@@ -144,7 +144,7 @@
   padding: 3px 8px;
   background: #f3f4f6;
   color: #374151;
-  border-radius: 12px;
+  border-radius: 4px;
   font-weight: 500;
 }
 
@@ -153,7 +153,7 @@
   padding: 3px 8px;
   background: #e5e7eb;
   color: #6b7280;
-  border-radius: 12px;
+  border-radius: 4px;
   font-weight: 500;
 }
 
@@ -262,7 +262,7 @@
   background: #27ae60;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;

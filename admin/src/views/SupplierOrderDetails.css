@@ -57,7 +57,7 @@
   padding: 0.4rem 0.75rem;
   font-size: 0.8rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
@@ -97,7 +97,7 @@
 .info-card {
   background: var(--sidebar-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 1.5rem;
 }
 
@@ -148,7 +148,7 @@
   padding: 1rem 1.25rem;
   background-color: #dbeafe;
   border: 1px solid #93c5fd;
-  border-radius: 8px;
+  border-radius: 4px;
   color: #1e40af;
   font-size: 0.9rem;
 }
@@ -161,7 +161,7 @@
 .items-section {
   background: var(--sidebar-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 1.5rem;
 }
 
@@ -177,7 +177,7 @@
 /* ----- ITEMS TABLE ----- */
 .items-table-container {
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -263,7 +263,7 @@
   width: 80px;
   padding: 0.5rem 0.5rem;
   border: 2px solid #93c5fd;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 0.85rem;
   text-align: right;
   background-color: #eff6ff;
@@ -296,7 +296,7 @@
 .total-row.highlight {
   padding: 0.5rem 0.75rem;
   background-color: #dbeafe;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .total-label {
@@ -323,7 +323,7 @@
   padding: 1rem 1.25rem;
   background-color: #fef3c7;
   border: 1px solid #fcd34d;
-  border-radius: 8px;
+  border-radius: 4px;
   color: #92400e;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -369,7 +369,7 @@
   padding: 0.75rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;

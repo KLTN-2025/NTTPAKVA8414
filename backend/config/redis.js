@@ -17,10 +17,9 @@ const connectRedis = async () => {
   try {
     if (!redis.isOpen) {
       await redis.connect();
-      console.log('Redis successfully connected');
     }
   } catch (err) {
-    console.warn('Redis is not available:', err.message);
+    
   }
 };
 

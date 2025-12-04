@@ -4,13 +4,11 @@ const Supplier = require('../models/Suppliers');
 const SupplyOrder = require('../models/SupplyOrders');
 const SupplyOrderItem = require('../models/SupplyOrderItems');
 const Product = require('../models/Products');
+const transactionService = require('../services/transactionService');
 
-
-// SUPPLIER MANAGEMENT
 /**
  * GET /api/admin/suppliers
  * Get all suppliers with optional filtering
- * Query params: name, email, phone, includeDeleted, page, limit
  */
 exports.getSuppliers = async (req, res) => {
   try {
@@ -104,7 +102,6 @@ exports.getSupplier = async (req, res) => {
 /**
  * POST /api/admin/suppliers
  * Create a new supplier
- * Body: { name, email, phone }
  */
 exports.createSupplier = async (req, res) => {
   try {
@@ -167,7 +164,6 @@ exports.createSupplier = async (req, res) => {
 /**
  * PUT /api/admin/suppliers/:id
  * Update a supplier
- * Body: { name, email, phone }
  */
 exports.updateSupplier = async (req, res) => {
   try {
@@ -305,7 +301,6 @@ exports.deleteSupplier = async (req, res) => {
 /**
  * GET /api/admin/suppliers/:id/supply-orders
  * Get supply orders for a specific supplier
- * Query params: limit (default 5 for inline view), page, status
  */
 exports.getSupplierOrders = async (req, res) => {
   try {
@@ -892,6 +887,15 @@ exports.updateSupplyOrderStatus = async (req, res) => {
     }
 
     await order.save();
+
+    if (newStatus === 'Received') {
+      const txResult = await transactionService.createSupplierPaymentTransaction(order);
+      if (!txResult.success) {
+        console.error('Failed to create supplier payment transaction:', txResult.error);
+      } else if (txResult.skipped) {
+        console.log('Supplier payment transaction skipped - no cost received');
+      }
+    }
 
     return res.status(200).json({
       success: true,

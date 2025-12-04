@@ -1,18 +1,14 @@
-// controllers/admin/orders.js
+// controllers/admin/orderManagement.js
 const mongoose = require("mongoose");
 const CustomerOrder = require("../models/CustomerOrders");
 const CustomerOrderItem = require("../models/CustomerOrderItems");
 const Product = require("../models/Products");
 const Customer = require("../models/Customers");
+const transactionService = require('../services/transactionService');
 
 /**
  * GET /api/admin/orders
  * Get all orders with filtering, search, sorting, and pagination
- * Query params: {
- *   search, order_status, payment_status, 
- *   dateBegin, dateEnd, priceMin, priceMax,
- *   sortBy, sortOrder, page, limit
- * }
  */
 exports.getAllOrders = async (req, res) => {
   try {
@@ -84,7 +80,7 @@ exports.getAllOrders = async (req, res) => {
     if (validSortFields.includes(sortBy)) {
       sortOptions[sortBy] = sortOrder === 'asc' ? 1 : -1;
     } else {
-      sortOptions.order_date = -1; // Default sort
+      sortOptions.order_date = -1;
     }
 
     // Pagination
@@ -156,7 +152,6 @@ exports.getAllOrders = async (req, res) => {
 exports.getOrderById = async (req, res) => {
   try {
     const orderId = req.params.id;
-    // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
       return res.status(400).json({
         success: false,
@@ -164,7 +159,6 @@ exports.getOrderById = async (req, res) => {
       });
     }
 
-    // Get order with customer details
     const order = await CustomerOrder.findById(orderId)
       .populate('customer_id', 'name email phone')
       .lean();
@@ -176,12 +170,10 @@ exports.getOrderById = async (req, res) => {
       });
     }
 
-    // Get order items with product details
     const items = await CustomerOrderItem.find({ order_id: orderId })
       .populate('product_id', 'name image_urls SKU')
       .lean();
 
-    // Calculate subtotals
     const itemsWithSubtotal = items.map(item => ({
       ...item,
       subtotal: item.price * item.quantity * (1 - item.discount / 100)
@@ -205,11 +197,6 @@ exports.getOrderById = async (req, res) => {
 /**
  * PUT /api/admin/orders/:id
  * Update order - allows editing contact info, shipping address, and statuses
- * Body: {
- *   recipient_name, recipient_email, recipient_phone,
- *   shipping_address, shipping_note,
- *   order_status, payment_status
- * }
  */
 exports.updateOrder = async (req, res) => {
   try {
@@ -224,7 +211,6 @@ exports.updateOrder = async (req, res) => {
       payment_status
     } = req.body;
 
-    // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
       return res.status(400).json({
         success: false,
@@ -232,7 +218,6 @@ exports.updateOrder = async (req, res) => {
       });
     }
 
-    // Find order
     const order = await CustomerOrder.findById(orderId);
     if (!order) {
       return res.status(404).json({
@@ -241,33 +226,53 @@ exports.updateOrder = async (req, res) => {
       });
     }
 
-    // Build update object
+    const previousPaymentStatus = order.payment_status;
+
     const updates = {};
 
-    // Update contact info if provided
     if (recipient_name !== undefined) updates.recipient_name = recipient_name;
     if (recipient_email !== undefined) updates.recipient_email = recipient_email;
     if (recipient_phone !== undefined) updates.recipient_phone = recipient_phone;
-
-    // Update shipping info if provided
     if (shipping_address !== undefined) updates.shipping_address = shipping_address;
     if (shipping_note !== undefined) updates.shipping_note = shipping_note;
 
-    // Validate and update order status
     const validOrderStatus = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
     if (order_status && validOrderStatus.includes(order_status)) {
       updates.order_status = order_status;
     }
 
-    // Validate and update payment status
     const validPaymentStatus = ['pending', 'paid', 'refunded', 'failed'];
     if (payment_status && validPaymentStatus.includes(payment_status)) {
+      if (payment_status === 'refunded' && previousPaymentStatus !== 'paid') {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot set payment status to 'refunded' - order was not paid"
+        });
+      }
+      
       updates.payment_status = payment_status;
     }
 
-    // Apply updates
     Object.assign(order, updates);
     await order.save();
+
+    const newPaymentStatus = order.payment_status;
+    if (newPaymentStatus === 'paid' && previousPaymentStatus !== 'paid') {
+      const txResult = await transactionService.createCustomerPaymentTransaction(
+        order,
+        order.payment_method
+      );
+      if (!txResult.success) {
+        console.error('Failed to create payment transaction:', txResult.error);
+      }
+    }
+
+    if (newPaymentStatus === 'refunded' && previousPaymentStatus === 'paid') {
+      const txResult = await transactionService.createRefundTransaction(order);
+      if (!txResult.success) {
+        console.error('Failed to create refund transaction:', txResult.error);
+      }
+    }
 
     return res.status(200).json({
       success: true,
@@ -292,7 +297,6 @@ exports.deleteOrder = async (req, res) => {
   try {
     const orderId = req.params.id;
 
-    // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
       return res.status(400).json({
         success: false,
@@ -300,7 +304,6 @@ exports.deleteOrder = async (req, res) => {
       });
     }
 
-    // Find order
     const order = await CustomerOrder.findById(orderId);
     if (!order) {
       return res.status(404).json({
@@ -309,7 +312,6 @@ exports.deleteOrder = async (req, res) => {
       });
     }
 
-    // Check if order can be deleted (only pending or confirmed)
     if (!['pending', 'confirmed'].includes(order.order_status)) {
       return res.status(400).json({
         success: false,
@@ -317,11 +319,11 @@ exports.deleteOrder = async (req, res) => {
       });
     }
 
-    // Get order items to restore stock
+    const previousPaymentStatus = order.payment_status;
+
     const orderItems = await CustomerOrderItem.find({ order_id: orderId })
       .select('product_id quantity');
 
-    // Restore stock for each product
     for (const item of orderItems) {
       const updateResult = await Product.findByIdAndUpdate(
         item.product_id,
@@ -334,7 +336,6 @@ exports.deleteOrder = async (req, res) => {
       }
     }
 
-    // Update payment status based on current status
     let newPaymentStatus = order.payment_status;
     if (order.payment_status === 'paid') {
       newPaymentStatus = 'refunded';
@@ -342,10 +343,16 @@ exports.deleteOrder = async (req, res) => {
       newPaymentStatus = 'failed';
     }
 
-    // Update order to cancelled (soft delete)
     order.order_status = 'cancelled';
     order.payment_status = newPaymentStatus;
     await order.save();
+
+    if (previousPaymentStatus === 'paid' && newPaymentStatus === 'refunded') {
+      const txResult = await transactionService.createRefundTransaction(order);
+      if (!txResult.success) {
+        console.error('Failed to create refund transaction:', txResult.error);
+      }
+    }
 
     return res.status(200).json({
       success: true,
@@ -364,4 +371,4 @@ exports.deleteOrder = async (req, res) => {
       message: 'Internal server error'
     });
   }
-}
+};

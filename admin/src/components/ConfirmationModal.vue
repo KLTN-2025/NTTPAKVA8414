@@ -97,7 +97,7 @@ const confirmButtonClass = computed(() => {
 
 .modal-card {
   background: var(--sidebar-bg, #fff);
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 450px;
@@ -182,7 +182,7 @@ const confirmButtonClass = computed(() => {
   padding: 0.65rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease;

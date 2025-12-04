@@ -6,6 +6,7 @@ const Product = require("../models/Products");
 const Customer = require("../models/Customers");
 const { getAuth } = require('@clerk/express')
 const { redis } = require('../config/redis');
+const transactionService = require('../services/transactionService');
 
 const MAX_CART_SIZE = 10;
 
@@ -325,8 +326,8 @@ exports.getOrderDetails = async (req, res) => {
 
     //Set cache
     /*
-    await redis.set(cachedKey, JSON.stringify(order), 'EX', 3600)
-    await redis.set(cachedItemsKey, JSON.stringify(formattedResult), 'EX', 3600)
+    await redis.set(cachedKey, JSON.stringify(order), {EX: 3600})
+    await redis.set(cachedItemsKey, JSON.stringify(formattedResult), {EX: 3600})
     */
     return res.status(200).json({
       success: true,
@@ -355,7 +356,7 @@ exports.cancelOrder = async (req, res) => {
     const userId = req.userId;
     const customer = await Customer.findOne({ clerkId: userId })
       .select("_id")
-      .lean()
+      .lean();
     
     if (!customer) {
       return res.status(404).json({ 
@@ -364,7 +365,6 @@ exports.cancelOrder = async (req, res) => {
       });
     }
     
-    //Validate ObjectId format
     const reqOrderId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(reqOrderId)) {
       return res.status(400).json({
@@ -373,12 +373,11 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    //Find order with authorization and status check
     const order = await CustomerOrder.findOne({
       _id: reqOrderId,
       customer_id: customer._id
     })
-    .select('order_status payment_status')
+    .select('order_status payment_status total_amount payment_method');
 
     if (!order) {
       return res.status(404).json({ 
@@ -387,7 +386,6 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    //Check if order can be cancelled
     if (!['pending', 'confirmed'].includes(order.order_status)) {
       return res.status(400).json({
         success: false,
@@ -395,11 +393,13 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    //Get order items 
-    const orderItems = await CustomerOrderItem.find({ order_id: reqOrderId })
-      .select('product_id quantity')
+    // === TRANSACTION INTEGRATION: Capture previous payment status ===
+    const previousPaymentStatus = order.payment_status;
 
-    //Restore stock for each product
+    const orderItems = await CustomerOrderItem.find({ order_id: reqOrderId })
+      .select('product_id quantity');
+
+    // Restore stock for each product
     for (const item of orderItems) {
       const updateResult = await Product.findByIdAndUpdate(
         item.product_id,
@@ -415,7 +415,7 @@ exports.cancelOrder = async (req, res) => {
       }
     }
 
-    //Update payment status
+    // Update payment status
     let newPaymentStatus = order.payment_status;
     if (order.payment_status === 'paid') {
       newPaymentStatus = 'refunded';
@@ -423,16 +423,22 @@ exports.cancelOrder = async (req, res) => {
       newPaymentStatus = 'failed'; 
     }
 
-    //Update order status
+    // Update order status
     order.order_status = 'cancelled';
     order.payment_status = newPaymentStatus;
     await order.save();
 
+    if (previousPaymentStatus === 'paid' && newPaymentStatus === 'refunded') {
+      const txResult = await transactionService.createRefundTransaction(order);
+      if (!txResult.success) {
+        console.error('Failed to create refund transaction:', txResult.error);
+      }
+    }
     
-    //Invalidate cache
-    const cachedKey = `orders:${reqOrderId}`
-    const cachedItemsKey = `orders:${reqOrderId}:items`
-    await redis.del(cachedKey, cachedItemsKey)
+    // Invalidate cache
+    const cachedKey = `orders:${reqOrderId}`;
+    const cachedItemsKey = `orders:${reqOrderId}:items`;
+    await redis.del(cachedKey, cachedItemsKey);
 
     return res.status(200).json({
       success: true,
@@ -443,7 +449,6 @@ exports.cancelOrder = async (req, res) => {
         payment_status: order.payment_status
       }
     });
-
 
   } catch (err) {
     console.error('cancelOrder error:', err);

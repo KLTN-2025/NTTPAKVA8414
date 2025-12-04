@@ -126,7 +126,7 @@ function handleSubmit() {
 
 .modal-card {
   background: var(--sidebar-bg, #fff);
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 480px;
@@ -195,7 +195,7 @@ function handleSubmit() {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 0.9rem;
   background-color: var(--admin-bg, #f9fafb);
   box-sizing: border-box;
@@ -229,7 +229,7 @@ function handleSubmit() {
   padding: 0.65rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease;

@@ -51,7 +51,7 @@
   color: var(--primary-color);
   font-size: 0.875rem;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .header-actions {
@@ -67,7 +67,7 @@
   padding: 0.65rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
@@ -127,7 +127,7 @@
 .filters-bar .filter-group input {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 0.85rem;
   background-color: var(--admin-bg);
   min-width: 140px;
@@ -142,7 +142,7 @@
 /* ----- TABLE CONTAINER ----- */
 .table-container {
   background: var(--sidebar-bg);
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -353,7 +353,7 @@
 
 .page-controls select {
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   padding: 0.4rem 0.5rem;
   font-weight: 500;
   background-color: var(--sidebar-bg);
@@ -363,7 +363,7 @@
   width: 32px;
   height: 32px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   background: var(--sidebar-bg);
   cursor: pointer;
   display: flex;
