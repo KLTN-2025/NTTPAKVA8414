@@ -328,7 +328,7 @@ html.dark-mode .form-group textarea,
 html.dark-mode .form-group select {
   background-color: var(--dark-bg);
   border-color: var(--dark-border-color);
-  color: var(--dark-text-dark);
+  color: white;
 }
 html.dark-mode .form-group input:focus,
 html.dark-mode .form-group textarea:focus,

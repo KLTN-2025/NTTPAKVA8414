@@ -126,6 +126,8 @@ import axios from 'axios'
 import { formatPrice } from '@/utilities/helper'
 import { useToast } from 'vue-toastification'
 const toast = useToast()
+import { useAuth } from '@clerk/vue'
+const { getToken } = useAuth()
 
 import TransactionSummaryCards from '@/components/SummaryCards.vue'
 import TransactionChart from '@/components/TransactionChart.vue'
@@ -221,8 +223,12 @@ function formatTimeAgo(dateString) {
 async function fetchSummary(period = 'today') {
   try {
     summaryLoading.value = true
+    const token = await getToken.value()
     const response = await axios.get('/api/admin/transactions/summary', {
-      params: { chartPeriod: period }
+      params: { chartPeriod: period },
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
     
     if (response.data.success) {
@@ -245,8 +251,12 @@ async function fetchSummary(period = 'today') {
 async function handleRefresh() {
   try {
     refreshing.value = true
+    const token = await getToken.value()
     const response = await axios.post('/api/admin/transactions/summary/refresh', null, {
-      params: { chartPeriod: selectedPeriod.value }
+      params: { chartPeriod: selectedPeriod.value },
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
     
     if (response.data.success) {
@@ -278,8 +288,13 @@ async function fetchTransactions(page = 1) {
     if (filters.type) params.type = filters.type
     if (filters.dateFrom) params.dateFrom = filters.dateFrom
     if (filters.dateTo) params.dateTo = filters.dateTo
-
-    const response = await axios.get('/api/admin/transactions', { params })
+    const token = await getToken.value()
+    const response = await axios.get('/api/admin/transactions', { 
+      params,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }    
+    })
     
     if (response.data.success) {
       transactions.value = response.data.data
@@ -342,7 +357,12 @@ async function openOrderPreview(orderId) {
     orderPreview.loading = true
     orderPreview.data = null
 
-    const response = await axios.get(`/api/admin/transactions/preview/order/${orderId}`)
+    const token = await getToken.value()
+    const response = await axios.get(`/api/admin/transactions/preview/order/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     
     if (response.data.success) {
       orderPreview.data = response.data.data
@@ -368,7 +388,12 @@ async function openSupplyOrderPreview(supplyOrderId) {
     supplyOrderPreview.loading = true
     supplyOrderPreview.data = null
 
-    const response = await axios.get(`/api/admin/transactions/preview/supply-order/${supplyOrderId}`)
+    const token = await getToken.value()
+    const response = await axios.get(`/api/admin/transactions/preview/supply-order/${supplyOrderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     
     if (response.data.success) {
       supplyOrderPreview.data = response.data.data
@@ -404,7 +429,12 @@ async function confirmDelete() {
 
   try {
     deleteModal.loading = true
-    const response = await axios.delete(`/api/admin/transactions/${deleteModal.transaction._id}`)
+    const token = await getToken.value()
+    const response = await axios.delete(`/api/admin/transactions/${deleteModal.transaction._id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     
     if (response.data.success) {
       toast.success('Transaction deleted successfully')

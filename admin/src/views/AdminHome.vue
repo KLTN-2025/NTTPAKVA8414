@@ -60,22 +60,12 @@
           </router-link>
         </li>
       </ul>
-
-      <div class="nav-section-title">TOOLS</div>
-      <ul class="nav-links">
-        <li>
-          <router-link to="/admin/settings">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/admin/help">
-            <i class="fas fa-question-circle"></i>
-            <span>Help</span>
-          </router-link>
-        </li>
-      </ul>
+      <li>
+        <router-link to="/admin/help">
+          <i class="fas fa-question-circle"></i>
+          <span>Help</span>
+        </router-link>
+      </li>
     </nav>
 
     <div class="main-container">

@@ -92,6 +92,7 @@
 .btn-primary {
   background-color: var(--primary-color, #4F46E5);
   color: #fff;
+  max-width: 200px;
 }
 
 .btn-primary:hover {

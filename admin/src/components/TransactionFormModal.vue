@@ -96,6 +96,8 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import axios from 'axios'
+import { useAuth } from '@clerk/vue'
+const { getToken } = useAuth()
 
 const emit = defineEmits(['close', 'created'])
 
@@ -154,6 +156,7 @@ async function handleSubmit() {
   
   try {
     submitting.value = true
+    const token = await getToken.value()
     const response = await axios.post('/api/admin/transactions', {
       date: form.date,
       type: form.type,
@@ -161,6 +164,10 @@ async function handleSubmit() {
       amount: form.amount,
       method: form.method,
       description: form.description.trim() || null
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
     
     if (response.data.success) {

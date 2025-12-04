@@ -19,7 +19,6 @@ const OrderForm = () => import('@/views/OrderForm.vue')
 const CustomerList = () => import('@/views/CustomerList.vue')
 const TransactionPage = () => import('@/views/TransactionManagement.vue')
 const SalesReport = () => import('@/views/SalesReport.vue')
-const Settings = () => import('@/views/Settings.vue')
 const Help = () => import('@/views/Help.vue')
 
 const SupplierOrdersPage = () => import('@/views/SupplierOrdersPage.vue')
@@ -136,12 +135,6 @@ const routes = [
         name: 'admin-sales-report',
         component: SalesReport,
         meta: { requireAdmin: true, title: 'Sales Report' }
-      },
-      {
-        path: 'settings',
-        name: 'admin-settings',
-        component: Settings,
-        meta: { requireAdmin: true, title: 'Settings' }
       },
       {
         path: 'help',
