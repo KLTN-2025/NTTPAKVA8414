@@ -10,8 +10,6 @@
           <i class="fas fa-chevron-left"></i>
         </button>
       </div>
-
-      <div class="nav-section-title">GENERAL</div>
       <ul class="nav-links">
         <li>
           <router-link to="/admin/dashboard">
@@ -26,7 +24,7 @@
             :class="{ 'active-parent': $route.path.startsWith('/products') }"
           >
             <i class="fas fa-box"></i>
-            <span>Product</span>
+            <span>Products</span>
           </router-link>
         </li>
         <li>
@@ -59,13 +57,19 @@
             <span>Sales Report</span>
           </router-link>
         </li>
+        <li>
+          <router-link to="/admin/metadata">
+          <i class="fa-solid fa-info"></i>            
+          <span>Metadata</span>
+          </router-link>
+        </li>
+          <li>
+          <router-link to="/admin/help">
+            <i class="fas fa-question-circle"></i>
+            <span>Help</span>
+          </router-link>
+        </li>
       </ul>
-      <li>
-        <router-link to="/admin/help">
-          <i class="fas fa-question-circle"></i>
-          <span>Help</span>
-        </router-link>
-      </li>
     </nav>
 
     <div class="main-container">

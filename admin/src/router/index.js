@@ -25,6 +25,8 @@ const SupplierOrdersPage = () => import('@/views/SupplierOrdersPage.vue')
 const SupplyOrderForm = () => import('@/views/SupplyOrderForm.vue')
 const SupplierOrderDetails = () => import('@/views/SupplierOrderDetails.vue')
 
+const MetadataManagement = () => import('@/views/MetadataManagement.vue')
+
 const routes = [
   {
     path: '/login',
@@ -42,6 +44,12 @@ const routes = [
         name: 'dashboard',
         component: Dashboard,
         meta: { requireAdmin: true, title: 'Dashboard' }
+      }, 
+      {
+        path: 'metadata',
+        name: 'admin-metadata',
+        component: MetadataManagement,
+        meta: { requireAdmin: true, title: 'Metadata Management' }
       },
       //Product management
       {

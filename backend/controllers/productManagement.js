@@ -589,10 +589,9 @@ exports.searchProducts = async (req, res) => {
 
     const searchTerm = q.trim();
 
-    // Search by SKU (exact prefix match) or name (partial match)
+    // Search by name (partial match)
     const products = await Product.find({
-      $or: [
-        { SKU: { $regex: `^${searchTerm}`, $options: "i" } },
+      $and: [
         { name: { $regex: searchTerm, $options: "i" } },
         { is_deleted: { $ne: true } }
       ],

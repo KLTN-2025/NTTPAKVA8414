@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
+router.use('/metadata', require('./metadata.js'))
 router.use('/orders', require('./orders'))
 router.use('/products', require('./products'))
 router.use('/customers', require('./customers'))
