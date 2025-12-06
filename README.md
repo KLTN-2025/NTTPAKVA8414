@@ -113,13 +113,13 @@ mongodb://localhost:27017/HealthyCrave
 ```
 
 ### Lưu ý cho tester
-Chạy script này (ở backend) mỗi khi tạo người dùng mới hoặc thay đổi thông tin cá nhân <br>
+1. Chạy script này (ở backend) mỗi khi tạo người dùng mới hoặc thay đổi thông tin cá nhân <br>
 (không nên thường xuyên vì sẽ bị giới hạn lượt dùng API)
 ```
 node scripts/syncUsers.js
 ```
 
-Test bằng tài khoản sau đây: <br>
+2. Test bằng tài khoản sau đây: <br>
 **Email**: nguyenvana@gmail.com <br>
 **Password**: nguyenvana123 <br>
 (Có quyền admin)

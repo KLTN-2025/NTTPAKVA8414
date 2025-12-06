@@ -77,22 +77,33 @@ async function updateProductReviewSummary(productId, updateMode, newRating, oldR
 
 async function hasCustomerPurchasedProduct(customerId, productId) {
   try {
-    const orderItems = await CustomerOrderItem.findOne({
-      product_id: productId
-    })
-    .select('order_id')
-    .populate({
-        path: 'order_id',
-        match: { 
-          customer_id: customerId,
-          order_status: { $in: ['confirmed', 'shipped', 'delivered'] }
-        },
-        select: '_id'
-      })
-      .lean();
+    const result = await CustomerOrderItem.aggregate([
+      {
+        $match: { product_id: new mongoose.Types.ObjectId(productId) }
+      },
+      {
+        $lookup: {
+          from: 'customerorders',
+          localField: 'order_id',
+          foreignField: '_id',
+          as: 'order'
+        }
+      },
+      {
+        $unwind: '$order'
+      },
+      {
+        $match: {
+          'order.customer_id': new mongoose.Types.ObjectId(customerId),
+          'order.order_status': { $in: ['confirmed', 'shipped', 'delivered'] }
+        }
+      },
+      {
+        $limit: 1
+      }
+    ]);
 
-    const hasPurchased = orderItems && orderItems.order_id !== null
-    return hasPurchased;
+    return result.length > 0;
   } catch (error) {
     console.error('Error checking purchase history:', error);
     return false;
