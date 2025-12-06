@@ -28,10 +28,7 @@ app.get('/', (_, res) => res.send('HealthyCrave API'))
 const startServer = async () => {
   try {
     await connectRedis()
-    
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/HealthyCrave', 
-      { useNewUrlParser: true, useUnifiedTopology: true })
-    console.log('MongoDB connected')
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/HealthyCrave') 
     
     const port = process.env.PORT || 5000
     app.listen(port, () => console.log(`Server running on port ${port}`))

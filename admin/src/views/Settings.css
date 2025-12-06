@@ -3,7 +3,7 @@
 /* ----- STYLE CARD CHUNG ----- */
 .card {
   background-color: #fff;
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
   max-width: 800px; /* Giới hạn chiều rộng */

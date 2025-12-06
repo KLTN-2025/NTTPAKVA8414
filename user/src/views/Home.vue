@@ -149,4 +149,4 @@ onMounted(() => {
 })
 </script>
 
-<style src="./Home.css"></style>
+<style src="../styling/Home.css"></style>

@@ -31,11 +31,11 @@
                 <span class="label-text">All Categories</span>
               </label>
             </li>
-            <li v-for="cat in categories" :key="cat.slug">
+            <li v-for="cat in categories" :key="cat._id">
               <label>
-                <input type="radio" name="category" v-model="selectedCategory" :value="cat.name" @change="applyFilters" />
+                <input type="radio" name="category" v-model="selectedCategory" :value="cat._id" @change="applyFilters" />
                 <span class="custom-radio"></span>
-                <span class="label-text">{{ cat.name }}</span>
+                <span class="label-text">{{ cat.category_name }}</span>
               </label>
             </li>
           </ul>
@@ -69,12 +69,13 @@
           <div v-else class="tags">
             <span
               v-for="attr in attributes"
-              :key="attr.slug"
+              :key="attr._id"
+              
               class="tag"
-              :class="{ active: selectedAttributes.includes(attr.name) }"
-              @click="toggleAttribute(attr.name)"
+              :class="{ active: selectedAttributes.includes(attr._id) }"
+              @click="toggleAttribute(attr._id)"
             >
-              {{ attr.name }}
+              {{ attr.description }}
             </span>
           </div>
         </div>
@@ -259,7 +260,6 @@ async function fetchProducts(page = 1) {
       params: params })
 
     if (response.data.success) {
-      console.log(response.data.user)
       products.value = response.data.data
       pagination.value = response.data.pagination
     } else {
@@ -278,11 +278,8 @@ async function fetchCategories() {
     const response = await axios.get('/api/categories')
     
     if (response.data.success) {
-      categories.value = response.data.data.map(cat => ({
-        name: cat.category_name,
-        slug: cat.category_name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and')
-      }))
-    }
+      categories.value = response.data.data
+      }
   } catch (err) {
     console.error('Error fetching categories:', err)
     // Fallback to empty array
@@ -296,10 +293,7 @@ async function fetchAttributes() {
     const response = await axios.get('/api/attributes')
     
     if (response.data.success) {
-      attributes.value = response.data.data.map(attr => ({
-        name: attr.description,
-        slug: attr.description.toLowerCase().replace(/\s+/g, '-')
-      }))
+      attributes.value = response.data.data
     }
   } catch (err) {
     console.error('Error fetching attributes:', err)
@@ -309,12 +303,12 @@ async function fetchAttributes() {
   }
 }
 
-function toggleAttribute(slug) {
-  const index = selectedAttributes.value.indexOf(slug)
+function toggleAttribute(id) {
+  const index = selectedAttributes.value.indexOf(id)
   if (index > -1) {
     selectedAttributes.value.splice(index, 1)
   } else {
-    selectedAttributes.value.push(slug)
+    selectedAttributes.value.push(id)
   }
   applyFilters()
 }
@@ -351,54 +345,4 @@ onMounted(async () => {
 })
 </script>
 
-<style src="./Products.css"></style>
-
-<style>
-.loading-container, .error-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  width: 100%;
-  color: var(--color-text-muted, #6b7280);
-  grid-column: 1 / -1; 
-}
-.spinner {
-  border: 4px solid var(--color-bg-muted, #f3f4f6);
-  border-top: 4px solid var(--color-primary, #27ae60);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-}
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-.error-container h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #ef4444;
-  margin-bottom: 0.5rem;
-}
-.retry-btn {
-  background-color: var(--color-primary, #27ae60);
-  color: var(--color-text-light, white);
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: var(--border-radius-sm, 6px);
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: background-color 0.2s;
-}
-.retry-btn:hover {
-  background-color: var(--color-primary-dark, #229954);
-}
-.tags-loading {
-  color: var(--color-text-muted, #6b7280);
-  font-style: italic;
-}
-</style>
+<style scoped src="../styling/Products.css"></style>

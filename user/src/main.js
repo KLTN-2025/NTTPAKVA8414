@@ -7,9 +7,8 @@ import 'vue-toastification/dist/index.css'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import App from './App.vue'
 import router from './router'
-import './style.css'
+import './styling/main.css'
 import { useCartStore } from './stores/cartStore'
-
 const app = createApp(App)
 app.use(clerkPlugin, {
     publishableKey: 'pk_test_cnVsaW5nLWNhbWVsLTQ2LmNsZXJrLmFjY291bnRzLmRldiQ',

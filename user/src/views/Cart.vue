@@ -154,4 +154,4 @@ onMounted(()=> {
 })
 </script>
 
-<style scoped src="./Cart.css"></style>
+<style scoped src="../styling/Cart.css"></style>

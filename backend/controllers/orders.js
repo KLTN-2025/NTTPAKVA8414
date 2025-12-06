@@ -5,6 +5,9 @@ const CustomerOrderItem = require("../models/CustomerOrderItems");
 const Product = require("../models/Products");
 const Customer = require("../models/Customers");
 const { getAuth } = require('@clerk/express')
+const { redis } = require('../config/redis');
+const transactionService = require('../services/transactionService');
+
 const MAX_CART_SIZE = 10;
 
 /**
@@ -97,10 +100,11 @@ exports.placeOrder = async (req, res) => {
       recipient_email: shippingDetails.recipient_email || '',
       recipient_phone: shippingDetails.recipient_phone,
       payment_method:
-        shippingDetails.payment_method === "transfer" ? "transfer" : "cod",
+        shippingDetails.payment_method === "vnpay" ? "vnpay" : "cod",
       shipping_address: shippingDetails.shipping_address,
       shipping_note: shippingDetails.shipping_note || "",
-      total_amount: total,
+      stock_deducted: true,
+      total_amount: total
     });
 
     // Create order items
@@ -134,14 +138,14 @@ exports.placeOrder = async (req, res) => {
 };
 
 /**
- * GET /api/orders
- * Get all orders made by a specific user with product preview
- * Query params: { order_status, payment_status, dateBegin, dateEnd, page, limit }
- * Requires auth
- * Returns: {
- *    success: true | false,
- *    data: list of Orders with first product info and item count,
- *    pagination: { currentPage, perPage, totalItems, totalPages, hasNextPage, hasPrevPage }
+ * - GET /api/orders
+ * - Get all orders made by a specific user with product preview
+ * - Query params: { order_status, payment_status, dateBegin, dateEnd, page, limit }
+ * - Requires auth
+ * - Returns: {
+ *   success: true | false,
+ *   data: list of Orders with first product info and item count,
+ *   pagination: { currentPage, perPage, totalItems, totalPages, hasNextPage, hasPrevPage }
  * }
  */
 exports.getOrders = async (req, res) => {
@@ -249,12 +253,12 @@ exports.getOrders = async (req, res) => {
 
 /**
  * GET /api/orders/:id
- * Get the complete order details including all order fields and item list
- * Returns: {
- *  success: true | false,
- *  order: { full order object with all fields },
- *  items: [{
- *    order_id, product_id (populated), price, quantity, discount, subtotal
+ * - Get the complete order details including all order fields and item list
+ * - Returns: {
+ * - success: true | false,
+ * - order: { full order object with all fields },
+ * - items: [{
+ *    order_id, product_id, price, quantity, discount, subtotal
  *  }]
  * }
  */
@@ -280,8 +284,22 @@ exports.getOrderDetails = async (req, res) => {
         message: 'Invalid order ID format'
       });
     }
+    /*
+    const cachedKey = `orders:${reqOrderId}`
+    const cachedItemsKey = `orders:${reqOrderId}:items`
+    
+    // Find order in cache first
+    const cachedOrder = await redis.get(cachedKey)
+    const cachedOrderItems = await redis.get(cachedItemsKey)
 
-    // Find order
+    if (cachedOrder && cachedOrderItems) {
+      return res.status(200).json({
+        success: true,
+        order: JSON.parse(cachedOrder),
+        items: JSON.parse(cachedOrderItems)
+      })
+    }*/
+
     const order = await CustomerOrder.findOne({
       _id: reqOrderId,
       customer_id: customer._id
@@ -307,9 +325,14 @@ exports.getOrderDetails = async (req, res) => {
       subtotal: item.price * item.quantity * (1 - item.discount / 100)
     }));
 
+    //Set cache
+    /*
+    await redis.set(cachedKey, JSON.stringify(order), {EX: 3600})
+    await redis.set(cachedItemsKey, JSON.stringify(formattedResult), {EX: 3600})
+    */
     return res.status(200).json({
       success: true,
-      order: order,  // Return complete order object
+      order: order, 
       items: formattedResult
     });
 
@@ -334,7 +357,7 @@ exports.cancelOrder = async (req, res) => {
     const userId = req.userId;
     const customer = await Customer.findOne({ clerkId: userId })
       .select("_id")
-      .lean()
+      .lean();
     
     if (!customer) {
       return res.status(404).json({ 
@@ -343,7 +366,6 @@ exports.cancelOrder = async (req, res) => {
       });
     }
     
-    //Validate ObjectId format
     const reqOrderId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(reqOrderId)) {
       return res.status(400).json({
@@ -352,12 +374,12 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    //Find order with authorization and status check
     const order = await CustomerOrder.findOne({
       _id: reqOrderId,
-      customer_id: customer._id
+      customer_id: customer._id,
+      stock_deducted: { $ne: false }
     })
-    .select('order_status payment_status')
+    .select('order_status payment_status total_amount payment_method');
 
     if (!order) {
       return res.status(404).json({ 
@@ -366,7 +388,6 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    //Check if order can be cancelled
     if (!['pending', 'confirmed'].includes(order.order_status)) {
       return res.status(400).json({
         success: false,
@@ -374,11 +395,11 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    //Get order items 
-    const orderItems = await CustomerOrderItem.find({ order_id: reqOrderId })
-      .select('product_id quantity')
+    const previousPaymentStatus = order.payment_status;
 
-    //Restore stock for each product
+    const orderItems = await CustomerOrderItem.find({ order_id: reqOrderId })
+      .select('product_id quantity');
+
     for (const item of orderItems) {
       const updateResult = await Product.findByIdAndUpdate(
         item.product_id,
@@ -394,7 +415,7 @@ exports.cancelOrder = async (req, res) => {
       }
     }
 
-    //Update payment status
+    // Update payment status
     let newPaymentStatus = order.payment_status;
     if (order.payment_status === 'paid') {
       newPaymentStatus = 'refunded';
@@ -402,10 +423,23 @@ exports.cancelOrder = async (req, res) => {
       newPaymentStatus = 'failed'; 
     }
 
-    //Update order status
+    // Update order status
     order.order_status = 'cancelled';
+    order.stock_deducted = false
     order.payment_status = newPaymentStatus;
     await order.save();
+
+    if (previousPaymentStatus === 'paid' && newPaymentStatus === 'refunded') {
+      const txResult = await transactionService.createRefundTransaction(order);
+      if (!txResult.success) {
+        console.error('Failed to create refund transaction:', txResult.error);
+      }
+    }
+    
+    // Invalidate cache
+    const cachedKey = `orders:${reqOrderId}`;
+    const cachedItemsKey = `orders:${reqOrderId}:items`;
+    await redis.del(cachedKey, cachedItemsKey);
 
     return res.status(200).json({
       success: true,

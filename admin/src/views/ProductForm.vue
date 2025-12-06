@@ -189,15 +189,14 @@
             </div>
             
             <div class="form-group">
-              <label for="productQty">Quantity (in Stock) *</label>
+              <label for="productQty">Quantity (in Stock)</label>
               <input 
                 type="number" 
                 id="productQty" 
                 placeholder="0" 
                 v-model.number="product.current_stock" 
-                :disabled="isViewMode"
+                disabled
                 min="0"
-                required
               />
               <span v-if="errors.current_stock" class="error-text">{{ errors.current_stock }}</span>
             </div>

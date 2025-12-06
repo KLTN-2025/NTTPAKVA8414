@@ -18,6 +18,9 @@
 * Clerk
 ### Caching
 * Redis / Memurai
+### Third-party API:
+* Chatbot: OpenAI API (GPT 4o-mini)
+* Tìm thưc đơn: Spoonacular API
 
 ## Yêu cầu cấu hình
 | Tool | Version | Mô tả |
@@ -81,9 +84,14 @@ npm install
 ```bash
 cd backend
 cp .env.example .env
+```
+Điền key vào: **OPENAI_API_KEY**, **CLERK_SECRET_KEY**, **SPOONACULAR_API_KEY**<br>
+Sau đó chạy:
+
+```bash
 node scripts/syncUsers.js
-node scripts/seedProducts.js 
-node scripts/computeRecommendation.js
+node scripts/init.js
+node scripts/createTrx.js
 node server.js
 ```
 
@@ -105,13 +113,13 @@ mongodb://localhost:27017/HealthyCrave
 ```
 
 ### Lưu ý cho tester
-Chạy script này (ở backend) mỗi khi tạo người dùng mới hoặc thay đổi thông tin cá nhân <br>
+1. Chạy script này (ở backend) mỗi khi tạo người dùng mới hoặc thay đổi thông tin cá nhân <br>
 (không nên thường xuyên vì sẽ bị giới hạn lượt dùng API)
 ```
 node scripts/syncUsers.js
 ```
 
-Test bằng tài khoản sau đây: <br>
+2. Test bằng tài khoản sau đây: <br>
 **Email**: nguyenvana@gmail.com <br>
 **Password**: nguyenvana123 <br>
 (Có quyền admin)

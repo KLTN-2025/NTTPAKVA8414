@@ -11,7 +11,9 @@ const path = require("path");
 async function deleteImageFiles(imageUrls) {
   if (!imageUrls || imageUrls.length === 0) return;
 
-  for (const url of imageUrls) {
+  //Filter out images that starts with "http" (external sources)
+  const deletableUrls = imageUrls.filter(url => !url.startsWith('http'))
+  for (const url of deletableUrls) {
     try {
       // Extract file path from URL
       const filePath = path.join(__dirname, "..", url);
@@ -74,8 +76,8 @@ exports.createProduct = async (req, res) => {
     }
     // Validate attributes if provided
     if (attributes && Array.isArray(attributes) && attributes.length > 0) {
-          const ids = attributes.map(id => new mongoose.Types.ObjectId(id))      
-          const validAttributes = await Attribute.find({ _id: { $in: ids } });
+      const ids = attributes.map((id) => new mongoose.Types.ObjectId(id));
+      const validAttributes = await Attribute.find({ _id: { $in: ids } });
       if (validAttributes.length !== attributes.length) {
         return res.status(400).json({
           success: false,
@@ -104,13 +106,13 @@ exports.createProduct = async (req, res) => {
       current_stock: parseInt(current_stock),
       image_urls,
       attributes: attributes || [],
+      is_deleted: false
     });
     await product.save();
     res.status(201).json({
       success: true,
       message: "Product created successfully",
     });
-
   } catch (error) {
     console.error(error);
     if (req.files && req.files.length > 0) {
@@ -156,15 +158,18 @@ exports.getAllProducts = async (req, res) => {
     } = req.query;
 
     const filter = {};
-
+    filter.is_deleted = { $ne: true }
+    
     if (brand_id) filter.brand_id = brand_id;
 
     if (category_id) {
       //filter.category_id = category_id
-      const types = await ProductType.find({ category_id: category_id }).select("_id");
+      const types = await ProductType.find({ category_id: category_id }).select(
+        "_id"
+      );
       filter.type_id = { $in: types.map((t) => t._id) };
     }
-    if (type_id){ 
+    if (type_id) {
       filter.type_id = type_id;
     }
 
@@ -176,7 +181,7 @@ exports.getAllProducts = async (req, res) => {
     if (search) {
       filter.$or = [
         { name: { $regex: search, $options: "i" } },
-        { SKU: { $regex: search, $options: "i" } }
+        { SKU: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -192,12 +197,14 @@ exports.getAllProducts = async (req, res) => {
       filter.current_stock = 0;
     }
 
+    
+
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const products = await Product.find(filter)
-      .select('-slug -size -unit -description -__v -createdAt')
-      .populate('attributes', 'description')
-      .populate('brand_id', 'name')
+      .select("-slug -size -unit -description -__v -createdAt")
+      .populate("attributes", "description")
+      .populate("brand_id", "name")
       .sort(sort)
       .skip(skip)
       .limit(parseInt(limit))
@@ -321,7 +328,7 @@ exports.updateProduct = async (req, res) => {
       selling_price,
       current_stock,
       attributes,
-      remove_images, 
+      remove_images,
     } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -474,7 +481,8 @@ exports.deleteProduct = async (req, res) => {
     }
 
     await deleteImageFiles(product.image_urls);
-    await Product.findByIdAndDelete(id);
+    product.is_deleted = true;
+    await product.save();
 
     res.status(200).json({
       success: true,
@@ -495,36 +503,45 @@ exports.bulkDeleteProducts = async (req, res) => {
     const { product_ids } = req.body;
 
     // Validate input
-    if (!product_ids || !Array.isArray(product_ids) || product_ids.length === 0) {
+    if (
+      !product_ids ||
+      !Array.isArray(product_ids) ||
+      product_ids.length === 0
+    ) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid product_ids. Must be a non-empty array'
+        message: "Invalid product_ids. Must be a non-empty array",
       });
     }
 
     // Validate all IDs
-    const invalidIds = product_ids.filter(id => !mongoose.Types.ObjectId.isValid(id));
+    const invalidIds = product_ids.filter(
+      (id) => !mongoose.Types.ObjectId.isValid(id)
+    );
     if (invalidIds.length > 0) {
       return res.status(400).json({
         success: false,
-        message: 'One or more invalid product IDs',
-        invalid_ids: invalidIds
+        message: "One or more invalid product IDs",
+        invalid_ids: invalidIds,
       });
     }
 
     // Find all products to delete (to get their images)
-    const products = await Product.find({ _id: { $in: product_ids } });
+    const products = await Product.find(
+    { 
+      _id: { $in: product_ids },
+    }).lean();
 
     if (products.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'No products found with the provided IDs'
+        message: "No products found with the provided IDs",
       });
     }
 
     // Collect all image URLs to delete
     const allImageUrls = [];
-    products.forEach(product => {
+    products.forEach((product) => {
       if (product.image_urls && product.image_urls.length > 0) {
         allImageUrls.push(...product.image_urls);
       }
@@ -535,140 +552,63 @@ exports.bulkDeleteProducts = async (req, res) => {
       await deleteImageFiles(allImageUrls);
     }
 
-    // Delete all products
-    const deleteResult = await Product.deleteMany({ _id: { $in: product_ids } });
+    // Soft-Delete all products
+    const deleteResult = await Product.updateMany(
+      { _id: { $in: product_ids } },
+      { $set: { is_deleted: true } }
+    );
 
     res.status(200).json({
       success: true,
       message: `${deleteResult.deletedCount} products deleted successfully`,
       deleted_count: deleteResult.deletedCount,
-      requested_count: product_ids.length
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error deleting products',
-      error: error.message
-    });
-  }
-};
-
-// INVENTORY - Adjust product stock
-exports.adjustInventory = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { adjustment, reason } = req.body;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid product ID",
-      });
-    }
-
-    if (adjustment === undefined || typeof adjustment !== "number") {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Invalid adjustment value. Must be a number (positive or negative)",
-      });
-    }
-
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
-
-    const newStock = product.current_stock + adjustment;
-
-    if (newStock < 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Adjustment would result in negative stock",
-        current_stock: product.current_stock,
-        attempted_adjustment: adjustment,
-      });
-    }
-
-    product.current_stock = newStock;
-    await product.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Inventory adjusted successfully",
-      data: {
-        product_id: product._id,
-        SKU: product.SKU,
-        name: product.name,
-        previous_stock: product.current_stock - adjustment,
-        adjustment: adjustment,
-        current_stock: product.current_stock,
-        reason: reason || "No reason provided",
-      },
+      requested_count: product_ids.length,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error adjusting inventory",
+      message: "Error deleting products",
       error: error.message,
     });
   }
 };
 
-// INVENTORY - Set exact stock level
-exports.setInventory = async (req, res) => {
+
+//Search products by SKU or name for autocomplete
+exports.searchProducts = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { stock, reason } = req.body;
+    const { q } = req.query;
+    const limit = Math.min(parseInt(req.query.limit) || 10, 50);
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid product ID",
+    if (!q || q.trim().length < 1) {
+      return res.status(200).json({
+        success: true,
+        data: [],
       });
     }
 
-    if (stock === undefined || typeof stock !== "number" || stock < 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid stock value. Must be a non-negative number",
-      });
-    }
+    const searchTerm = q.trim();
 
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
+    // Search by SKU (exact prefix match) or name (partial match)
+    const products = await Product.find({
+      $or: [
+        { SKU: { $regex: `^${searchTerm}`, $options: "i" } },
+        { name: { $regex: searchTerm, $options: "i" } },
+        { is_deleted: { $ne: true } }
+      ],
+    })
+      .select("_id name SKU cost_price current_stock")
+      .limit(limit)
+      .lean();
 
-    const previousStock = product.current_stock;
-    product.current_stock = parseInt(stock);
-    await product.save();
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Inventory set successfully",
-      data: {
-        product_id: product._id,
-        SKU: product.SKU,
-        name: product.name,
-        previous_stock: previousStock,
-        current_stock: product.current_stock,
-        difference: product.current_stock - previousStock,
-        reason: reason || "No reason provided",
-      },
+      data: products,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err) {
+    return res.status(500).json({
       success: false,
-      message: "Error setting inventory",
-      error: error.message,
+      message: "Internal server error",
     });
   }
 };

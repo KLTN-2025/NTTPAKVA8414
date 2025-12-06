@@ -1,4 +1,4 @@
-/* Nút Nổi (FAB) */
+/* FAB Button */
 .chatbot-fab {
   position: fixed;
   bottom: 25px;
@@ -14,6 +14,9 @@
   cursor: pointer;
   z-index: 999;
   transition: transform 0.3s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chatbot-fab:hover {
@@ -21,23 +24,21 @@
   background-color: #45a049;
 }
 
-/* MỚI: Thêm hiệu ứng xoay cho icon bên trong FAB */
 .chatbot-fab i {
   transition: transform 0.3s ease;
-  
 }
+
 .chatbot-fab.is-open i {
   transform: rotate(180deg);
 }
 
-
-/* Cửa sổ Chat */
+/* Chat Window */
 .chatbot-window {
   position: fixed;
   bottom: 100px;
   right: 25px;
-  width: 350px;
-  height: 450px;
+  width: 380px;
+  height: 520px;
   background-color: #ffffff;
   border-radius: 15px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
@@ -45,10 +46,9 @@
   flex-direction: column;
   overflow: hidden;
   z-index: 998;
-  /* (Bỏ animation cũ, thay bằng Transition) */
 }
 
-/* MỚI: CSS cho hiệu ứng <Transition> */
+/* Transition */
 .chat-window-fade-enter-active,
 .chat-window-fade-leave-active {
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -59,7 +59,6 @@
   transform: translateY(20px);
 }
 
-
 /* Header */
 .chat-header {
   background-color: #4CAF50;
@@ -68,67 +67,100 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-shrink: 0; /* Không cho header co lại */
+  flex-shrink: 0;
 }
+
 .chat-header h4 {
   margin: 0;
   font-size: 1.1rem;
 }
+
 .chat-header h4 i {
   margin-right: 8px;
 }
-.chat-header .close-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
+
+.header-buttons {
+  display: flex;
+  gap: 8px;
 }
 
-/* Khung hội thoại */
+.header-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.header-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.header-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.restart-btn i {
+  font-size: 14px;
+}
+
+.close-btn i {
+  font-size: 18px;
+}
+
+/* Chat Body */
 .chat-body {
   flex-grow: 1;
   padding: 15px;
   overflow-y: auto;
   background-color: #f9f9f9;
-  padding-bottom: 10px; 
 }
 
 .message {
   margin-bottom: 15px;
-  display: flex; /* Dùng flex để căn chỉnh */
+  display: flex;
 }
+
 .message p {
   padding: 10px 15px;
   border-radius: 20px;
-  max-width: 85%; /* Tăng max-width */
+  max-width: 85%;
   word-wrap: break-word;
   margin: 0;
-  line-height: 1.4; /* Cải thiện khả năng đọc */
+  line-height: 1.5;
+  font-size: 0.9rem;
 }
 
-/* Tin nhắn của Bot */
+/* Bot messages */
 .message.bot {
-  justify-content: flex-start; /* Bot ở bên trái */
+  justify-content: flex-start;
 }
+
 .message.bot p {
   background-color: #e9e9eb;
   color: #333;
   border-bottom-left-radius: 5px;
 }
 
-/* Tin nhắn của User */
+/* User messages */
 .message.user {
-  justify-content: flex-end; /* User ở bên phải */
+  justify-content: flex-end;
 }
+
 .message.user p {
-  background-color: #007bff;
+  background-color: #4CAF50;
   color: white;
   border-bottom-right-radius: 5px;
 }
 
-/* MỚI: CSS cho chỉ báo "đang gõ" */
+/* Typing indicator */
 .typing-indicator {
   display: flex;
   align-items: center;
@@ -137,6 +169,7 @@
   border-radius: 20px;
   border-bottom-left-radius: 5px;
 }
+
 .typing-indicator span {
   height: 8px;
   width: 8px;
@@ -146,33 +179,76 @@
   display: inline-block;
   animation: bounce 1.2s infinite;
 }
+
 .typing-indicator span:nth-of-type(2) {
   animation-delay: 0.2s;
 }
+
 .typing-indicator span:nth-of-type(3) {
   animation-delay: 0.4s;
 }
+
 @keyframes bounce {
   0%, 80%, 100% { transform: translateY(0); }
   40% { transform: translateY(-6px); }
 }
 
-
-/* Khung nhập tin nhắn và gợi ý */
+/* Footer */
 .chat-footer {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   padding: 10px;
   border-top: 1px solid #ddd;
   background-color: #fff;
-  flex-shrink: 0; /* Không cho footer co lại */
+  flex-shrink: 0;
 }
 
-/* Dòng chứa input và nút gửi */
+/* Suggestions */
+.suggestion-chips {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+
+.suggestion-chips::-webkit-scrollbar {
+  height: 6px;
+}
+
+.suggestion-chips::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+.suggestion-chips button {
+  background-color: #fff;
+  border: 1px solid #4CAF50;
+  color: #4CAF50;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.suggestion-chips button:hover:not(:disabled) {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+.suggestion-chips button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Input row */
 .chat-input-row {
   display: flex;
-  align-items: center; 
-  margin-top: 10px; 
+  align-items: center;
+  gap: 10px;
 }
 
 .chat-input-row input {
@@ -183,77 +259,54 @@
   font-size: 0.9rem;
   transition: border-color 0.2s ease;
 }
+
 .chat-input-row input:focus {
   border-color: #4CAF50;
   outline: none;
 }
 
-.chat-input-row button { 
+.chat-input-row input:disabled {
+  background-color: #f4f4f4;
+  cursor: not-allowed;
+}
+
+.chat-input-row button {
   background-color: #4CAF50;
   border: none;
   color: white;
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  margin-left: 10px;
   cursor: pointer;
-  flex-shrink: 0; 
+  flex-shrink: 0;
   transition: background-color 0.2s ease;
-
-  /* == THÊM 3 DÒNG NÀY ĐỂ CĂN GIỮA ICON == */
   display: flex;
   align-items: center;
   justify-content: center;
-  /* ======================================= */
 }
-.chat-input-row button:hover {
+
+.chat-input-row button:hover:not(:disabled) {
   background-color: #45a049;
 }
 
-/* MỚI: CSS cho trạng thái vô hiệu hóa */
-.chat-input-row input:disabled,
-.chat-input-row button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background-color: #f4f4f4;
-}
 .chat-input-row button:disabled {
   background-color: #ccc;
+  cursor: not-allowed;
 }
 
-
-/* CSS CHO GỢI Ý (Cuộn ngang) */
-.suggestion-chips {
-  padding: 5px 0 0 0; 
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 8px;
-  padding-bottom: 5px; 
-}
-.suggestion-chips::-webkit-scrollbar {
-  height: 6px; 
-}
-.suggestion-chips::-webkit-scrollbar-thumb {
-  background-color: #ccc; 
-  border-radius: 10px;
-}
-.suggestion-chips::-webkit-scrollbar-track {
-  background: #f1f1f1; 
-}
-.suggestion-chips button {
-  background-color: #fff;
-  border: 1px solid #4CAF50;
-  color: #4CAF50;
-  border-radius: 20px;
-  padding: 6px 12px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-.suggestion-chips button:hover {
-  background-color: #4CAF50;
-  color: #fff;
+/* Responsive */
+@media (max-width: 480px) {
+  .chatbot-window {
+    width: calc(100vw - 30px);
+    height: calc(100vh - 150px);
+    right: 15px;
+    bottom: 90px;
+  }
+  
+  .chatbot-fab {
+    right: 15px;
+    bottom: 15px;
+    width: 56px;
+    height: 56px;
+  }
 }

@@ -19,14 +19,19 @@
     "cors": "2.8.5",
     "dotenv": "17.2.3",
     "express": "5.1.0",
+    "express-rate-limit": "^8.2.1",
     "express-validator": "7.2.1",
     "jsonwebtoken": "9.0.2",
     "jwks-rsa": "^3.2.0",
+    "libphonenumber-js": "^1.12.29",
     "mongoose": "8.19.1",
     "multer": "^2.0.2",
+    "openai": "^6.9.1",
+    "qs": "^6.14.0",
     "redis": "^5.9.0",
     "slugify": "1.6.6",
-    "svix": "1.77.0"
+    "svix": "1.77.0",
+    "vnpay": "^2.4.4"
   },
   "devDependencies": {
     "nodemon": "3.1.10"

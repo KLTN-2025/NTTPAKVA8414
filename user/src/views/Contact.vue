@@ -38,7 +38,7 @@
         <div class="info-block-new">
           <i class="fas fa-location-dot"></i>
           <div class="info-text-new">
-            <span>123 Healthy St, Ho Chi Minh City</span>
+            <span>123 Healthy St, Da Nang City</span>
           </div>
         </div>
       </div>
@@ -143,4 +143,4 @@ async function handleSubmit() {
 }
 </script>
 
-<style scoped src="./Contact.css"></style>
+<style scoped src="../styling/Contact.css"></style>

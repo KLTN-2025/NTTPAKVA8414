@@ -103,7 +103,7 @@ exports.checkAdminRole = async (req, res, next) => {
 
               if (userRole) {
                 try {
-                  await redis.set(cachedKey, userRole, 'EX', 3600);
+                  await redis.set(cachedKey, userRole);
                 } catch (redisErr) {
                   console.warn('Cannot cache role:', redisErr.message);
                 }

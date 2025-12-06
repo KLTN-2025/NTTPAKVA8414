@@ -20,11 +20,11 @@ const reviewSchema = new mongoose.Schema({
   comment: {
     type: String,
     trim: true,
-    default: null 
+    default: null,
+    maxlength: 500
   },
 }, { timestamps: true }
 );
 
 
-reviewSchema.index({ product_id: 1, customer_id: 1 }, { unique: true });
 module.exports =  mongoose.model("Review", reviewSchema);

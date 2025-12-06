@@ -1,93 +1,148 @@
 <template>
   <div class="chatbot-container">
+    <!-- Chat Window -->
     <Transition name="chat-window-fade">
-      <div v-if="isOpen" class="chatbot-window">
+      <div v-if="chatStore.isOpen" class="chatbot-window">
+        <!-- Header -->
         <div class="chat-header">
-          <h4><i class="fa-solid fa-seedling"></i> Tư vấn Dinh dưỡng AI</h4>
-          <button @click="toggleChat" class="close-btn">&times;</button>
+          <h4><i class="fa-solid fa-seedling"></i> HealthyCrave Bot</h4>
+          <div class="header-buttons">
+            <button 
+              @click="handleRestart" 
+              class="header-btn restart-btn"
+              title="Restart conversation"
+              :disabled="chatStore.isLoading"
+            >
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+            <button @click="chatStore.close" class="header-btn close-btn">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
         </div>
 
+        <!-- Messages -->
         <div class="chat-body" ref="chatBody">
-          <div v-for="(msg, index) in messages" :key="index" 
-               :class="['message', msg.sender]">
-            <p>{{ msg.text }}</p>
+          <div 
+            v-for="msg in chatStore.messages" 
+            :key="msg.id" 
+            :class="['message', msg.sender]"
+          >
+            <p v-html="formatMessage(msg.text)"></p>
           </div>
           
-          <div v-if="isBotTyping" class="message bot">
+          <!-- Typing Indicator -->
+          <div v-if="chatStore.isLoading" class="message bot">
             <div class="typing-indicator">
-              <span></span><span></span><span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
           </div>
         </div>
         
+        <!-- Footer -->
         <div class="chat-footer">
-          <div v-if="showSuggestions" class="suggestion-chips">
+          <!-- Suggestions -->
+          <div v-if="chatStore.suggestions.length > 0 && !chatStore.isLoading" class="suggestion-chips">
             <button 
-              v-for="suggestion in suggestions" 
+              v-for="suggestion in chatStore.suggestions" 
               :key="suggestion" 
               @click="handleSuggestionClick(suggestion)"
+              :disabled="chatStore.isLoading"
             >
               {{ suggestion }}
             </button>
           </div>
           
-          <div class="chat-input-row"> 
+          <!-- Input -->
+          <div class="chat-input-row">
             <input 
               type="text" 
-              v-model="newMessage" 
-              @keyup.enter="sendMessage" 
-              placeholder="Hỏi tôi về dinh dưỡng..."
-              ref="inputField" :disabled="isLoading" />
-            <button @click="sendMessage" :disabled="isLoading"> <i class="fa-solid fa-paper-plane"></i>
+              v-model="inputMessage" 
+              @keyup.enter="handleSend" 
+              placeholder="Type your message..."
+              ref="inputField"
+              :disabled="chatStore.isLoading"
+            />
+            <button 
+              @click="handleSend" 
+              :disabled="chatStore.isLoading || !inputMessage.trim()"
+            >
+              <i class="fa-solid fa-paper-plane"></i>
             </button>
           </div>
         </div>
       </div>
     </Transition>
 
-    <button @click="toggleChat" class="chatbot-fab" :class="{ 'is-open': isOpen }">
-      <i :class="isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-comments'"></i>
+    <!-- FAB Button -->
+    <button 
+      @click="handleToggle" 
+      class="chatbot-fab" 
+      :class="{ 'is-open': chatStore.isOpen }"
+    >
+      <i :class="chatStore.isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-comments'"></i>
     </button>
   </div>
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
-import './Chatbot.css'
+import { ref, nextTick, watch } from 'vue'
+import { useChatStore } from '@/stores/chatStore'
 
-const isOpen = ref(false)
-const newMessage = ref('')
-const chatBody = ref(null) 
+const chatStore = useChatStore()
+const inputMessage = ref('')
+const chatBody = ref(null)
+const inputField = ref(null)
 
-// --- CÁC BIẾN MỚI ---
-const inputField = ref(null) // Để focus vào ô input
-const isBotTyping = ref(false) // Để hiển thị "..."
-const isLoading = ref(false) // Để vô hiệu hóa nút
-// --------------------
-
-const suggestions = ref([
-  'Tạo lộ trình dinh dưỡng',
-  'Tìm công thức nấu ăn',
-  'Sản phẩm hữu cơ là gì?'
-])
-const showSuggestions = ref(true) 
-
-const messages = ref([
-  { sender: 'bot', text: 'Chào bạn! Tôi có thể giúp bạn tạo lộ trình dinh dưỡng hoặc tìm công thức nấu ăn.' }
-])
-
-// --- CẬP NHẬT: Tự động focus khi mở ---
-const toggleChat = () => {
-  isOpen.value = !isOpen.value
-  if (isOpen.value) {
-    // Chờ cho DOM được cập nhật
+/**
+ * Toggle chat window
+ */
+function handleToggle() {
+  chatStore.toggle()
+  if (chatStore.isOpen) {
     nextTick(() => {
-      inputField.value?.focus() // Tự động focus
+      inputField.value?.focus()
+      scrollToBottom()
     })
   }
 }
 
-const scrollToBottom = () => {
+/**
+ * Send message
+ */
+async function handleSend() {
+  const text = inputMessage.value.trim()
+  if (!text || chatStore.isLoading) return
+  
+  inputMessage.value = ''
+  await chatStore.sendMessage(text)
+  scrollToBottom()
+}
+
+/**
+ * Handle suggestion click
+ */
+async function handleSuggestionClick(suggestion) {
+  if (chatStore.isLoading) return
+  await chatStore.selectSuggestion(suggestion)
+  scrollToBottom()
+}
+
+/**
+ * Handle restart
+ */
+function handleRestart() {
+  if (chatStore.isLoading) return
+  chatStore.restart()
+  scrollToBottom()
+}
+
+/**
+ * Scroll chat to bottom
+ */
+function scrollToBottom() {
   nextTick(() => {
     if (chatBody.value) {
       chatBody.value.scrollTop = chatBody.value.scrollHeight
@@ -95,39 +150,35 @@ const scrollToBottom = () => {
   })
 }
 
-const handleSuggestionClick = (suggestion) => {
-  if (isLoading.value) return; 
-  newMessage.value = suggestion
-  sendMessage()
+/**
+ * Format message text (handle newlines)
+ */
+function formatMessage(text) {
+  if (!text) return ''
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>')
 }
 
-// --- CẬP NHẬT: Thêm logic isBotTyping ---
-const sendMessage = () => {
-  const text = newMessage.value.trim()
-  if (text === '' || isLoading.value) return;
+// Watch for new messages to auto-scroll
+watch(
+  () => chatStore.messages.length,
+  () => {
+    scrollToBottom()
+  }
+)
 
-  isLoading.value = true; 
-  showSuggestions.value = false; 
-  messages.value.push({ sender: 'user', text: text })
-  newMessage.value = ''
-  scrollToBottom() // Cuộn xuống ngay khi user gửi
-
-  // Bật "đang gõ"
-  isBotTyping.value = true;
-  nextTick(scrollToBottom); // Cuộn xuống để xem "đang gõ"
-
-  // Giả lập AI trả lời (tăng lên 1.5s cho thật hơn)
-  setTimeout(() => {
-    isBotTyping.value = false; // Tắt "đang gõ"
-    
-    messages.value.push({ 
-      sender: 'bot', 
-      text: 'Đây là câu trả lời giả lập. Để trả lời thật, cần kết nối backend.' 
-    })
-    
-    isLoading.value = false; // Tải xong
-    showSuggestions.value = true; // Hiển thị lại gợi ý
-    scrollToBottom() // Cuộn xuống xem tin nhắn mới
-  }, 1500) // Tăng thời gian chờ
-}
+// Watch for loading state to scroll to typing indicator
+watch(
+  () => chatStore.isLoading,
+  (loading) => {
+    if (loading) {
+      scrollToBottom()
+    }
+  }
+)
 </script>
+
+<style src="./Chatbot.css"></style>

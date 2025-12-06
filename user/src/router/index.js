@@ -5,8 +5,8 @@ import Checkout from '@/views/Checkout.vue'
 import About from '@/views/About.vue'
 import Contact from '@/views/Contact.vue'
 import OrderHistory from '@/views/OrderHistory.vue' 
-// 1. IMPORT COMPONENT CHI TIẾT ĐƠN HÀNG
-import UserOrderDetail from '@/views/UserOrderDetail.vue'
+const UserOrderDetail = () => import('@/views/UserOrderDetail.vue')
+const PaymentReturn = () => import('@/views/PaymentReturn.vue')
 
 const routes = [
   {
@@ -45,6 +45,11 @@ const routes = [
     path: '/checkout',
     name: 'checkout',
     component: Checkout
+  },
+  {
+    path: '/payment/result',
+    name: 'PaymentResult',
+    component: PaymentReturn
   },
   {
     path: '/about',
