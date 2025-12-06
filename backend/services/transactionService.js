@@ -33,7 +33,6 @@ async function createCustomerPaymentTransaction(order, paymentMethod = 'other') 
     });
 
     if (existingTransaction) {
-      console.log(`Transaction already exists for order ${order._id}`);
       return { success: true, transaction: existingTransaction, duplicate: true };
     }
 
@@ -75,7 +74,6 @@ async function createRefundTransaction(order) {
     });
 
     if (existingTransaction) {
-      console.log(`Refund transaction already exists for order ${order._id}`);
       return { success: true, transaction: existingTransaction, duplicate: true };
     }
 
@@ -111,14 +109,12 @@ async function createSupplierPaymentTransaction(supplyOrder) {
     });
 
     if (existingTransaction) {
-      console.log(`Supplier payment transaction already exists for supply order ${supplyOrder._id}`);
       return { success: true, transaction: existingTransaction, duplicate: true };
     }
 
     const amount = supplyOrder.total_cost_received ?? supplyOrder.total_cost_ordered ?? 0;
 
     if (amount <= 0) {
-      console.log(`Skipping supplier payment transaction - amount is ${amount}`);
       return { success: true, transaction: null, skipped: true };
     }
 

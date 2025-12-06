@@ -99,6 +99,8 @@ exports.searchAndFilterProducts = async (req, res) => {
 
     const filter = {};
 
+    filter.is_deleted = { $ne: true }
+
     if (req.query.category && mongoose.Types.ObjectId.isValid(req.query.category)) {
       const cat = req.query.category
       const category = await ProductCategory.findById(cat).select("_id").lean()

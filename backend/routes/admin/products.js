@@ -58,16 +58,4 @@ router.delete(
   checkAdminRole,
   productController.deleteProduct
 );
-
-router.patch(
-  "/:id/inventory/adjust",
-  checkAdminRole,
-  productController.adjustInventory
-);
-
-router.patch(
-  "/:id/inventory/set",
-  checkAdminRole,
-  productController.setInventory
-);
 module.exports = router;

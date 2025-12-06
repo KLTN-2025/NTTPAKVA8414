@@ -115,16 +115,11 @@ async function createRefundTransaction(order) {
 }
 
 async function migrate() {
-  console.log('='.repeat(60));
   console.log('Transaction Migration Script');
-  console.log('='.repeat(60));
-  console.log('');
 
   try {
-    console.log('Connecting to MongoDB...');
     await mongoose.connect(MONGODB_URI);
-    console.log('Connected successfully!');
-    console.log('');
+    console.log('Connected to MongoDB!');
 
     // Stats
     let customerPaymentsCreated = 0;
@@ -135,11 +130,9 @@ async function migrate() {
     let supplierPaymentsSkipped = 0;
 
     // 1. Migrate customer order payments
-    console.log('--- Processing Customer Order Payments ---');
     const paidOrders = await CustomerOrder.find({ 
       payment_status: 'paid' 
     }).lean();
-    console.log(`Found ${paidOrders.length} paid orders`);
 
     for (const order of paidOrders) {
       const result = await createCustomerPaymentTransaction(order);
@@ -150,9 +143,7 @@ async function migrate() {
         customerPaymentsSkipped++;
       }
     }
-    console.log('');
-    console.log(`  Created: ${customerPaymentsCreated}, Skipped: ${customerPaymentsSkipped}`);
-    console.log('');
+    console.log(`Created: ${customerPaymentsCreated}, Skipped: ${customerPaymentsSkipped}`);
 
     // 2. Migrate refunds for cancelled orders that were paid
     console.log('--- Processing Refunds ---');
@@ -171,16 +162,13 @@ async function migrate() {
         refundsSkipped++;
       }
     }
-    console.log('');
     console.log(`  Created: ${refundsCreated}, Skipped: ${refundsSkipped}`);
-    console.log('');
 
     // 3. Migrate supply order payments
     console.log('--- Processing Supply Order Payments ---');
     const receivedSupplyOrders = await SupplyOrder.find({ 
       status: 'Received' 
     }).lean();
-    console.log(`Found ${receivedSupplyOrders.length} received supply orders`);
 
     for (const supplyOrder of receivedSupplyOrders) {
       const result = await createSupplierPaymentTransaction(supplyOrder);
@@ -191,22 +179,15 @@ async function migrate() {
         supplierPaymentsSkipped++;
       }
     }
-    console.log('');
     console.log(`  Created: ${supplierPaymentsCreated}, Skipped: ${supplierPaymentsSkipped}`);
-    console.log('');
 
     // Summary
-    console.log('='.repeat(60));
     console.log('MIGRATION COMPLETE');
-    console.log('='.repeat(60));
-    console.log('');
     console.log('Summary:');
     console.log(`  Customer Payments: ${customerPaymentsCreated} created, ${customerPaymentsSkipped} skipped`);
     console.log(`  Refunds:           ${refundsCreated} created, ${refundsSkipped} skipped`);
     console.log(`  Supplier Payments: ${supplierPaymentsCreated} created, ${supplierPaymentsSkipped} skipped`);
-    console.log('');
     console.log(`  Total Created: ${customerPaymentsCreated + refundsCreated + supplierPaymentsCreated}`);
-    console.log('');
 
   } catch (error) {
     console.error('');

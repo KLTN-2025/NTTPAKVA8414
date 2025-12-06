@@ -95,8 +95,6 @@
                 <select id="paymentStatus" v-model="formData.payment_status">
                   <option value="pending">Pending</option>
                   <option value="paid">Paid</option>
-                  <option value="refunded">Refunded</option>
-                  <option value="failed">Failed</option>
                 </select>
               </div>
               <div class="form-group">
@@ -106,7 +104,6 @@
                   <option value="confirmed">Confirmed</option>
                   <option value="shipped">Shipped</option>
                   <option value="delivered">Delivered</option>
-                  <option value="cancelled">Cancelled</option>
                 </select>
               </div>
             </div>
@@ -141,14 +138,18 @@
           </div>
         </div>
         
-        <!-- FORM ACTIONS -->
+        <!-- FORM ACTIONS (Back to previous pages (done), saving changes (done), cancel order (to be implemented)) -->
         <div class="form-action-buttons">
           <router-link to="/admin/orders" class="btn btn-secondary">
-            Cancel
+            Back
           </router-link>
           <button type="submit" class="btn btn-primary" :disabled="saving">
             <i class="fas fa-save"></i>
             {{ saving ? 'Saving...' : 'Save Changes' }}
+          </button>
+          <button type="button" @click="handleCancel" class="btn btn-cancel" :disabled="saving || !isCancellable">
+            <i class="fas fa-save"></i>
+            {{ saving ? 'Cancelling...' : 'Cancel Order' }}
           </button>
         </div>
       </div>
@@ -178,6 +179,7 @@ const formData = ref(null)
 const items = ref([])
 const orderTotal = ref(0)
 const defaultImage = ''
+const isCancellable = ref(false)
 
 // Fetch order details
 async function fetchOrderDetails() {
@@ -206,6 +208,7 @@ async function fetchOrderDetails() {
         order_status: order.order_status,
         payment_status: order.payment_status
       }
+      isCancellable.value = order.order_status !== "cancelled"
 
       items.value = response.data.items
       orderTotal.value = order.total_amount
@@ -233,6 +236,44 @@ async function fetchOrderDetails() {
     }
   } finally {
     loading.value = false
+  }
+}
+
+// Handle order cancellation
+async function handleCancel() {
+  if (saving.value) 
+    return
+  saving.value = true
+  try {
+    const token = await getToken.value()
+    const response = await axios.delete(`/api/admin/orders/${orderId.value}`,
+      { 
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        withCredentials: true 
+      }
+    )
+
+    if (response.data.success) {
+      toast.success('Order successfully cancelled!')
+      router.push('/admin/orders')
+    } else {
+      throw new Error(response.data.message || 'Failed to cancel order')
+    }
+
+  } catch (err) {
+    let errorMessage = 'Failed to cancel order. Please try again.'
+    
+    if (err.response) {
+      errorMessage = err.response.data.message || errorMessage
+    } else if (err.request) {
+      errorMessage = 'Network error. Please check your connection.'
+    }
+    
+    toast.error(errorMessage)
+  } finally {
+    saving.value = false
   }
 }
 

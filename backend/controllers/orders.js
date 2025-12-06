@@ -100,10 +100,11 @@ exports.placeOrder = async (req, res) => {
       recipient_email: shippingDetails.recipient_email || '',
       recipient_phone: shippingDetails.recipient_phone,
       payment_method:
-        shippingDetails.payment_method === "transfer" ? "transfer" : "cod",
+        shippingDetails.payment_method === "vnpay" ? "vnpay" : "cod",
       shipping_address: shippingDetails.shipping_address,
       shipping_note: shippingDetails.shipping_note || "",
-      total_amount: total,
+      stock_deducted: true,
+      total_amount: total
     });
 
     // Create order items
@@ -375,7 +376,8 @@ exports.cancelOrder = async (req, res) => {
 
     const order = await CustomerOrder.findOne({
       _id: reqOrderId,
-      customer_id: customer._id
+      customer_id: customer._id,
+      stock_deducted: { $ne: false }
     })
     .select('order_status payment_status total_amount payment_method');
 
@@ -393,13 +395,11 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    // === TRANSACTION INTEGRATION: Capture previous payment status ===
     const previousPaymentStatus = order.payment_status;
 
     const orderItems = await CustomerOrderItem.find({ order_id: reqOrderId })
       .select('product_id quantity');
 
-    // Restore stock for each product
     for (const item of orderItems) {
       const updateResult = await Product.findByIdAndUpdate(
         item.product_id,
@@ -425,6 +425,7 @@ exports.cancelOrder = async (req, res) => {
 
     // Update order status
     order.order_status = 'cancelled';
+    order.stock_deducted = false
     order.payment_status = newPaymentStatus;
     await order.save();
 

@@ -405,7 +405,7 @@ function formatStatus(status) {
 // Format payment method
 function formatPaymentMethod(method) {
   if (!method) return 'N/A'
-  return method === 'cod' ? 'COD' : 'Bank Transfer'
+  return method === 'cod' ? 'COD' : 'VNpay'
 }
 
 // Get order status badge class
@@ -453,4 +453,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped src="./UserOrderDetail.css"></style>
+<style scoped src="../styling/UserOrderDetail.css"></style>

@@ -9,5 +9,6 @@ router.use('/categories', require('./categories'))
 router.use('/carts', require('./carts'))
 router.use('/orders', require('./orders'))
 router.use('/chatbot', require('./chatbot'))
+router.use('/vnpay', require('./vnpay'))
 
 module.exports = router;

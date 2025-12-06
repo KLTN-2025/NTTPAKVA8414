@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Banner/Breadcrumb Section -->
     <div class="cart-banner-container">
       <img src="@/assets/images/Breadcrumbs.png" alt="Checkout Banner" class="cart-banner-img" />
 
@@ -17,15 +18,16 @@
     <div class="checkout-container">
       <h1 class="checkout-title">Billing Details</h1>
 
-      <form @submit.prevent="placeOrder" class="checkout-layout">
+      <form @submit.prevent="handleSubmit" class="checkout-layout">
+        <!-- Left Column: Billing Form -->
         <div class="billing-details-column">
           <div class="form-row-grid">
             <div class="form-group">
-              <label for="firstname">Họ *</label>
+              <label for="firstname">Last Name (Họ) *</label>
               <input type="text" id="firstname" v-model="form.lastName" required />
             </div>
             <div class="form-group">
-              <label for="lastname">Tên *</label>
+              <label for="lastname">First Name (Tên) *</label>
               <input type="text" id="lastname" v-model="form.firstName" required />
             </div>
           </div>
@@ -33,7 +35,7 @@
           <div class="form-row-grid">
             <div class="form-group">
               <label for="email">Email Address</label>
-              <input type="email" id="email" v-model="form.email" />
+              <input type="email" id="email" v-model="form.email"/>
             </div>
             <div class="form-group">
               <label for="phone">Phone *</label>
@@ -68,6 +70,7 @@
           </div>
         </div>
 
+        <!-- Right Column: Order Summary -->
         <div class="order-summary-column">
           <div class="order-summary-card">
             <h3>Your Order</h3>
@@ -77,7 +80,7 @@
               <span>Subtotal</span>
             </div>
 
-            <!-- [CHANGED] Use cartStore items instead of hardcoded items -->
+            <!-- Cart Items -->
             <div
               v-for="item in cartItems"
               :key="item.productId"
@@ -87,12 +90,12 @@
                 <img :src="buildImagePath(item.image)" :alt="item.name" class="product-thumbnail" />
                 <span class="product-name">{{ item.name }} × {{ item.quantity }}</span>
               </div>
-              <span class="product-price">{{ (item.price * item.quantity).toFixed(0) }}đ</span>
+              <span class="product-price">{{ formatPrice(item.price * item.quantity) }}</span>
             </div>
 
             <div class="summary-row">
               <span>Subtotal</span>
-              <span>{{ subtotal.toFixed(0) }}đ</span>
+              <span>{{ formatPrice(subtotal) }}</span>
             </div>
             <div class="summary-row">
               <span>Shipping</span>
@@ -100,10 +103,14 @@
             </div>
             <div class="summary-row total-row">
               <span>Total</span>
-              <span>{{ subtotal.toFixed(0) }}đ</span>
+              <span>{{ formatPrice(subtotal) }}</span>
             </div>
 
+            <!-- Payment Methods Section -->
             <div class="payment-methods">
+              <h4 class="payment-title">Payment Method</h4>
+              
+              <!-- COD Option -->
               <div class="payment-option">
                 <input
                   type="radio"
@@ -111,25 +118,96 @@
                   name="payment"
                   value="cod"
                   v-model="form.paymentMethod"
-                  checked
                 />
-                <label for="cod">Cash on delivery (COD)</label>
+                <label for="cod">
+                  <i class="fas fa-truck payment-icon"></i>
+                  Cash on Delivery (COD)
+                </label>
+                <p v-if="form.paymentMethod === 'cod'" class="payment-desc">
+                  Pay with cash when your order is delivered to your doorstep.
+                </p>
               </div>
+
+              <!-- VNPay Option -->
               <div class="payment-option">
                 <input
                   type="radio"
-                  id="transfer"
+                  id="vnpay"
                   name="payment"
-                  value="transfer"
+                  value="vnpay"
                   v-model="form.paymentMethod"
                 />
-                <label for="bank">Direct bank transfer</label>
+                <label for="vnpay">
+                  <img 
+                    src="@/assets/images/vnpay.jpg" 
+                    alt="VNPay" 
+                    class="vnpay-logo"
+                    onerror="this.style.display='none'"
+                  />
+                  VNPay
+                </label>
+                <div v-if="form.paymentMethod === 'vnpay'" class="payment-desc vnpay-desc">
+                  <p>Pay securely via VNPay with:</p>
+                  <ul class="vnpay-options">
+                    <li><i class="fas fa-credit-card"></i> ATM Cards (Vietnamese Banks)</li>
+                    <li><i class="fab fa-cc-visa"></i> Visa / Mastercard / JCB</li>
+                    <li><i class="fas fa-qrcode"></i> VNPay QR Code</li>
+                    <li><i class="fas fa-wallet"></i> VNPay Wallet</li>
+                  </ul>
+                  
+                  <!-- Optional: Bank Selection -->
+                  <div class="bank-selection" v-if="showBankSelection">
+                    <label for="bankCode">Select Bank (optional):</label>
+                    <select id="bankCode" v-model="form.bankCode">
+                      <option value="">-- Choose at VNPay --</option>
+                      <option value="NCB">NCB Bank</option>
+                      <option value="VIETCOMBANK">Vietcombank</option>
+                      <option value="VIETINBANK">VietinBank</option>
+                      <option value="BIDV">BIDV</option>
+                      <option value="AGRIBANK">Agribank</option>
+                      <option value="TECHCOMBANK">Techcombank</option>
+                      <option value="MBBANK">MB Bank</option>
+                      <option value="VPBANK">VPBank</option>
+                      <option value="TPBANK">TPBank</option>
+                      <option value="SACOMBANK">Sacombank</option>
+                      <option value="ACB">ACB</option>
+                      <option value="VNPAYQR">VNPay QR</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <button type="submit" class="place-order-btn" :disabled="loading">
-              {{ loading ? 'Placing Order...' : 'Place Order' }}
+            <!-- Error Message -->
+            <div v-if="errorMessage" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ errorMessage }}
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+              type="submit" 
+              class="place-order-btn" 
+              :disabled="loading || cartItems.length === 0"
+            >
+              <span v-if="loading" class="btn-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                Processing...
+              </span>
+              <span v-else-if="form.paymentMethod === 'vnpay'">
+                <i class="fas fa-lock"></i>
+                Pay with VNPay
+              </span>
+              <span v-else>
+                Place Order
+              </span>
             </button>
+
+            <!-- Security Notice for VNPay -->
+            <p v-if="form.paymentMethod === 'vnpay'" class="security-notice">
+              <i class="fas fa-shield-alt"></i>
+              You will be redirected to VNPay's secure payment page.
+            </p>
           </div>
         </div>
       </form>
@@ -140,14 +218,16 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { buildImagePath, removeExtraSpaces } from '@/utilities/helper'
+import { buildImagePath, removeExtraSpaces, formatPrice } from '@/utilities/helper'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import { useCartStore } from '@/stores/cartStore'
-import axios from 'axios' 
-
+import axios from 'axios'
+import { useAuth } from '@clerk/vue'
+const { getToken } = useAuth()
 const router = useRouter()
-const cartStore = useCartStore() 
+const cartStore = useCartStore()
 
+// Form state
 const form = ref({
   firstName: '',
   lastName: '',
@@ -157,54 +237,105 @@ const form = ref({
   city: '',
   notes: '',
   paymentMethod: 'cod',
+  bankCode: ''
 })
 
-const loading = ref(false) 
+const loading = ref(false)
+const errorMessage = ref('')
+const showBankSelection = ref(false)
+
 const cartItems = computed(() => cartStore.items)
 const subtotal = computed(() =>
   cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
 )
 
-async function placeOrder() {
+function buildShippingDetails() {
+  return {
+    recipient_name: `${removeExtraSpaces(form.value.lastName)} ${removeExtraSpaces(form.value.firstName)}`,
+    recipient_email: removeExtraSpaces(form.value.email) || '',
+    recipient_phone: removeExtraSpaces(form.value.phone),
+    shipping_address: `${removeExtraSpaces(form.value.address)}, ${removeExtraSpaces(form.value.city)}`,
+    shipping_note: removeExtraSpaces(form.value.notes)
+  }
+}
+
+function buildItemsArray() {
+  return cartItems.value.map((i) => ({
+    product_id: i.productId,
+    quantity: i.quantity
+  }))
+}
+
+async function handleSubmit() {
   if (cartItems.value.length === 0) {
-    alert('Your cart is empty.')
+    errorMessage.value = 'Your cart is empty.'
     return
   }
 
+  errorMessage.value = ''
   loading.value = true
 
   try {
-    const payload = {
-      shippingDetails: {
-        recipient_name: `${removeExtraSpaces(form.value.lastName)} ${removeExtraSpaces(form.value.firstName)}`,
-        recipient_email: removeExtraSpaces(form.value.email) || '',
-        recipient_phone: removeExtraSpaces(form.value.phone),
-        shipping_address: `${removeExtraSpaces(form.value.address)}, ${removeExtraSpaces(form.value.city)}`,
-        shipping_note: removeExtraSpaces(form.value.notes),
-        payment_method: form.value.paymentMethod,
-      },
-      items: cartItems.value.map((i) => ({
-        product_id: i.productId,
-        quantity: i.quantity,
-      })),
+    if (form.value.paymentMethod === 'vnpay') {
+      await processVnpayPayment()
+    } else {
+      await processCodOrder()
     }
-
-    const res = await axios.post('/api/orders', payload)
-    console.log('Order placed:', res.data)
-
-    cartStore.clearCart()
-    alert('Order complete! Thank you for buying at our store')
-    router.push('/')
-    //router.push('/thank-you')
   } catch (err) {
-    console.error('Order failed:', err.response?.data || err.message)
-    alert('Failed to place order. Please try again.')
+    console.error('Order failed:', err)
+    errorMessage.value = err.response?.data?.message || 'Failed to process order. Please try again.'
   } finally {
     loading.value = false
   }
 }
 
+async function processCodOrder() {
+  const payload = {
+    shippingDetails: {
+      ...buildShippingDetails(),
+      payment_method: 'cod'
+    },
+    items: buildItemsArray()
+  }
 
+  const token = await getToken.value()
+  const response = await axios.post('/api/orders', payload, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  if (response.data?.success){
+    cartStore.clearCart()
+    alert('Order placed successfully! Thank you for shopping with us.')
+    router.push('/')
+  }
+}
+
+async function processVnpayPayment() {
+  const payload = {
+    shippingDetails: buildShippingDetails(),
+    items: buildItemsArray(),
+    bankCode: form.value.bankCode || null,
+    locale: 'vn'
+  }
+
+  const token = await getToken.value()
+  const res = await axios.post('/api/vnpay/create-payment-url', payload, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+  
+  if (res.data.success && res.data.paymentUrl) {
+    sessionStorage.setItem('pendingOrderId', res.data.orderId)
+    sessionStorage.setItem('pendingTxnRef', res.data.txnRef)
+    cartStore.clearCart() 
+    window.location.href = res.data.paymentUrl
+  } else {
+    throw new Error(res.data.message || 'Failed to create payment URL')
+  }
+}
 </script>
 
-<style scoped src="./Checkout.css"></style>
+<style scoped src="../styling/Checkout.css"></style>

@@ -163,4 +163,4 @@
 import '@fortawesome/fontawesome-free/css/all.min.css';
 </script>
 
-<style scoped src="./About.css"></style>
+<style scoped src="../styling/About.css"></style>

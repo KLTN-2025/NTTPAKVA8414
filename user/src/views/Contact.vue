@@ -143,4 +143,4 @@ async function handleSubmit() {
 }
 </script>
 
-<style scoped src="./Contact.css"></style>
+<style scoped src="../styling/Contact.css"></style>

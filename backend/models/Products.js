@@ -90,6 +90,10 @@ const ProductSchema = new mongoose.Schema(
         breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
       }),
     },
+    is_deleted: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

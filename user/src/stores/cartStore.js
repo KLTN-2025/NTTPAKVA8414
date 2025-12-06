@@ -120,7 +120,6 @@ export const useCartStore = defineStore('cart', () => {
         return true
       }
       else {
-        console.log('No sync performed')
         return false
       }
     } catch (err) {
@@ -199,7 +198,6 @@ export const useCartStore = defineStore('cart', () => {
   watch(isSignedIn, async (newStatus, _) => {
     if (!newStatus.value) {
       //syncCartToServer()
-      clearCart()
     }
     else {
       //
