@@ -10,9 +10,9 @@
           to help you live a healthy and balanced lifestyle every day.
         </p>
         <div class="footer-social">
-          <a href="#" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+          <a target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+          <a target="_blank"><i class="fa-brands fa-instagram"></i></a>
+          <a target="_blank"><i class="fa-brands fa-twitter"></i></a>
         </div>
       </div>
 

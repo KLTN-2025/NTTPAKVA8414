@@ -62,74 +62,19 @@
   box-sizing: border-box;
 }
 
-/* ----- BANNER VÀ BREADCRUMB (GIỐNG HỆT TRANG CART) ----- */
-.cart-banner-container {
-  position: relative; /* Quan trọng: để chứa ảnh nền */
-  width: 100%;
-  margin-bottom: var(--gutter-gap);
-  overflow: hidden; /* Cắt bỏ phần ảnh thừa */
-}
-
-.cart-banner-img {
-  /* Ảnh nền nằm tuyệt đối */
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%; /* <-- Quan trọng: ảnh sẽ cao bằng nội dung */
-  object-fit: cover;
-  z-index: 1; /* Nằm dưới */
-}
-
-.cart-breadcrumbs-container {
-  position: relative; /* <-- Quan trọng: nằm trên ảnh */
-  z-index: 2; /* Nằm trên z-index: 1 */
-  
-  width: 100%;
-  padding: 1.5rem 0; /* Padding này sẽ quyết định chiều cao của banner */
-  background-color: rgba(0, 0, 0, 0.4); 
-  color: var(--color-text-light);
-  font-size: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.cart-breadcrumbs {
-  max-width: var(--container-width); 
-  width: 100%;
-  padding: 0 var(--gutter-gap);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.cart-breadcrumbs a {
-  color: #f0f0f0;
-  text-decoration: none;
-  transition: color var(--transition-short);
-}
-.cart-breadcrumbs a:hover {
-  color: var(--color-text-light);
-  text-decoration: underline;
-}
-
-.cart-breadcrumbs strong {
-  color: var(--color-text-light);
-  font-weight: 600;
-}
-
-.breadcrumb-separator {
-  color: #cccccc;
-  font-size: 10px;
+input {
+  border: 1px solid rgb(231, 225, 225);
 }
 
 /* ========== PRODUCTS PAGE ========== */
 .products-page {
+  width: 95%;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   gap: var(--gutter-gap);
   min-height: 100vh;
+  margin: 0 auto;
 }
 
 /* (Toàn bộ CSS còn lại của bạn được giữ nguyên) */
@@ -137,38 +82,19 @@
   width: 25%;
   background: var(--color-bg-light);
   padding: var(--spacing-xl); 
+  padding-top: 1rem;
   border-radius: var(--border-radius-xl);
   box-shadow: var(--shadow-md);
   position: sticky;
-  top: 100px;
+  top: 0;
   flex-shrink: 0;
   align-self: flex-start;
 }
 
-.filter-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
-  width: 100%;
-  padding: var(--spacing-md);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text-light);
-  background-color: var(--color-primary);
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: background-color var(--transition-short);
-  margin-bottom: var(--spacing-xl); 
-}
-
-.filter-btn:hover {
-  background-color: var(--color-primary-dark);
-}
-
-.filter-section {
-  margin-bottom: var(--spacing-xxxl);
+.filter-header {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
 }
 
 .sidebar hr {
@@ -177,9 +103,13 @@
   margin: var(--spacing-xl) 0;
 }
 
+.filter-section {
+  margin-bottom: 2rem;
+}
+
 .filter-section h3 {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-text-body);
   margin-bottom: var(--spacing-md);
   border-left: 4px solid var(--color-primary);
@@ -192,7 +122,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: .75rem;
 }
 
 .filter-list li {
@@ -221,7 +151,7 @@
 .custom-radio {
   width: 18px;
   height: 18px;
-  border: 2px solid var(--color-border);
+  border: 2px solid gray;
   border-radius: 50%;
   display: inline-block;
   position: relative;
@@ -303,14 +233,14 @@ input[type="checkbox"]:checked + .custom-checkbox::after {
 .price-values {
   font-size: 14px;
   color: var(--color-text-muted);
-  margin-top: var(--spacing-md);
+  margin-top: 0.5rem;
 }
 
 input[type="range"].price-slider {
   -webkit-appearance: none;
   width: 100%;
   height: 6px;
-  background: var(--color-accent-star-empty);
+  background: rgb(239, 236, 236);
   border-radius: 5px;
   outline: none;
 }
@@ -373,6 +303,7 @@ input[type="range"].price-slider::-moz-range-track {
 }
 
 .products-content {
+  padding: 1rem;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -390,8 +321,8 @@ input[type="range"].price-slider::-moz-range-track {
 }
 
 .products-header h2 {
-  font-size: var(--spacing-xxl);
-  font-weight: 600;
+  font-weight: 500;
+  margin-bottom: 0;
   color: var(--color-text-heading);
 }
 
@@ -404,7 +335,7 @@ input[type="range"].price-slider::-moz-range-track {
 .search-bar,
 .sort-select {
   padding: 10px var(--spacing-lg);
-  border: 1px solid var(--color-border);
+  border: 1px solid rgb(215, 212, 212);
   border-radius: var(--border-radius-md);
   font-size: 14px;
   transition: border-color var(--transition-short), box-shadow var(--transition-short);
@@ -438,10 +369,10 @@ input[type="range"].price-slider::-moz-range-track {
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-xxxl);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
   flex-grow: 1;
-  min-height: 500px;
+  min-height: 400px;
   place-items: start stretch;
 }
 

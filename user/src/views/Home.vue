@@ -49,7 +49,7 @@
       :key="index"
     >
       <img :src="offer.image" :alt="`Special Offer ${index + 1}`" />
-      <button class="offer-btn">Shop Now</button>
+      <router-link to="/products" class="offer-btn">Shop Now</router-link>
     </div>
   </div>
 </section>

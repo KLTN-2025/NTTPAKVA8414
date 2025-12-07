@@ -3,59 +3,6 @@
    Updated with VNPay Integration
    ============================================ */
 
-/* ----- BANNER/BREADCRUMB (SHARED) ----- */
-.cart-banner-container {
-  position: relative; 
-  width: 100%;
-  margin-bottom: var(--gutter-gap, 2rem);
-  overflow: hidden; 
-}
-.cart-banner-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1; 
-}
-.cart-breadcrumbs-container {
-  position: relative; 
-  z-index: 2; 
-  width: 100%;
-  padding: 1.5rem 0; 
-  background-color: rgba(0, 0, 0, 0.4); 
-  color: var(--color-text-light, #fff);
-  font-size: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.cart-breadcrumbs {
-  max-width: var(--container-width, 80vw); 
-  width: 100%;
-  padding: 0 var(--gutter-gap, 2rem);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.cart-breadcrumbs a {
-  color: #f0f0f0;
-  text-decoration: none;
-  transition: color var(--transition-short, 0.2s ease);
-}
-.cart-breadcrumbs a:hover {
-  color: var(--color-text-light, #fff);
-  text-decoration: underline;
-}
-.cart-breadcrumbs strong {
-  color: var(--color-text-light, #fff);
-  font-weight: 600;
-}
-.breadcrumb-separator {
-  color: #cccccc;
-  font-size: 10px;
-}
 
 /* ----- CHECKOUT PAGE STRUCTURE ----- */
 .checkout-container {
