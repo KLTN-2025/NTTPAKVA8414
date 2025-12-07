@@ -18,14 +18,14 @@
       <table class="transaction-table">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Method</th>
-            <th>Reference</th>
-            <th class="text-right">Amount</th>
-            <th class="action-col">Action</th>
+            <th style="font-size: 14px; font-weight: 500;" >Date</th>
+            <th style="font-size: 14px; font-weight: 500;" >Type</th>
+            <th style="font-size: 14px; font-weight: 500;" >Category</th>
+            <th style="font-size: 14px; font-weight: 500;" >Description</th>
+            <th style="font-size: 14px; font-weight: 500;" >Method</th>
+            <th style="font-size: 14px; font-weight: 500;" >Reference</th>
+            <th style="font-size: 14px; font-weight: 500;"  class="text-right">Amount</th>
+            <th style="font-size: 14px; font-weight: 500;" class="action-col">Action</th>
           </tr>
         </thead>
         <tbody>

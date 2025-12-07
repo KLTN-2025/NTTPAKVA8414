@@ -24,6 +24,7 @@ const Help = () => import('@/views/Help.vue')
 const SupplierOrdersPage = () => import('@/views/SupplierOrdersPage.vue')
 const SupplyOrderForm = () => import('@/views/SupplyOrderForm.vue')
 const SupplierOrderDetails = () => import('@/views/SupplierOrderDetails.vue')
+const InventoryTracking = () => import('@/views/InventoryTracking.vue')
 
 const MetadataManagement = () => import('@/views/MetadataManagement.vue')
 
@@ -106,6 +107,12 @@ const routes = [
         name: 'admin-supply-order-view',
         component: SupplierOrderDetails,
         meta: { requireAdmin: true, title: 'Supply Order Details' }
+      },
+      {
+        path: 'inventory',
+        name: 'admin-inventory',
+        component: InventoryTracking,
+        meta: { requireAdmin: true, title: 'Inventory Tracking' }
       },
       //Customer order management
       {

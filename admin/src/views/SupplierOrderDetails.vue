@@ -71,14 +71,14 @@
           <table class="items-table">
             <thead>
               <tr>
-                <th>Product</th>
-                <th>SKU</th>
-                <th class="col-number">Ordered</th>
+                <th style="font-size: 14px; font-weight: 500;" >Product</th>
+                <th style="font-size: 14px; font-weight: 500;" >SKU</th>
+                <th style="font-size: 14px; font-weight: 500;"  class="col-number">Ordered</th>
                 <th v-if="isReceivingMode || order.status === 'Received'" class="col-number">
                   Received
                 </th>
-                <th class="col-number">Unit Cost</th>
-                <th class="col-number">Subtotal</th>
+                <th style="font-size: 14px; font-weight: 500;"  class="col-number">Unit Cost</th>
+                <th style="font-size: 14px; font-weight: 500;"  class="col-number">Subtotal</th>
               </tr>
             </thead>
             <tbody>

@@ -35,10 +35,10 @@
         <thead>
           <tr>
             <th class="col-expand"></th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th class="col-actions">Actions</th>
+            <th style="font-size: 14px; font-weight: 500;">Name</th>
+            <th style="font-size: 14px; font-weight: 500;">Email</th>
+            <th style="font-size: 14px; font-weight: 500;">Phone</th>
+            <th style="font-size: 14px; font-weight: 500;" class="col-actions">Actions</th>
           </tr>
         </thead>
         <tbody>
