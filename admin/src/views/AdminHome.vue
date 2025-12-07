@@ -57,12 +57,6 @@
             <span>Sales Report</span>
           </router-link>
         </li>
-        <li>
-          <router-link to="/admin/metadata">
-          <i class="fa-solid fa-info"></i>            
-          <span>Metadata</span>
-          </router-link>
-        </li>
           <li>
           <router-link to="/admin/help">
             <i class="fas fa-question-circle"></i>
