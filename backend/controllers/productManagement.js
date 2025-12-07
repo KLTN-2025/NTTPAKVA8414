@@ -64,16 +64,22 @@ exports.createProduct = async (req, res) => {
         message: "Invalid product type ID",
       });
     }
-    // Validate brand_id if provided
-    if (brand_id) {
-      const brandExists = await Brand.findById(brand_id);
-      if (!brandExists) {
-        return res.status(400).json({
+
+    // Validate brand_id
+    if (!brand_id) {
+      return res.status(400).json({
           success: false,
           message: "Invalid brand ID",
         });
-      }
     }
+    const brandExists = await Brand.findById(brand_id);
+    if (!brandExists) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid brand ID",
+      });
+    }
+
     // Validate attributes if provided
     if (attributes && Array.isArray(attributes) && attributes.length > 0) {
       const ids = attributes.map((id) => new mongoose.Types.ObjectId(id));
@@ -87,12 +93,19 @@ exports.createProduct = async (req, res) => {
     }
     // Handle image uploads
     let image_urls = [];
+
     if (req.files && req.files.length > 0) {
       image_urls = req.files.map((file) => {
         const relativePath = file.path.split("uploads")[1];
         return `/uploads${relativePath}`;
       });
     }
+    else
+      return res.status(400).json({
+        success: false,
+        message: "You must upload at least one image for this product",
+      });
+
     const product = new Product({
       type_id,
       brand_id: brand_id || null,
@@ -103,7 +116,7 @@ exports.createProduct = async (req, res) => {
       unit: unit || "",
       cost_price: parseFloat(cost_price),
       selling_price: parseFloat(selling_price),
-      current_stock: parseInt(current_stock),
+      current_stock: 0,
       image_urls,
       attributes: attributes || [],
       is_deleted: false
@@ -357,19 +370,19 @@ exports.updateProduct = async (req, res) => {
       product.type_id = type_id;
     }
 
-    if (brand_id !== undefined) {
-      if (brand_id === null || brand_id === "") {
-        product.brand_id = null;
-      } else {
-        const brandExists = await Brand.findById(brand_id);
-        if (!brandExists) {
-          return res.status(400).json({
-            success: false,
-            message: "Invalid brand ID",
-          });
-        }
-        product.brand_id = brand_id;
-      }
+    // Validate brand_id
+    if (!brand_id) {
+      return res.status(400).json({
+          success: false,
+          message: "Invalid brand ID",
+        });
+    }
+    const brandExists = await Brand.findById(brand_id);
+    if (!brandExists) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid brand ID",
+      });
     }
 
     if (attributes) {
@@ -419,19 +432,18 @@ exports.updateProduct = async (req, res) => {
       });
       product.image_urls = [...product.image_urls, ...newImageUrls];
     }
-
+    if (product.image_urls.length < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "At least 1 valid image URL must be provided",
+      });
+    }
+    
     await product.save();
-
-    await product.populate([
-      { path: "type_id", select: "name category_id" },
-      { path: "brand_id", select: "name" },
-      { path: "attributes", select: "description slug" },
-    ]);
 
     res.status(200).json({
       success: true,
       message: "Product updated successfully",
-      data: product,
     });
   } catch (error) {
     if (req.files && req.files.length > 0) {

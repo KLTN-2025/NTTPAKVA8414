@@ -116,11 +116,12 @@
             </div>
 
             <div class="form-group">
-              <label for="productBrand">Brand</label>
+              <label for="productBrand">Brand *</label>
               <select 
                 id="productBrand" 
                 v-model="product.brand_id" 
                 :disabled="isViewMode"
+                required
               >
                 <option value="">No brand</option>
                 <option 
