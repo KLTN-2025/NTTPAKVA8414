@@ -11,6 +11,7 @@ router.use('/supply-orders', require('./supply-orders'))
 router.use('/recommendations', require('./recommendations'))
 router.use('/transactions', require('./transactions'))
 router.use('/support', require('./support'))
+router.use('/dashboard', require('./dashboard'))
 router.use('/', require('./additional'))
 
 module.exports = router;
