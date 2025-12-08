@@ -258,8 +258,10 @@ import { useAuth } from "@clerk/vue";
 import axios from "axios";
 import Chart from "chart.js/auto";
 import { buildImagePath, formatPrice } from "@/utilities/helper";
+import { useToast } from "vue-toastification";
 
 const { getToken } = useAuth();
+const toast = useToast()
 
 const loading = ref(true);
 const refreshing = ref(false);
@@ -451,7 +453,7 @@ async function fetchDashboardData() {
       throw new Error(response.data.message || "Failed to load dashboard");
     }
   } catch (err) {
-    console.error("Dashboard fetch error:", err);
+    toast.error("Error fetching dashboard!");
     error.value =
       err.response?.data?.message ||
       err.message ||
@@ -481,7 +483,7 @@ async function changeChartPeriod(period) {
       updateChart();
     }
   } catch (err) {
-    console.error("Chart update error:", err);
+    toast.error("Error updating chart data!");
   } finally {
     refreshing.value = false;
   }
