@@ -27,6 +27,7 @@ const SupplierOrderDetails = () => import('@/views/SupplierOrderDetails.vue')
 const InventoryTracking = () => import('@/views/InventoryTracking.vue')
 
 const MetadataManagement = () => import('@/views/MetadataManagement.vue')
+const CustomerSupport = () => import('@/views/CustomerSupport.vue')
 
 const routes = [
   {
@@ -146,10 +147,10 @@ const routes = [
         meta: { requireAdmin: true, title: 'Customers Management' }
       },
       {
-        path: 'sales-report',
-        name: 'admin-sales-report',
-        component: SalesReport,
-        meta: { requireAdmin: true, title: 'Sales Report' }
+        path: 'customer-support',
+        name: 'admin-support',
+        component: CustomerSupport,
+        meta: { requireAdmin: true, title: 'Customer Support' }
       },
       {
         path: 'help',

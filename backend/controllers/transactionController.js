@@ -262,7 +262,7 @@ exports.getOrderPreview = async (req, res) => {
       success: true,
       data: {
         _id: order._id,
-        orderId: `ORD-${order._id.toString().slice(-4).toUpperCase()}`,
+        orderId: `ORD-#${order._id.toString().slice(-6).toUpperCase()}`,
         recipient_name: order.recipient_name,
         order_date: order.order_date,
         order_status: order.order_status,
@@ -310,7 +310,7 @@ exports.getSupplyOrderPreview = async (req, res) => {
       success: true,
       data: {
         _id: supplyOrder._id,
-        poNumber: `PO-${supplyOrder._id.toString().slice(-4).toUpperCase()}`,
+        poNumber: `PO-#${supplyOrder._id.toString().slice(-6).toUpperCase()}`,
         supplier_name: supplyOrder.supplier_id?.name || 'Unknown Supplier',
         status: supplyOrder.status,
         expected_arrival: supplyOrder.expected_arrival,

@@ -27,19 +27,7 @@
         </ul>
       </div>
 
-      <!-- Column 3: Shop Categories -->
-      <div class="footer-col">
-        <h4 class="footer-title">Shop Categories</h4>
-        <ul class="footer-links">
-          <li><a href="#">Vegetables</a></li>
-          <li><a href="#">Fruits</a></li>
-          <li><a href="#">Snacks</a></li>
-          <li><a href="#">Oils & Fats</a></li>
-          <li><a href="#">Beverages</a></li>
-        </ul>
-      </div>
-
-      <!-- Column 4: Contact Info -->
+      <!-- Column 3: Contact Info -->
       <div class="footer-col">
         <h4 class="footer-title">Contact</h4>
         <ul class="footer-contact">

@@ -455,4 +455,4 @@ onMounted(() => {
 })
 </script>
 
-<style src="./TransactionManagement.css"></style>
+<style src="@/styling/TransactionManagement.css"></style>

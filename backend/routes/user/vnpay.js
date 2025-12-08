@@ -1,4 +1,4 @@
-// routes/api/vnpay.js
+// routes/user/vnpay.js
 // VNPay API Routes
 
 const express = require('express');

@@ -9,16 +9,15 @@
   }
 }
 
-/* ----- CẤU TRÚC TRANG CONTACT (MỚI) ----- */
+/* ----- PAGE STRUCTURE ----- */
 .contact-page-container {
-  /* Nền trang vẫn là màu xám */
   background-color: var(--color-bg-muted, #f3f4f6);
   padding: 4rem 0; 
   margin-top: -2rem; 
   position: relative;
 }
 
-/* KHUNG CHIA 2 CỘT MỚI */
+/* SPLIT LAYOUT */
 .contact-split-layout {
   max-width: 1100px;
   margin: 0 auto;
@@ -26,22 +25,24 @@
   background: var(--color-bg-light, #fff);
   border-radius: var(--border-radius-xl, 16px);
   box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.05));
-  overflow: hidden; /* Quan trọng để bo góc */
+  overflow: hidden;
 }
 
-/* ----- CỘT BÊN TRÁI: INFO (NỀN XANH) ----- */
+/* ----- LEFT COLUMN: INFO (GREEN BACKGROUND) ----- */
 .contact-info-panel {
   flex-basis: 40%;
   padding: 3rem;
   background-color: var(--color-primary, #27ae60);
   color: var(--color-text-light, #fff);
 }
+
 .contact-info-panel h2 {
   font-size: 28px;
   font-weight: 600;
   color: var(--color-text-light, #fff);
   margin-bottom: 1rem;
 }
+
 .contact-info-panel p {
   font-size: 15px;
   color: rgba(255, 255, 255, 0.9);
@@ -51,10 +52,11 @@
 
 .info-block-new {
   display: flex;
-  align-items: flex-start; /* Icon căn trên */
+  align-items: flex-start;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
+
 .info-block-new i {
   font-size: 24px;
   width: 25px;
@@ -62,16 +64,24 @@
   margin-top: 2px;
   flex-shrink: 0;
 }
+
 .info-text-new {
   display: flex;
   flex-direction: column;
 }
+
 .info-text-new span {
   font-size: 16px;
   line-height: 1.6;
 }
 
-/* ----- CỘT BÊN PHẢI: FORM (NỀN TRẮNG) ----- */
+.support-hours {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ----- RIGHT COLUMN: FORM (WHITE BACKGROUND) ----- */
 .contact-form-panel {
   flex-basis: 60%; 
   padding: 3rem;
@@ -84,6 +94,7 @@
   color: var(--color-text-heading, #111827);
   margin-bottom: 0.5rem;
 }
+
 .contact-form-panel p {
   font-size: 15px;
   color: var(--color-text-muted, #6b7280);
@@ -101,19 +112,37 @@
   margin-bottom: 1.5rem;
 }
 
-.form-group:has(textarea) {
-  flex-grow: 1; 
+.form-group label {
   display: flex;
-  flex-direction: column;
-}
-.form-group:has(textarea) textarea {
-  flex-grow: 1; 
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-body, #374151);
+  margin-bottom: 0.5rem;
 }
 
-/* Style input (bo góc) */
+.form-group .required {
+  color: #dc2626;
+  margin-left: 2px;
+}
+
+.form-group .char-count {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-muted, #6b7280);
+}
+
+.form-group .char-count.near-limit {
+  color: #f59e0b;
+}
+
+/* Input Styles */
 .form-group input[type="text"],
 .form-group input[type="email"],
-.form-group textarea {
+.form-group input[type="tel"],
+.form-group textarea,
+.form-group select {
   width: 100%;
   padding: 0.85rem 1rem; 
   border: 1px solid var(--color-border, #e0e0e0); 
@@ -125,17 +154,45 @@
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
   outline: none;
   border-color: var(--color-primary, #27ae60);
   box-shadow: var(--focus-ring-shadow, 0 0 0 3px rgba(39, 174, 96, 0.15));
 }
 
 .form-group textarea {
-  min-height: 100px;
+  min-height: 120px;
   resize: vertical;
+  font-family: inherit;
 }
 
+/* Select Dropdown Styles */
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.25em;
+  padding-right: 2.5rem;
+}
+
+.form-group select:invalid {
+  color: var(--color-text-muted, #6b7280);
+}
+
+.form-group select option {
+  color: var(--color-text-body, #374151);
+}
+
+.form-group select option[value=""] {
+  color: var(--color-text-muted, #6b7280);
+}
+
+/* Submit Button */
 .submit-btn {
   background-color: var(--color-primary, #27ae60);
   color: var(--color-text-light, #fff);
@@ -146,16 +203,26 @@
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-short, 0.2s);
-}
-.submit-btn:hover {
-  background-color: var(--color-primary-dark, #229954);
-}
-.submit-btn:disabled {
-  opacity: 0.7;
-  cursor: wait;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-/* ----- CSS CHO UX ----- */
+.submit-btn:hover:not(:disabled) {
+  background-color: var(--color-primary-dark, #229954);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-btn i {
+  font-size: 14px;
+}
+
+/* ----- ACCESSIBILITY ----- */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -168,26 +235,41 @@
   border-width: 0;
 }
 
+/* Form Messages */
 .form-message {
   font-size: 14px;
   padding: 0.75rem 1rem;
   border-radius: var(--border-radius-md, 8px);
   margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
+
+.form-message i {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
 .form-message.success {
   background-color: #f0fdf4;
   color: #15803d;
+  border: 1px solid #bbf7d0;
 }
+
 .form-message.error {
   background-color: #fef2f2;
   color: #b91c1c;
+  border: 1px solid #fecaca;
 }
+
 .form-message.info {
   background-color: #f3f4f6;
   color: var(--color-text-muted, #6b7280);
+  border: 1px solid #e5e7eb;
 }
 
-/* ----- PHẦN BẢN ĐỒ (MAP) ----- */
+/* ----- MAP SECTION ----- */
 .map-section {
   width: 100vw; 
   position: relative;
@@ -214,30 +296,35 @@
   .contact-split-layout {
     flex-direction: column; 
     max-width: 100%;
-    margin: 0 1rem; /* Thêm margin ngang trên mobile */
+    margin: 0 1rem;
     box-sizing: border-box;
   }
+  
   .contact-page-container {
     padding: 2rem 0; 
   }
+  
   .contact-form-panel, .contact-info-panel {
     flex-basis: 100%;
     padding: 1.5rem; 
   }
+  
   .form-row-grid {
     grid-template-columns: 1fr; 
     gap: 0;
   }
+  
+  .form-group label {
+    flex-wrap: wrap;
+  }
 }
 
-/* === SỬA LỖI Ở ĐÂY === */
-/* (Áp dụng hiệu ứng cho class đúng) */
+/* Animation */
 .contact-split-layout, .map-section {
   opacity: 0;
   animation: fadeInUp 0.6s ease-out forwards;
 }
 
-/* (Hiệu ứng nối tiếp) */
 .map-section {
   animation-delay: 0.2s;
 }

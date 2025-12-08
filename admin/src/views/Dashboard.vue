@@ -194,4 +194,4 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style scoped src="./Dashboard.css"></style>
+<style scoped src="@/styling/Dashboard.css"></style>

@@ -104,4 +104,4 @@
   </div>
 </template>
 
-<style scoped src="./Help.css"></style>
+<style scoped src="@/styling/Help.css"></style>

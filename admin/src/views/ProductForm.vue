@@ -625,4 +625,4 @@ watch(() => product.value.category_id, (newCategoryId) => {
 })
 </script>
 
-<style scoped src="./ProductForm.css"></style>
+<style scoped src="@/styling/ProductForm.css"></style>

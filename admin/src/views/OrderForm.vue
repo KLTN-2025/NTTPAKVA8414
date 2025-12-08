@@ -342,4 +342,4 @@ onMounted(() => {
 })
 </script>
 
-<style src="./OrderForm.css"></style>
+<style src="@/styling/OrderForm.css"></style>

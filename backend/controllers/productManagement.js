@@ -37,7 +37,6 @@ exports.createProduct = async (req, res) => {
       unit,
       cost_price,
       selling_price,
-      current_stock,
       attributes,
     } = req.body;
     // Validate required fields
@@ -47,8 +46,7 @@ exports.createProduct = async (req, res) => {
       !name ||
       !description ||
       cost_price === undefined ||
-      selling_price === undefined ||
-      current_stock === undefined
+      selling_price === undefined
     ) {
       return res.status(400).json({
         success: false,
@@ -210,10 +208,7 @@ exports.getAllProducts = async (req, res) => {
       filter.current_stock = 0;
     }
 
-    
-
     const skip = (parseInt(page) - 1) * parseInt(limit);
-
     const products = await Product.find(filter)
       .select("-slug -size -unit -description -__v -createdAt")
       .populate("attributes", "description")
@@ -339,7 +334,6 @@ exports.updateProduct = async (req, res) => {
       unit,
       cost_price,
       selling_price,
-      current_stock,
       attributes,
       remove_images,
     } = req.body;
@@ -411,8 +405,6 @@ exports.updateProduct = async (req, res) => {
     if (cost_price !== undefined) product.cost_price = parseFloat(cost_price);
     if (selling_price !== undefined)
       product.selling_price = parseFloat(selling_price);
-    if (current_stock !== undefined)
-      product.current_stock = parseInt(current_stock);
 
     if (
       remove_images &&

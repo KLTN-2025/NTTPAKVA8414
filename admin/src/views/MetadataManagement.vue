@@ -919,4 +919,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped src="./MetadataManagement.css"></style>
+<style scoped src="@/styling/MetadataManagement.css"></style>

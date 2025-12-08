@@ -465,4 +465,4 @@ watch(orderId, () => {
 })
 </script>
 
-<style src="./SupplierOrderDetails.css"></style>
+<style src="@/styling/SupplierOrderDetails.css"></style>

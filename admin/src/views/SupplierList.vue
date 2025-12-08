@@ -508,4 +508,4 @@ onMounted(() => {
 })
 </script>
 
-<style src="./SupplierList.css"></style>
+<style src="@/styling/SupplierList.css"></style>

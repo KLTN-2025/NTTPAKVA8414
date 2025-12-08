@@ -87,6 +87,17 @@
           </router-link>
         </li>
         <li>
+          <router-link
+            to="/admin/customer-support"
+            :class="{
+              'active-parent': $route.path.startsWith('/admin/customer-support'),
+            }"
+          >
+            <i class="fas fa-headset"></i>
+            <span>Customer Support</span>
+          </router-link>
+        </li>
+        <li>
           <router-link to="/admin/help">
             <i class="fas fa-question-circle"></i>
             <span>Help</span>
@@ -135,4 +146,4 @@ function toggleSidebar() {
 }
 </script>
 
-<style src="./AdminHome.css"></style>
+<style src="@/styling/AdminHome.css"></style>

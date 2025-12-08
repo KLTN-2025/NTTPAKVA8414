@@ -253,4 +253,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped src="./InventoryTracking.css"></style>
+<style scoped src="@/styling/InventoryTracking.css"></style>
