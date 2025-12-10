@@ -52,7 +52,10 @@
         </div>
       </div>
 
-      <div style="padding: 0.5rem" class="product-detail-page w-[90%] my-4 shadow-lg">
+      <div
+        style="padding: 0.5rem"
+        class="product-detail-page w-[90%] my-4 shadow-lg"
+      >
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
           <!-- Image Carousel -->
           <div style="padding-top: 0.25rem" class="space-y-4">
@@ -137,7 +140,7 @@
           <!-- Product Info -->
           <div class="product-info-section">
             <!-- Title and Brand -->
-            <div class="title-and-brand border-b  border-gray-200">
+            <div class="title-and-brand border-b border-gray-200">
               <p
                 v-if="product.brand"
                 class="text-xl sm:text-2xl font-medium text-gray-500"
@@ -173,7 +176,10 @@
             <!-- Description -->
             <div class="border-b border-gray-200">
               <h2 class="font-medium text-lg sm:text-xl">Description</h2>
-              <p style="font-weight: 400;" class="text-gray-500 text-base sm:text-lg leading-relaxed">
+              <p
+                style="font-weight: 400"
+                class="text-gray-500 text-base sm:text-lg leading-relaxed"
+              >
                 {{ product.description }}
               </p>
             </div>
@@ -327,29 +333,30 @@
               <div
                 v-for="(value, key) in reviews.breakdown"
                 :key="key"
-                class="flex items-center gap-4"
               >
-                <span class="text-lg font-medium w-16">{{ key }} star</span>
-                <div
-                  class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden"
-                >
+                <div class="flex items-center gap-4" v-if="key >= 1 && key <= 5">
+                  <span class="text-lg font-medium w-16">{{ key }} star</span>
                   <div
-                    class="h-full bg-yellow-400 rounded-full transition-all duration-500"
-                    :style="{
-                      width:
-                        (reviews.total_reviews == 0
-                          ? 0
-                          : (100 * value) / reviews.totalReviews) + '%',
-                    }"
-                  ></div>
+                    class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-yellow-400 rounded-full transition-all duration-500"
+                      :style="{
+                        width:
+                          (reviews.total_reviews == 0
+                            ? 0
+                            : (100 * value) / reviews.totalReviews) + '%',
+                      }"
+                    ></div>
+                  </div>
+                  <span class="text-lg text-gray-600 w-16 text-right"
+                    >{{
+                      reviews.totalReviews == 0
+                        ? 0
+                        : Math.round((100 * value) / reviews.totalReviews)
+                    }}%</span
+                  >
                 </div>
-                <span class="text-lg text-gray-600 w-16 text-right"
-                  >{{
-                    reviews.totalReviews == 0
-                      ? 0
-                      : Math.round((100 * value) / reviews.totalReviews)
-                  }}%</span
-                >
               </div>
             </div>
           </div>
