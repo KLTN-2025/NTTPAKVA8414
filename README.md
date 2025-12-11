@@ -6,12 +6,14 @@
 * Express.js
 * Mongoose
 * JSON Web Token
+* express-rate-limit
 ### Frontend:
 * Vue.js 3 + Vite
 * Tailwind CSS
 * Axios
 * Vue Router
 * Pinia
+* Chart.js
 ### Cơ sở dữ liệu
 * MongoDB
 ### Xác thực người dùng
