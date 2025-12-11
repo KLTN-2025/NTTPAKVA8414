@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
-const Product = require("../models/Products");
-const ProductType = require("../models/ProductTypes");
-const ProductCategory = require("../models/ProductCategories");
-const Brand = require("../models/Brands");
-const Attribute = require("../models/Attributes");
+const mongoose = require("mongoose")
+const Product = require("../models/Products")
+const ProductType = require("../models/ProductTypes")
+const ProductCategory = require("../models/ProductCategories")
+const Brand = require("../models/Brands")
+const Attribute = require("../models/Attributes")
 
 /**
  * GET /api/products/all
@@ -27,7 +27,7 @@ exports.getAllProducts = async () => {
     const formattedProducts = products.map((product) => {
       const formattedSize = product.size
         ? parseFloat(product.size.toString())
-        : null;
+        : null
 
       return {
         _id: product._id,
@@ -64,8 +64,8 @@ exports.getAllProducts = async () => {
               name: attr.description,
             }))
           : [],
-      };
-    });
+      }
+    })
 
     return formattedProducts
 
@@ -79,11 +79,12 @@ exports.getAllProducts = async () => {
  * Search for products with filtering and pagination
  * Query Parameters:
  * - page: Page number (default: 1)
- * - limit: Items per page (default: 20, max: 50)
+ * - limit: Items per page (default: 10, max: 50)
  * - category: Filter by category name (e.g., "oils-fats", "vegetables")
  * - type: Filter by product type name (e.g., "olive-oil", "berries")
  * - brand: Filter by brand name (e.g., "nutrilife", "purehealth")
- * - attributes: Filter by attribute names (comma-separated, e.g., "organic,keto-friendly")
+ * - attributes: Filter by attribute names
+ * - min_rating: Minimum rating (default 0, max 5)
  * - price_min: Minimum selling price
  * - price_max: Maximum selling price
  * - q: Search query (product name or SKU)
@@ -93,11 +94,11 @@ exports.getAllProducts = async () => {
  */
 exports.searchAndFilterProducts = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || 20, 50);
-    const skip = (page - 1) * limit;
+    const page = parseInt(req.query.page) || 1
+    const limit = Math.min(parseInt(req.query.limit) || 10, 50)
+    const skip = (page - 1) * limit
 
-    const filter = {};
+    const filter = {}
 
     filter.is_deleted = { $ne: true }
 
@@ -108,10 +109,10 @@ exports.searchAndFilterProducts = async (req, res) => {
       if (category) {
         const productTypes = await ProductType.find({
           category_id: category._id,
-        }).select("_id").lean();
+        }).select("_id").lean()
 
-        const typeIds = productTypes.map((pt) => pt._id);
-        filter.type_id = { $in: typeIds };
+        const typeIds = productTypes.map((pt) => pt._id)
+        filter.type_id = { $in: typeIds }
       } else {
         return res.status(200).json({
           success: true,
@@ -125,16 +126,16 @@ exports.searchAndFilterProducts = async (req, res) => {
             has_next_page: false,
             has_prev_page: false,
           },
-        });
+        })
       }
     }
 
     if (req.query.type && mongoose.Types.ObjectId.isValid(req.query.type)) {
       const productType = await ProductType.findById(req.query.type)
-      .select('_id').lean();
+      .select('_id').lean()
 
       if (productType) {
-        filter.type_id = productType._id;
+        filter.type_id = productType._id
       } else {
         return res.status(200).json({
           success: true,
@@ -148,39 +149,39 @@ exports.searchAndFilterProducts = async (req, res) => {
             has_next_page: false,
             has_prev_page: false,
           },
-        });
+        })
       }
     }
 
     if (req.query.price_min || req.query.price_max) {
-      filter.selling_price = {};
+      filter.selling_price = {}
       if (req.query.price_min) {
-        filter.selling_price.$gte = parseFloat(req.query.price_min);
+        filter.selling_price.$gte = parseFloat(req.query.price_min)
       }
       if (req.query.price_max) {
-        filter.selling_price.$lte = parseFloat(req.query.price_max);
+        filter.selling_price.$lte = parseFloat(req.query.price_max)
       }
     }
 
     if (req.query.stock === "available") {
-      filter.current_stock = { $gt: 0 };
+      filter.current_stock = { $gt: 0 }
     }
 
     if (req.query.q) {
-      const searchTerm = req.query.q.trim();
-      filter.$or = [{ slug: { $regex: searchTerm, $options: "i" } }];
+      const searchTerm = req.query.q.trim()
+      filter.$or = [{ slug: { $regex: searchTerm, $options: "i" } }]
     }
 
     if (req.query.attributes) {
       const attrArray = req.query.attributes.split(",")
       const attributes = await Attribute.find({
         _id: { $in: attrArray },
-      }).select("_id").lean();
+      }).select("_id").lean()
 
-      const attributeIds = attributes.map((a) => a._id);
+      const attributeIds = attributes.map((a) => a._id)
 
       if (attributeIds.length > 0) {
-        filter.attributes = { $all: attributeIds };
+        filter.attributes = { $all: attributeIds }
       } else {
         return res.status(200).json({
           success: true,
@@ -194,19 +195,44 @@ exports.searchAndFilterProducts = async (req, res) => {
             has_next_page: false,
             has_prev_page: false,
           },
-        });
+        })
       }
     }
 
-    let sort = {};
-    const sortOrder = (req.query.sortOrder === "asc" ? 1 : -1) || 1;
+    if (req.query.min_rating) {
+      const rating = parseFloat(req.query.min_rating)
+      if (rating >= -1 && rating <= 5.0) {
+        filter["reviews_summary.avg_rating"] = { $gte: rating }
+      }
+      else
+        return res.status(200).json({
+          success: true,
+          message: `Invalid rating: rating must be from 0-5`,
+          data: [],
+          pagination: {
+            current_page: page,
+            per_page: limit,
+            total_items: 0,
+            total_pages: 0,
+            has_next_page: false,
+            has_prev_page: false,
+          }
+        }
+      )
+    }
+
+    let sort = {}
+    const sortOrder = (req.query.sortOrder === "asc" ? 1 : -1) || 1
     switch (req.query.sortBy) {
+      case "rating":
+        sort["reviews_summary.avg_rating"] = sortOrder
+        break
       case "price":
-        sort.selling_price = sortOrder;
-        break;
+        sort.selling_price = sortOrder
+        break
       case "name":
-        sort.name = sortOrder;
-        break;
+        sort.name = sortOrder
+        break
     }
 
     const products = await Product.find(filter)
@@ -223,12 +249,12 @@ exports.searchAndFilterProducts = async (req, res) => {
       .sort(sort)
       .skip(skip)
       .limit(limit)
-      .lean();
+      .lean()
 
     const formattedProducts = products.map((product) => {
       const formattedSize = product.size
         ? parseFloat(product.size.toString())
-        : null;
+        : null
 
       return {
         _id: product._id,
@@ -266,11 +292,11 @@ exports.searchAndFilterProducts = async (req, res) => {
             }))
           : [],
         rating: product.reviews_summary.avg_rating
-      };
-    });
+      }
+    })
 
-    const totalItems = await Product.countDocuments(filter);
-    const totalPages = Math.ceil(totalItems / limit);
+    const totalItems = await Product.countDocuments(filter)
+    const totalPages = Math.ceil(totalItems / limit)
 
     return res.status(200).json({
       success: true,
@@ -283,16 +309,16 @@ exports.searchAndFilterProducts = async (req, res) => {
         has_next_page: page < totalPages,
         has_prev_page: page > 1,
       },
-    });
+    })
   } catch (error) {
-    console.error("Error fetching products:", error);
+    console.error("Error fetching products:", error)
     return res.status(500).json({
       success: false,
       message: "Error fetching products",
       error: error.message,
-    });
+    })
   }
-};
+}
 
 /**
  * GET /api/products/:id
@@ -300,13 +326,13 @@ exports.searchAndFilterProducts = async (req, res) => {
  */
 exports.getSingleProductDetails = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.id
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid product id" });
+      return res.status(400).json({ message: "Invalid product id" })
     }
 
     //Retrieving from MongoDB and set cache
-    const productId = new mongoose.Types.ObjectId(id);
+    const productId = new mongoose.Types.ObjectId(id)
 
     const product = await Product.findById(productId)
       .populate({
@@ -319,16 +345,16 @@ exports.getSingleProductDetails = async (req, res) => {
       })
       .populate("brand_id", "name")
       .populate("attributes", "description")
-      .lean();
+      .lean()
 
     if (!product) {
       return res.status(404).json({
         success: false,
         message: "Product not found",
-      });
+      })
     }
 
-    const size = product.size ? parseFloat(product.size.toString()) : null;
+    const size = product.size ? parseFloat(product.size.toString()) : null
 
     const productDetails = {
       _id: product._id,
@@ -370,21 +396,21 @@ exports.getSingleProductDetails = async (req, res) => {
         : [],
       
       
-    };
+    }
 
 
     return res.status(200).json({
       success: true,
       data: productDetails,
-    });
+    })
   } catch (error) {
-    console.error("Error fetching product detail:", error);
+    console.error("Error fetching product detail:", error)
     return res.status(500).json({
       message: "Error fetching product detail",
       error: error.message,
-    });
+    })
   }
-};
+}
 
 /**
  * GET /api/products/bulk-fetch
@@ -393,36 +419,36 @@ exports.getSingleProductDetails = async (req, res) => {
  */
 exports.bulkFetchProducts = async (req, res) => {
   try {
-    const { productIds } = req.body;
+    const { productIds } = req.body
     if (!Array.isArray(productIds)) {
       return res.status(400).json({
         success: false,
         message: "product IDs must be an array",
-      });
+      })
     }
     if (productIds.length === 0) {
       return res.status(400).json({
         success: false,
         message: "No product to refresh",
-      });
+      })
     }
     if (productIds.length > 10) {
       return res.status(400).json({
         success: false,
         message: "Cannot request more than 10 products",
-      });
+      })
     }
     if (!productIds.every((id) => mongoose.Types.ObjectId.isValid(id))) {
       return res.status(400).json({
         success: false,
         message: "Some product IDs are in invalid format",
-      });
+      })
     }
 
-    const uniqueIds = [...new Set(productIds)].map(id => new mongoose.Types.ObjectId(id));
+    const uniqueIds = [...new Set(productIds)].map(id => new mongoose.Types.ObjectId(id))
     const products = await Product.find({ _id: { $in: uniqueIds } })
       .select("_id name selling_price current_stock image_urls")
-      .lean();
+      .lean()
 
     const formattedResponse = products.map((p) => {
       return {
@@ -431,16 +457,16 @@ exports.bulkFetchProducts = async (req, res) => {
         price: p.selling_price,
         stock: p.current_stock,
         image: p.image_urls[0],
-      };
-    });
+      }
+    })
     return res.status(200).json({
       success: true,
       products: formattedResponse,
-    });
+    })
   } catch (err) {
     return res.status(500).json({
       success: false,
       error: "Error bulk fetching requested products",
-    });
+    })
   }
-};
+}

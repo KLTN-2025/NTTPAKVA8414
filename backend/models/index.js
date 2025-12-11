@@ -12,6 +12,7 @@ import CustomerOrderItems from "./CustomerOrderItems.js";
 import Transactions from "./Transactions.js";
 import Reviews from "./Reviews.js";
 import Cart from "./Carts.js"
+import CustomerInquiries from "./CustomerInquiries.js";
 
 export {
   ProductCategories,
@@ -27,5 +28,6 @@ export {
   CustomerOrderItems,
   Transactions,
   Reviews,
-  Cart
+  Cart,
+  CustomerInquiries
 };

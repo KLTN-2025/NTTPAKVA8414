@@ -7,11 +7,30 @@ const {
   getRecommendations,
 } = require('../../controllers/recommendation');
 
+const rateLimit = require('express-rate-limit')
+
+const productViewLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 min
+    max: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => res.status(429).json({ success: false, message: 'Too many requests. Wait before retrying again' })
+  });
+
+const reviewLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1h
+    max: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => res.status(429).json({ success: false, message: 'Too many requests. Wait before retrying again' })
+  });
+
 /**
  * GET /api/products/search
  * Search and filter products
  */
 router.get('/search', 
+  productViewLimiter,
   productController.searchAndFilterProducts
 )
 
@@ -20,6 +39,7 @@ router.get('/search',
  * Get all products
  */
 router.get('/all', 
+  productViewLimiter,
   productController.getAllProducts
 )
 
@@ -45,6 +65,7 @@ router.get('/:productId/reviews',
  */
 router.post('/:productId/reviews', 
     checkMemberStatus, 
+    reviewLimiter,
     reviewController.createReview);
 
 /**
@@ -53,6 +74,7 @@ router.post('/:productId/reviews',
  */
 router.put('/:productId/reviews/:reviewId', 
     checkMemberStatus, 
+    reviewLimiter,
     reviewController.updateReview);
 
 /**
@@ -69,6 +91,7 @@ router.delete('/products/:productId/reviews/:reviewId',
  * Get single product details
  */
 router.get('/:id', 
+  productViewLimiter,
   productController.getSingleProductDetails
 );
 

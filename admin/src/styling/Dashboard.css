@@ -1,0 +1,557 @@
+/* ----- LOADING & ERROR STATES ----- */
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-color, #e5e7eb);
+  border-top-color: var(--primary-color, #16a34a);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+  color: var(--text-muted, #6b7280);
+  font-size: 1rem;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+  text-align: center;
+}
+
+.error-container i {
+  font-size: 3rem;
+  color: #ef4444;
+}
+
+.error-container h3 {
+  color: var(--text-dark, #111827);
+  margin: 0;
+}
+
+.error-container p {
+  color: var(--text-muted, #6b7280);
+  margin: 0;
+}
+
+/* ----- SUMMARY CARDS ROW ----- */
+.summary-cards-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Card Color Variations */
+.stat-card.revenue-card {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+}
+
+.stat-card.orders-card {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.stat-card.pending-card {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.stat-card.lowstock-card {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.stat-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stat-card .card-header h5 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.stat-card .card-header i {
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.stat-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.stat-body h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.stat-change {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.stat-change.positive {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.stat-change.negative {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.stat-badge {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-badge.warning {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.stat-badge.danger {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.stat-footer {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ----- MAIN GRID LAYOUT ----- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+.grid-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.grid-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ----- CARD BASE ----- */
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.card .card-header h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark, #111827);
+  margin: 0;
+}
+
+/* ----- SALES CHART CARD ----- */
+.sales-chart-card .chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.period-toggle {
+  display: flex;
+  background: var(--admin-bg, #f3f4f6);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.period-btn {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted, #6b7280);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.period-btn:hover {
+  color: var(--text-dark, #111827);
+}
+
+.period-btn.active {
+  background: #fff;
+  color: var(--primary-color, #16a34a);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.refresh-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--admin-bg, #f3f4f6);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  color: var(--text-muted, #6b7280);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: #fff;
+  color: var(--primary-color, #16a34a);
+  border-color: var(--primary-color, #16a34a);
+}
+
+.refresh-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.chart-container {
+  padding: 1.5rem;
+  height: 300px;
+}
+
+/* ----- BEST SELLERS CARD ----- */
+.best-sellers-card .card-header .period-label {
+  font-size: 0.8rem;
+  color: var(--text-muted, #6b7280);
+  background: var(--admin-bg, #f3f4f6);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.empty-state i {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.product-table th,
+.product-table td {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  font-size: 0.875rem;
+}
+
+.product-table th {
+  color: var(--text-muted, #6b7280);
+  font-weight: 500;
+  background: var(--admin-bg, #f9fafb);
+}
+
+.product-table tbody tr:hover {
+  background: var(--admin-bg, #f9fafb);
+}
+
+.product-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rank-badge {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-color-light, #dcfce7);
+  color: var(--primary-color, #16a34a);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 50%;
+}
+
+.product-cell img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-sku {
+  font-size: 0.75rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.product-name {
+  font-weight: 500;
+  color: var(--text-dark, #111827);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sold-count {
+  font-weight: 600;
+  color: var(--primary-color, #16a34a);
+}
+
+.revenue-amount {
+  font-weight: 500;
+  color: var(--text-dark, #111827);
+}
+
+/* ----- QUICK ACTIONS CARD ----- */
+.quick-actions-card .card-header {
+  border-bottom: none;
+  padding-bottom: 0.5rem;
+}
+
+.quick-actions-list {
+  padding: 0.5rem 0;
+}
+
+.quick-action-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s;
+}
+
+.quick-action-item:hover {
+  background: var(--admin-bg, #f9fafb);
+}
+
+.action-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.action-icon.pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.action-icon.warning {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.action-icon.success {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.action-icon.info {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.action-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-label {
+  font-weight: 500;
+  color: var(--text-dark, #111827);
+  font-size: 0.9rem;
+}
+
+.action-count {
+  font-size: 0.8rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.quick-action-item > i {
+  color: var(--text-muted, #6b7280);
+  font-size: 0.75rem;
+}
+
+/* ----- INFO CARD ----- */
+.info-card {
+  padding: 1rem 1.5rem;
+}
+
+.info-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.info-content i {
+  color: var(--text-muted, #6b7280);
+}
+
+.info-content > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.info-value {
+  font-size: 0.875rem;
+  color: var(--text-dark, #111827);
+  font-weight: 500;
+}
+
+/* ----- BUTTONS ----- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary-color, #16a34a);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-color-dark, #15803d);
+}
+
+/* ----- RESPONSIVE ----- */
+@media (max-width: 1200px) {
+  .summary-cards-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .summary-cards-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .sales-chart-card .chart-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .period-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .product-table th,
+  .product-table td {
+    padding: 0.75rem 1rem;
+  }
+  
+  .product-name {
+    max-width: 120px;
+  }
+}

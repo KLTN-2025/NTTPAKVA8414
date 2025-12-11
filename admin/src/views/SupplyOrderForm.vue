@@ -373,4 +373,4 @@ onMounted(async () => {
 })
 </script>
 
-<style src="./SupplyOrderForm.css"></style>
+<style src="@/styling/SupplyOrderForm.css"></style>

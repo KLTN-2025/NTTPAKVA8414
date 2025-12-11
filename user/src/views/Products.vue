@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="product-page">
   <div class="cart-banner-container">
     <img src="@/assets/images/Breadcrumbs.png" alt="Products Banner" class="cart-banner-img" />
     
@@ -7,28 +7,22 @@
       <nav class="cart-breadcrumbs">
         <router-link to="/">Home</router-link>
         <i class="fas fa-chevron-right breadcrumb-separator"></i> 
-        <strong>Shop</strong> </nav>
+        <strong>Products</strong> </nav>
     </div>
   </div>
 
   <div class="container">
     <div class="products-page">
       <aside class="sidebar">
-        <button class="filter-btn">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 10H15M2.5 5H17.5M7.5 15H12.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span>Filter</span>
-        </button>
-
+        <h2 class="filter-header">Filters</h2>
         <div class="filter-section">
-          <h3>All Categories</h3>
+          <h3>Categories</h3>
           <ul class="filter-list">
             <li>
               <label>
                 <input type="radio" name="category" v-model="selectedCategory" value="" @change="applyFilters" />
                 <span class="custom-radio"></span>
-                <span class="label-text">All Categories</span>
+                <span class="label-text">All</span>
               </label>
             </li>
             <li v-for="cat in categories" :key="cat._id">
@@ -41,10 +35,8 @@
           </ul>
         </div>
 
-        <hr />
-
         <div class="filter-section">
-          <h3>Price</h3>
+          <h3 style="margin-bottom: 0;">Price</h3>
           <div class="price-slider-container">
             <input 
               type="range" 
@@ -61,7 +53,25 @@
           </div>
         </div>
 
-        <hr />
+        <div class="filter-section">
+          <h3>Rating</h3>
+          <ul class="filter-list">
+            <li>
+              <label>
+                <input type="radio" name="rating" v-model.number="selectedMinRating" value="0" @change="applyFilters" />
+                <span class="custom-radio"></span>
+                <span class="label-text">All</span>
+              </label>
+            </li>
+            <li v-for="minRating in 4" :key="minRating">
+              <label>
+                <input type="radio" name="rating" v-model.number="selectedMinRating" :value="minRating" @change="applyFilters" />
+                <span class="custom-radio"></span>
+                <span class="label-text">{{ minRating }}.0 or better</span>
+              </label>
+            </li>
+          </ul>
+        </div>
 
         <div class="filter-section">
           <h3>Popular Tags</h3>
@@ -83,7 +93,7 @@
 
       <section class="products-content">
         <div class="products-header">
-          <h2>All Products</h2>
+          <h2 style="font-size: 2rem; margin-left: 1rem;">All Products</h2>
           <div class="right-controls">
             <input
               type="text"
@@ -94,8 +104,10 @@
             />
             <select v-model="sortOption" @change="applyFilters" class="sort-select">
               <option value="newest">Newest</option>
-              <option value="price-low">Price: Low → High</option>
+              <option value="rating-high">Rating: High → Low</option>
+              <option value="rating-low">Rating: Low → High</option>
               <option value="price-high">Price: High → Low</option>
+              <option value="price-low">Price: Low → High</option>
               <option value="name-asc">Name: A → Z</option>
               <option value="name-desc">Name: Z → A</option>
             </select>
@@ -158,6 +170,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+
 import axios from 'axios'
 import ProductCard from '@/components/ProductCard.vue'
 
@@ -174,6 +188,7 @@ const error = ref(null)
 
 // Filters
 const selectedCategory = ref('')
+const selectedMinRating = ref(0)
 const priceMax = ref(1000000)
 const selectedAttributes = ref([])
 const sortOption = ref('newest')
@@ -231,10 +246,13 @@ async function fetchProducts(page = 1) {
 
     const sortMapping = {
       'newest': { sortBy: 'createdAt', sortOrder: 'desc' },
+      'rating-low': { sortBy: 'rating', sortOrder: 'asc' },
+      'rating-high': { sortBy: 'rating', sortOrder: 'desc' },
       'price-low': { sortBy: 'price', sortOrder: 'asc' },
       'price-high': { sortBy: 'price', sortOrder: 'desc' },
       'name-asc': { sortBy: 'name', sortOrder: 'asc' },
       'name-desc': { sortBy: 'name', sortOrder: 'desc' }
+      
     }
 
     const sortConfig = sortMapping[sortOption.value] || {}
@@ -255,6 +273,9 @@ async function fetchProducts(page = 1) {
     }
     if (searchQuery.value.trim()) {
       params.q = searchQuery.value.trim()
+    }
+    if (selectedMinRating.value) {
+      params.min_rating = selectedMinRating.value
     }
     const response = await axios.get('/api/products/search', {
       params: params })

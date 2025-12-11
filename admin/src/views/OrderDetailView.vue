@@ -319,4 +319,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped src="./OrderDetailView.css"></style>
+<style scoped src="@/styling/OrderDetailView.css"></style>

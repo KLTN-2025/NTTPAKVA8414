@@ -5,13 +5,11 @@
   >
     <nav class="admin-sidebar">
       <div class="sidebar-header">
-        <img src="@/assets/images/logo.jpg" alt="Logo" class="logo" />
+        <img src="@/assets/images/logo_dark_2.png" alt="Logo" class="logo" />
         <button @click="toggleSidebar" class="collapse-btn">
           <i class="fas fa-chevron-left"></i>
         </button>
       </div>
-
-      <div class="nav-section-title">GENERAL</div>
       <ul class="nav-links">
         <li>
           <router-link to="/admin/dashboard">
@@ -23,55 +21,95 @@
         <li>
           <router-link
             to="/admin/products"
-            :class="{ 'active-parent': $route.path.startsWith('/products') }"
+            :class="{
+              'active-parent': $route.path.startsWith('/admin/products'),
+            }"
           >
-            <i class="fas fa-box"></i>
-            <span>Product</span>
+            <i class="fa-solid fa-bowl-food"></i> <span>Products</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/admin/suppliers">
-            <i class="fa-solid fa-truck"></i>
-            <span>Suppliers</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/admin/orders">
+          <router-link
+            to="/admin/orders"
+            :class="{
+              'active-parent': $route.path.startsWith('/admin/orders'),
+            }"
+          >
             <i class="fas fa-file-alt"></i>
             <span>Orders</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/admin/transactions">
+          <router-link
+            to="/admin/inventory"
+            :class="{
+              'active-parent': $route.path.startsWith('/admin/inventory'),
+            }"
+          >
+            <i class="fa-solid fa-box"></i>
+            <span>Inventory</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/admin/suppliers"
+            :class="{
+              'active-parent':
+                $route.path.startsWith('/admin/suppliers') ||
+                $route.path.startsWith('/admin/supply-order'),
+            }"
+          >
+            <i class="fa-solid fa-truck"></i>
+            <span>Suppliers</span>
+          </router-link>
+        </li>
+
+        <li>
+          <router-link
+            to="/admin/transactions"
+            :class="{
+              'active-parent': $route.path.startsWith('/admin/transactions'),
+            }"
+          >
             <i class="fa-solid fa-dollar-sign"></i>
             <span>Transactions</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/admin/customers">
+          <router-link
+            to="/admin/customers"
+            :class="{
+              'active-parent': $route.path.startsWith('/admin/customers'),
+            }"
+          >
             <i class="fas fa-users"></i>
             <span>Customers</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/admin/sales-report">
-            <i class="fas fa-chart-line"></i>
-            <span>Sales Report</span>
+          <router-link
+            to="/admin/customer-support"
+            :class="{
+              'active-parent': $route.path.startsWith('/admin/customer-support'),
+            }"
+          >
+            <i class="fas fa-headset"></i>
+            <span>Customer Support</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/admin/help">
+            <i class="fas fa-question-circle"></i>
+            <span>Help</span>
           </router-link>
         </li>
       </ul>
-      <li>
-        <router-link to="/admin/help">
-          <i class="fas fa-question-circle"></i>
-          <span>Help</span>
-        </router-link>
-      </li>
     </nav>
 
     <div class="main-container">
       <header class="admin-topbar">
-         <div class="topbar-left">
-          <h1>{{ $route.meta.title || 'Dashboard' }}</h1>
+        <div class="topbar-left">
+          <h1>{{ $route.meta.title || "Dashboard" }}</h1>
         </div>
         <div class="topbar-right">
           <button class="topbar-icon-btn">
@@ -108,4 +146,4 @@ function toggleSidebar() {
 }
 </script>
 
-<style src="./AdminHome.css"></style>
+<style src="@/styling/AdminHome.css"></style>

@@ -10,9 +10,9 @@
           to help you live a healthy and balanced lifestyle every day.
         </p>
         <div class="footer-social">
-          <a href="#" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+          <a target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+          <a target="_blank"><i class="fa-brands fa-instagram"></i></a>
+          <a target="_blank"><i class="fa-brands fa-twitter"></i></a>
         </div>
       </div>
 
@@ -27,25 +27,20 @@
         </ul>
       </div>
 
-      <!-- Column 3: Shop Categories -->
-      <div class="footer-col">
-        <h4 class="footer-title">Shop Categories</h4>
-        <ul class="footer-links">
-          <li><a href="#">Vegetables</a></li>
-          <li><a href="#">Fruits</a></li>
-          <li><a href="#">Snacks</a></li>
-          <li><a href="#">Oils & Fats</a></li>
-          <li><a href="#">Beverages</a></li>
-        </ul>
-      </div>
-
-      <!-- Column 4: Contact Info -->
+      <!-- Column 3: Contact Info -->
       <div class="footer-col">
         <h4 class="footer-title">Contact</h4>
         <ul class="footer-contact">
           <li><i class="fa-solid fa-phone"></i> (+84) 869 777777</li>
           <li><i class="fa-solid fa-envelope"></i> contact@healthycrave.com</li>
           <li><i class="fa-solid fa-location-dot"></i> 123 Healthy St, Da Nang City</li>
+          <li>
+            <i class="fas fa-clock"></i>
+            <div class="info-text-new">
+              <p><b>Mon - Fri:</b> 8h - 11h30 | 13h30 - 18h</p>
+              <p><b>Sat:</b> 9h - 11h30 | 13h30 - 17h</p>
+            </div>
+          </li>
         </ul>
       </div>
 

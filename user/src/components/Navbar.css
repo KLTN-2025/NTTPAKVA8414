@@ -2,7 +2,7 @@
 
 header {
   @apply sticky top-0 left-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-md transition-all duration-300;
-  padding: 0 9.5rem; 
+  padding: 0.25rem 5rem; 
 }
 
 header > div {
@@ -72,10 +72,13 @@ header .btn-signup {
   header .btn-signup {
     @apply text-sm px-3 py-1.5;
   }
+
+  
 }
 header .logo img {
   @apply transition-transform duration-200;
 }
+
 
 
 /* ----- CSS MỚI CHO CART DROPDOWN (ĐÃ TINH CHỈNH) ----- */

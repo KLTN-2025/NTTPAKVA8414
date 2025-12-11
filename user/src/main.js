@@ -8,7 +8,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import App from './App.vue'
 import router from './router'
 import './styling/main.css'
-import { useCartStore } from './stores/cartStore'
 const app = createApp(App)
 app.use(clerkPlugin, {
     publishableKey: 'pk_test_cnVsaW5nLWNhbWVsLTQ2LmNsZXJrLmFjY291bnRzLmRldiQ',
@@ -28,6 +27,3 @@ app.use(Toast, {
   showCloseButtonOnHover: false,
 })
 app.mount('#app')
-
-const cart = useCartStore()
-cart.refetchFromServer()

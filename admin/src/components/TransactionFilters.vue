@@ -2,7 +2,7 @@
   <div class="filters-section">
     <div class="filters-row">
       <div class="filter-group">
-        <label>Type</label>
+        <label style="font-size: 14px; font-weight: 500;" >Type</label>
         <select v-model="localFilters.type">
           <option value="">All Types</option>
           <option value="inflow">Inflow</option>
@@ -11,7 +11,7 @@
       </div>
       
       <div class="filter-group">
-        <label>From</label>
+        <label style="font-size: 14px; font-weight: 500;" >From</label>
         <input 
           type="date" 
           v-model="localFilters.dateFrom"
@@ -20,7 +20,7 @@
       </div>
       
       <div class="filter-group">
-        <label>To</label>
+        <label style="font-size: 14px; font-weight: 500;" >To</label>
         <input 
           type="date" 
           v-model="localFilters.dateTo"

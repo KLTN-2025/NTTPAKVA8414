@@ -36,7 +36,7 @@
               <input 
                 type="text" 
                 v-model="formData.recipient_name"
-                required
+                disabled
               />
             </div>
             <div class="form-row-grid-2">
@@ -45,6 +45,7 @@
                 <input 
                   type="email" 
                   v-model="formData.recipient_email"
+                  disabled
                 />
               </div>
               <div class="form-group">
@@ -53,7 +54,7 @@
                   type="tel"
                   pattern="(\+84|0)\d{9,10}" 
                   v-model="formData.recipient_phone"
-                  required
+                  disabled
                 />
               </div>
             </div>
@@ -70,7 +71,7 @@
               <input 
                 type="text" 
                 v-model="formData.shipping_address"
-                required
+                disabled
               />
             </div>
             <div class="form-group">
@@ -79,6 +80,7 @@
                 type="text" 
                 v-model="formData.shipping_note"
                 placeholder="Add delivery instructions..."
+                disabled
               />
             </div>
           </div>
@@ -340,4 +342,4 @@ onMounted(() => {
 })
 </script>
 
-<style src="./OrderForm.css"></style>
+<style src="@/styling/OrderForm.css"></style>

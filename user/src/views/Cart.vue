@@ -81,12 +81,8 @@
       </div>
 
       <div class="cart-bottom-section">
-        <div class="coupon-section">
-          <h3>Coupon Code</h3>
-          <div class="coupon-inputs">
-            <input type="text" placeholder="Enter code" />
-            <button class="apply-coupon-btn">Apply Coupon</button>
-          </div>
+        <div style="border: none;" class="coupon-section">
+
         </div>
 
         <div class="cart-total-section">

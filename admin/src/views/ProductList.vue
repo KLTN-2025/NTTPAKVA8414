@@ -85,11 +85,8 @@
             <th @click="handleSort('selling_price')" class="sortable">
               Price <i :class="getSortIcon('selling_price')"></i>
             </th>
-            <th @click="handleSort('current_stock')" class="sortable">
-              Stock <i :class="getSortIcon('current_stock')"></i>
-            </th>
             <th @click="handleSort('createdAt')" class="sortable">
-              Date <i :class="getSortIcon('createdAt')"></i>
+              Last Update <i :class="getSortIcon('createdAt')"></i>
             </th>
             <th>Status</th>
             <th>Action</th>
@@ -135,7 +132,6 @@
             <td>
               {{ formatPrice(product.selling_price) }}
             </td>
-            <td>{{ product.current_stock }}</td>
             <td>
               <div class="date-cell">
                 <span>{{ formatDate(product.updatedAt) }}</span>
@@ -537,7 +533,7 @@ const handleSort = (field) => {
     'name': 'name',
     'selling_price': 'selling_price',
     'current_stock': 'current_stock',
-    'createdAt': 'createdAt'
+    'updatedAt': 'updatedAt'
   }
   const mappedField = fieldMap[field]
 
@@ -720,4 +716,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped src="./ProductList.css"></style>
+<style scoped src="@/styling/ProductList.css"></style>

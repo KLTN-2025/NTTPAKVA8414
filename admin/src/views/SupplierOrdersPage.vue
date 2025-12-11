@@ -20,7 +20,7 @@
     <!-- Filters Bar -->
     <div class="filters-bar">
       <div class="filter-group">
-        <label>Status</label>
+        <label style="font-size: 14px; font-weight: 500;" >Status</label>
         <select v-model="filters.status" @change="fetchOrders">
           <option value="">All Statuses</option>
           <option value="Draft">Draft</option>
@@ -30,11 +30,11 @@
         </select>
       </div>
       <div class="filter-group">
-        <label>From</label>
+        <label style="font-size: 14px; font-weight: 500;" >From</label>
         <input type="date" v-model="filters.dateBegin" @change="fetchOrders" />
       </div>
       <div class="filter-group">
-        <label>To</label>
+        <label style="font-size: 14px; font-weight: 500;" >To</label>
         <input type="date" v-model="filters.dateEnd" @change="fetchOrders" />
       </div>
       <button class="btn btn-secondary btn-sm" @click="clearFilters">
@@ -53,12 +53,12 @@
       <table v-else class="orders-table">
         <thead>
           <tr>
-            <th>Order ID</th>
-            <th>Status</th>
-            <th>Expected Arrival</th>
-            <th>Total Cost</th>
-            <th>Created</th>
-            <th class="col-actions">Actions</th>
+            <th style="font-size: 14px; font-weight: 500;" >Order ID</th>
+            <th style="font-size: 14px; font-weight: 500;" >Status</th>
+            <th style="font-size: 14px; font-weight: 500;" >Expected Arrival</th>
+            <th style="font-size: 14px; font-weight: 500;" >Total Cost</th>
+            <th style="font-size: 14px; font-weight: 500;" >Created</th>
+            <th style="font-size: 14px; font-weight: 500;"  class="col-actions">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -440,4 +440,4 @@ watch(supplierId, () => {
 });
 </script>
 
-<style src="./SupplierOrdersPage.css"></style>
+<style src="@/styling/SupplierOrdersPage.css"></style>

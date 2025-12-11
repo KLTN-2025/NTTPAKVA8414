@@ -24,6 +24,10 @@ const Help = () => import('@/views/Help.vue')
 const SupplierOrdersPage = () => import('@/views/SupplierOrdersPage.vue')
 const SupplyOrderForm = () => import('@/views/SupplyOrderForm.vue')
 const SupplierOrderDetails = () => import('@/views/SupplierOrderDetails.vue')
+const InventoryTracking = () => import('@/views/InventoryTracking.vue')
+
+const MetadataManagement = () => import('@/views/MetadataManagement.vue')
+const CustomerSupport = () => import('@/views/CustomerSupport.vue')
 
 const routes = [
   {
@@ -42,6 +46,12 @@ const routes = [
         name: 'dashboard',
         component: Dashboard,
         meta: { requireAdmin: true, title: 'Dashboard' }
+      }, 
+      {
+        path: 'metadata',
+        name: 'admin-metadata',
+        component: MetadataManagement,
+        meta: { requireAdmin: true, title: 'Metadata Management' }
       },
       //Product management
       {
@@ -99,6 +109,12 @@ const routes = [
         component: SupplierOrderDetails,
         meta: { requireAdmin: true, title: 'Supply Order Details' }
       },
+      {
+        path: 'inventory',
+        name: 'admin-inventory',
+        component: InventoryTracking,
+        meta: { requireAdmin: true, title: 'Inventory Tracking' }
+      },
       //Customer order management
       {
         path: 'orders',
@@ -131,10 +147,10 @@ const routes = [
         meta: { requireAdmin: true, title: 'Customers Management' }
       },
       {
-        path: 'sales-report',
-        name: 'admin-sales-report',
-        component: SalesReport,
-        meta: { requireAdmin: true, title: 'Sales Report' }
+        path: 'customer-support',
+        name: 'admin-support',
+        component: CustomerSupport,
+        meta: { requireAdmin: true, title: 'Customer Support' }
       },
       {
         path: 'help',

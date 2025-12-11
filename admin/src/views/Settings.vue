@@ -63,4 +63,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped src="./Settings.css"></style>
+<style scoped src="@/styling/Settings.css"></style>

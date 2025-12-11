@@ -143,4 +143,4 @@ onMounted(() => {
 
 </script>
 
-<style scoped src="./SalesReport.css"></style>
+<style scoped src="@/styling/SalesReport.css"></style>

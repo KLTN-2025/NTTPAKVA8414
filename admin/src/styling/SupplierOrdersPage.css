@@ -139,6 +139,10 @@
   border-color: var(--primary-color);
 }
 
+.filter-group {
+  margin-bottom: 0;
+}
+
 /* ----- TABLE CONTAINER ----- */
 .table-container {
   background: var(--sidebar-bg);

@@ -36,8 +36,8 @@
 /* ----- 1. SIDEBAR (Bên trái) ----- */
 .admin-sidebar {
   width: var(--sidebar-width);
-  background: var(--sidebar-bg); /* Sẽ thay đổi */
-  border-right: 1px solid var(--border-color); /* Sẽ thay đổi */
+  background: var(--dark-bg); /* Sẽ thay đổi */
+  border-right: 1px solid var(--dark-border-color); /* Sẽ thay đổi */
   display: flex;
   flex-direction: column;
   position: fixed; 
@@ -56,7 +56,7 @@
   justify-content: space-between; 
   padding-bottom: 1.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-color); /* Sẽ thay đổi */
+  border-bottom: 1px solid var(--dark-border-color); /* Sẽ thay đổi */
   height: 48px; 
 }
 
@@ -70,8 +70,8 @@
 
 .collapse-btn {
   background: none;
-  border: 1px solid var(--border-color); /* Sẽ thay đổi */
-  color: var(--text-muted); /* Sẽ thay đổi */
+  border: 1px solid var(--dark-border-color); /* Sẽ thay đổi */
+  color: var(--dark-text-muted); /* Sẽ thay đổi */
   width: 32px;
   height: 32px;
   border-radius: 4px;
@@ -94,7 +94,7 @@
 .nav-section-title {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-light);
+  color: var(--dark-text-dark);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 0.5rem;
@@ -124,7 +124,7 @@
   border-radius: 4px;
   text-decoration: none;
   font-weight: 500;
-  color: var(--text-muted); /* Sẽ thay đổi */
+  color: var(--dark-text-dark); /* Sẽ thay đổi */
   transition: all 0.2s ease;
   cursor: pointer; 
   position: relative;
@@ -184,8 +184,8 @@
 .admin-profile { display: flex; align-items: center; gap: 0.75rem; }
 .admin-profile img { border-radius: 50%; width: 40px; height: 40px; }
 .admin-info { display: flex; flex-direction: column; line-height: 1.4; }
-.admin-name { font-weight: 600; color: var(--text-dark); } /* Sẽ thay đổi */
-.admin-role { font-size: 0.8rem; color: var(--text-muted); } /* Sẽ thay đổi */
+.admin-name { font-weight: 600; color: var(--dark-text-dark); } /* Sẽ thay đổi */
+.admin-role { font-size: 0.8rem; color: var(--dark-text-muted); } /* Sẽ thay đổi */
 
 /* NỘI DUNG CHÍNH (scrollable) */
 .admin-content {

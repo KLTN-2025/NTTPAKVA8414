@@ -466,4 +466,4 @@ onMounted(() => {
 })
 </script>
 
-<style src="./CustomerList.css"></style>
+<style src="@/styling/CustomerList.css"></style>
