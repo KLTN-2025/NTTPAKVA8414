@@ -2,35 +2,38 @@ const express = require('express')
 const router = express.Router()
 const productController = require('../../controllers/productController')
 const reviewController = require('../../controllers/reviews');
-const { checkMemberStatus } = require('../../middleware/checkMember') //Already implemented
+const { checkMemberStatus } = require('../../middleware/checkMember')
 const {
   getRecommendations,
 } = require('../../controllers/recommendation');
 
-const rateLimit = require('express-rate-limit')
+const { WINDOW_LENGTH, rateLimiter } = require("../../middleware/rateLimiter")
 
-const productViewLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 min
-    max: 300,
-    standardHeaders: true,
-    legacyHeaders: false,
-    handler: (req, res) => res.status(429).json({ success: false, message: 'Too many requests. Wait before retrying again' })
-  });
-
-const reviewLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1h
-    max: 10,
-    standardHeaders: true,
-    legacyHeaders: false,
-    handler: (req, res) => res.status(429).json({ success: false, message: 'Too many requests. Wait before retrying again' })
-  });
+const productListingConfig = {
+  window: 15 * WINDOW_LENGTH.MINUTE, 
+  max: 300,                       
+  group: "product_listing",
+  errorMessage: "Too many inquries sent! Please wait"
+}
+const productDetailConfig = {
+  window: 1 * WINDOW_LENGTH.MINUTE, 
+  max: 40,                       
+  group: "product_details",
+  errorMessage: "Too many inquries sent! Please wait"
+}
+const reviewConfig = {
+  window: 1 * WINDOW_LENGTH.HOUR, 
+  max: 10,                       
+  group: "review",
+  errorMessage: "Too many inquries sent! Please wait"
+}
 
 /**
  * GET /api/products/search
  * Search and filter products
  */
 router.get('/search', 
-  productViewLimiter,
+  rateLimiter(productListingConfig),
   productController.searchAndFilterProducts
 )
 
@@ -39,7 +42,7 @@ router.get('/search',
  * Get all products
  */
 router.get('/all', 
-  productViewLimiter,
+  rateLimiter(productListingConfig),
   productController.getAllProducts
 )
 
@@ -65,7 +68,7 @@ router.get('/:productId/reviews',
  */
 router.post('/:productId/reviews', 
     checkMemberStatus, 
-    reviewLimiter,
+    rateLimiter(reviewConfig),
     reviewController.createReview);
 
 /**
@@ -74,7 +77,7 @@ router.post('/:productId/reviews',
  */
 router.put('/:productId/reviews/:reviewId', 
     checkMemberStatus, 
-    reviewLimiter,
+    rateLimiter(reviewConfig),
     reviewController.updateReview);
 
 /**
@@ -91,13 +94,13 @@ router.delete('/products/:productId/reviews/:reviewId',
  * Get single product details
  */
 router.get('/:id', 
-  productViewLimiter,
+  rateLimiter(productDetailConfig),
   productController.getSingleProductDetails
 );
 
 /**
  * GET api/products/:productId/recommendation
- * Get single product details
+ * Get single product recommendation
  */
 router.get('/:productId/recommendation', 
   getRecommendations
