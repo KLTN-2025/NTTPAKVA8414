@@ -4,22 +4,14 @@
 const express = require("express");
 const router = express.Router();
 const vnpayController = require("../../controllers/vnpayController");
-const rateLimit = require("express-rate-limit");
+const { WINDOW_LENGTH, rateLimiter } = require("../../middleware/rateLimiter")
 
-const orderCreateLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 min
+const config = {
+  window: 10 * WINDOW_LENGTH.MINUTE,
   max: 10,
-  keyGenerator: (req) => req.userId || req.ip,
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (req, res) =>
-    res
-      .status(429)
-      .json({
-        success: false,
-        message: "Too many requests. Wait before retrying again",
-      }),
-});
+  group: "order_create",
+  errorMessage: "Too many request sent! Please wait"
+}
 
 /**
  * POST /api/vnpay/create-payment-url
@@ -28,7 +20,7 @@ const orderCreateLimiter = rateLimit({
  */
 router.post(
   "/create-payment-url",
-  orderCreateLimiter,
+  rateLimiter(config),
   vnpayController.createPaymentUrl
 );
 

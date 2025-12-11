@@ -2,18 +2,14 @@
 const express = require("express");
 const router = express.Router();
 const customerSupportController = require("../../controllers/customerSupport");
-const rateLimit = require('express-rate-limit')
+const { WINDOW_LENGTH, rateLimiter } = require("../../middleware/rateLimiter")
 
-const inquiryLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1h
-  max: 5,
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (req, res) =>
-    res
-      .status(429)
-      .json({ success: false, message: "Too many inquiries. Wait before retrying again" }),
-});
+const config = {
+  window: 30 * WINDOW_LENGTH.MINUTE, 
+  max: 5,                       
+  group: "support",
+  errorMessage: "Too many inquries sent! Please wait"
+}
 
 /**
  * POST /api/support/inquiries
@@ -21,7 +17,7 @@ const inquiryLimiter = rateLimit({
  */
 router.post(
   "/inquiries",
-  inquiryLimiter,
+  rateLimiter(config),
   customerSupportController.createInquiry
 );
 
