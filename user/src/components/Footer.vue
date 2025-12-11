@@ -34,6 +34,13 @@
           <li><i class="fa-solid fa-phone"></i> (+84) 869 777777</li>
           <li><i class="fa-solid fa-envelope"></i> contact@healthycrave.com</li>
           <li><i class="fa-solid fa-location-dot"></i> 123 Healthy St, Da Nang City</li>
+          <li>
+            <i class="fas fa-clock"></i>
+            <div class="info-text-new">
+              <p><b>Mon - Fri:</b> 8h - 11h30 | 13h30 - 18h</p>
+              <p><b>Sat:</b> 9h - 11h30 | 13h30 - 17h</p>
+            </div>
+          </li>
         </ul>
       </div>
 

@@ -46,21 +46,21 @@
           <div class="info-block-new support-hours">
             <i class="fas fa-clock"></i>
             <div class="info-text-new">
-              <span>Mon - Fri: 8:00 AM - 6:00 PM</span>
-              <span>Sat: 9:00 AM - 4:00 PM</span>
+              <span><b>Mon - Fri:</b> 8h - 11h30 | 13h30 - 18h</span>
+              <span><b>Sat:</b> 9h - 11h30 | 13h30 - 17h</span>
             </div>
           </div>
         </div>
 
         <form @submit.prevent="handleSubmit" class="contact-form-panel">
-          <h2>Send Us an Inquiry</h2>
+          <h2>Customer Suupport</h2>
           <p>
-            Have a question or need assistance? Fill out the form below and our support team will get back to you as soon as possible.
+            Have a question or need assistance? Fill out the form below and we will get back to you as soon as possible.
           </p>
           
           <div class="form-row-grid">
             <div class="form-group">
-              <label for="name">Your Name <span class="required">*</span></label>
+              <label for="name">Name <span class="required">*</span></label>
               <input 
                 type="text" 
                 id="name" 
@@ -95,7 +95,7 @@
               />
             </div>
             <div class="form-group">
-              <label for="problemType">Type of Problem <span class="required">*</span></label>
+              <label for="problemType">Problem Type <span class="required">*</span></label>
               <select 
                 id="problemType" 
                 v-model="form.problemType" 
@@ -122,19 +122,13 @@
               v-model="form.details"
               rows="5"
               required
-              placeholder="Please describe your issue or question in detail..."
+              placeholder="Enter your inquiry here..."
               maxlength="500"
             ></textarea>
           </div>
-
-          <div v-if="formMessage.text" :class="['form-message', formMessage.type]">
-            <i :class="formMessage.type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
-            {{ formMessage.text }}
-          </div>
-
           <button type="submit" class="submit-btn" :disabled="isSending || !isFormValid">
             <i v-if="isSending" class="fas fa-spinner fa-spin"></i>
-            {{ isSending ? 'Sending...' : 'Submit Inquiry' }}
+            {{ isSending ? 'Sending...' : 'Submit' }}
           </button>
         </form>
       </div>
@@ -243,20 +237,8 @@ async function handleSubmit() {
     }
 
   } catch (error) {
-    console.error('Error submitting inquiry:', error)
-    
-    let errorMessage = 'Sorry, something went wrong. Please try again.'
-    
-    if (error.response?.data?.message) {
-      errorMessage = error.response.data.message
-    } else if (error.message) {
-      errorMessage = error.message
-    }
+     toast.error(error)
 
-    formMessage.value = { 
-      type: 'error', 
-      text: errorMessage 
-    }
   } finally {
     isSending.value = false
   }
