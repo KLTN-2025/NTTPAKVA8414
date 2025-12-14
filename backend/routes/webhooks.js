@@ -87,14 +87,8 @@ router.post(
         // --- USER DELETED ---
         case 'user.deleted': {
           const { id } = evt.data;
-          await Customer.findOneAndUpdate(
-            { clerkId: id },
-            {
-              $set: {
-                is_deleted: true,
-                account_status: 'inactive',
-              },
-            }
+          await Customer.findOneAndDelete(
+            { clerkId: id }
           );
           break;
         }
