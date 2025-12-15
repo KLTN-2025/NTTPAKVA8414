@@ -166,7 +166,6 @@ Respond in JSON format:
   const result = await chat({
     systemPrompt,
     messages: [{ role: 'user', content: message }],
-    model: 'gpt-4.1-nano',
     temperature: 0.3,
     maxTokens: 150,
     jsonMode: true,

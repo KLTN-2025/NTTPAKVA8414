@@ -75,10 +75,10 @@ exports.placeOrder = async (req, res) => {
         });
       }
 
-      if (item.quantity > product.current_stock) {
+      if (item.quantity < 1 || item.quantity > product.current_stock) {
         return res.status(400).json({
           success: false,
-          message: `Insufficient stock for ${product.name}. Available: ${product.current_stock}`,
+          message: `Invalid stock quantity`,
         });
       }
 

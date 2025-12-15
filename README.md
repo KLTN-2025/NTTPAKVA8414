@@ -21,8 +21,8 @@
 ### Caching
 * Redis / Memurai
 ### Third-party API:
-* Chatbot: OpenAI API (GPT 4o-mini)
-* Tìm thưc đơn: Spoonacular API
+* Chatbot: OpenAI API (GPT 4.1-mini)
+* Tìm thực đơn: Spoonacular API
 
 ## Yêu cầu cấu hình
 | Tool | Version | Mô tả |

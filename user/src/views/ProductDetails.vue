@@ -280,7 +280,7 @@
 
               <button
                 @click="addToCart"
-                :disabled="!product.in_stock || addingToCart"
+                :disabled="disableAdd || !product.in_stock || addingToCart"
                 style="margin-top: 1rem; padding: 0.25rem 0"
                 class="w-full bg-green-600 text-white text-lg rounded-lg font-semibold hover:bg-green-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
               >
@@ -577,6 +577,7 @@ const reviewsLoading = ref(false);
 const error = ref(null);
 const currentImageIndex = ref(0);
 const quantity = ref(1);
+const disableAdd = computed(() => { return quantity.value < 1; })
 const addingToCart = ref(false);
 const reviewPagination = reactive({
   page: 1,

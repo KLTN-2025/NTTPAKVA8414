@@ -224,7 +224,9 @@
               <div class="detail-item">
                 <label>Phone Number</label>
                 <span>
-                  <a :href="`tel:${selectedInquiry.sender_phone}`" class="phone-link">
+                  <a :href="`https://zalo.me/${selectedInquiry.sender_phone}`"
+                  target="_blank"
+                   class="phone-link">
                     {{ selectedInquiry.sender_phone }}
                   </a>
                 </span>
