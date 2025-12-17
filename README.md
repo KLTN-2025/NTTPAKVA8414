@@ -6,6 +6,7 @@
 * Express.js
 * Mongoose
 * JSON Web Token
+* express-rate-limit
 ### Frontend:
 * Vue.js 3 + Vite
 * Tailwind CSS
