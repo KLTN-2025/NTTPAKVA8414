@@ -116,15 +116,6 @@
                     {{ p.label }}
                   </button>
                 </div>
-                <button
-                  @click="fetchDashboardData"
-                  class="refresh-btn"
-                  :disabled="refreshing"
-                >
-                  <i
-                    :class="['fas fa-sync-alt', { 'fa-spin': refreshing }]"
-                  ></i>
-                </button>
               </div>
             </div>
             <div class="chart-container">
@@ -161,10 +152,6 @@
                   </td>
                   <td>
                     <div class="product-cell">
-                      <img
-                        :src="buildImagePath(product.image)"
-                        :alt="product.name"
-                      />
                       <div class="product-info">
                         <span class="product-sku">{{ product.sku }}</span>
                         <span class="product-name">{{ product.name }}</span>
@@ -235,8 +222,8 @@
           </div>
 
           <!-- Last Updated Info -->
-          <div class="card info-card">
-            <div class="info-content">
+          <div style="display: flex" class="card info-card">
+            <div style="flex: 1" class="info-content">
               <i class="fas fa-info-circle"></i>
               <div>
                 <span class="info-label">Last updated</span>
@@ -245,6 +232,13 @@
                 }}</span>
               </div>
             </div>
+            <button
+              @click="fetchDashboardData"
+              class="refresh-btn"
+              :disabled="refreshing"
+            >
+              <i :class="['fas fa-sync-alt', { 'fa-spin': refreshing }]"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -253,7 +247,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, watch, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { useAuth } from "@clerk/vue";
 import axios from "axios";
 import Chart from "chart.js/auto";
@@ -261,7 +255,7 @@ import { buildImagePath, formatPrice } from "@/utilities/helper";
 import { useToast } from "vue-toastification";
 
 const { getToken } = useAuth();
-const toast = useToast()
+const toast = useToast();
 
 const loading = ref(true);
 const refreshing = ref(false);
@@ -498,6 +492,17 @@ onUnmounted(() => {
     chartInstance.destroy();
   }
 });
+
+watch(
+  () => [loading.value, salesChart.value],
+  async ([isLoading, canvas]) => {
+    if (!isLoading && canvas && !chartInstance) {
+      await nextTick();
+      initChart();
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped src="@/styling/Dashboard.css"></style>

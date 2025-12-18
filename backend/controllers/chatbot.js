@@ -171,7 +171,7 @@ function isValidInputForStep(message, flow, step) {
   if (flow === 'recipe') {
     switch (step) {
       case 'dish':
-        return trimmed.length > 1; // Any dish name
+        return trimmed.length > 1;
       case 'servings':
         return /^[1-6]$/.test(trimmed);
       case 'confirm':
@@ -181,7 +181,7 @@ function isValidInputForStep(message, flow, step) {
       case 'select':
         return /^[1-9]$/.test(trimmed);
       case 'owned':
-        return true; // Any text is valid
+        return true; 
       case 'cart_confirm':
         return ['yes', 'no', 'y', 'n', 'ok', 'sure', 'add', 'skip'].some(k => 
           trimmed.toLowerCase().includes(k)
@@ -682,7 +682,7 @@ async function processRecipeFound(recipe, state) {
   // Format ingredients for display
   const { displayed, remaining } = spoonacularService.formatIngredientsForDisplay(recipe.ingredients, 10);
   
-  let message = `Great! Here are the ingredients for ${recipe.title} (${recipe.servings} servings):\n\n`;
+  let message = `Here are the ingredients for ${recipe.title} (${recipe.servings} servings):\n\n`;
   displayed.forEach((ing, idx) => {
     message += `${idx + 1}. ${ing.display}\n`;
   });

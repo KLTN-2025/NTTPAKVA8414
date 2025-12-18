@@ -130,11 +130,6 @@ export const useChatStore = defineStore('chat', () => {
     
     let message = ''
     
-    if (addedCount > 0) {
-      const total = cartStore.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-      message += `Your cart has been updated! Cart total: ${formatPrice(total)}`
-    }
-    
     if (failedItems.length > 0) {
       message += `\nCouldn't add: ${failedItems.join(', ')} (cart limit reached).`
     }

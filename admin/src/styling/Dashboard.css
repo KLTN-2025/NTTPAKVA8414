@@ -60,7 +60,7 @@
 }
 
 .stat-card {
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 1.5rem;
   color: #fff;
   position: relative;
@@ -191,7 +191,7 @@
 /* ----- CARD BASE ----- */
 .card {
   background-color: #fff;
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border-color, #e5e7eb);
 }
@@ -221,7 +221,7 @@
 .period-toggle {
   display: flex;
   background: var(--admin-bg, #f3f4f6);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 4px;
 }
 
@@ -232,7 +232,7 @@
   color: var(--text-muted, #6b7280);
   background: transparent;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -255,7 +255,7 @@
   justify-content: center;
   background: var(--admin-bg, #f3f4f6);
   border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 8px;
+  border-radius: 4px;
   color: var(--text-muted, #6b7280);
   cursor: pointer;
   transition: all 0.2s;

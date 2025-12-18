@@ -7,6 +7,17 @@ const Product = require('../models/Products');
 const TIMEZONE = 'Asia/Ho_Chi_Minh'; 
 const TIMEZONE_OFFSET_MS = 7 * 60 * 60 * 1000; 
 
+const { redis } = require("../config/redis");
+
+const keyList = {
+  'dashboard:chart:7days': 1 * 60 * 15,
+  'dashboard:chart:4weeks': 1 * 60 * 60,
+  'dashboard:chart:12months': 1 * 60 * 60 * 24,
+  'dashboard:summary': 1 * 60 * 60,
+  'dashboard:bestsellers': 1 * 60 * 60
+}
+
+
 /**
  * Helper: Get current date/time in Vietnam timezone
  */
@@ -63,9 +74,6 @@ function getMonthRanges() {
 
 /**
  * Helper: Calculate percentage change, handling zero division
- * Returns 100 if previous is 0 and current > 0
- * Returns 0 if both are 0
- * Returns -100 if current is 0 and previous > 0
  */
 function calculatePercentageChange(current, previous) {
   if (previous === 0) {
@@ -83,10 +91,8 @@ exports.getSummaryCards = async (req, res) => {
     const { current, previous } = getMonthRanges();
     const LOW_STOCK_THRESHOLD = 10;
 
-    // Valid order statuses for revenue calculation
     const validStatuses = ['confirmed', 'shipped', 'delivered'];
 
-    // ============ TOTAL REVENUE ============
     const [currentRevenue] = await CustomerOrder.aggregate([
       {
         $match: {
@@ -121,7 +127,6 @@ exports.getSummaryCards = async (req, res) => {
     const revenueLastMonth = previousRevenue?.total || 0;
     const revenueChange = calculatePercentageChange(revenueThisMonth, revenueLastMonth);
 
-    // ============ TOTAL ORDERS ============
     const ordersThisMonth = await CustomerOrder.countDocuments({
       order_date: { $gte: current.start, $lte: current.end }
     });
@@ -132,15 +137,10 @@ exports.getSummaryCards = async (req, res) => {
 
     const ordersChange = calculatePercentageChange(ordersThisMonth, ordersLastMonth);
 
-    // ============ PENDING ORDERS ============
     const pendingOrders = await CustomerOrder.countDocuments({
       order_status: 'pending'
     });
 
-    // For pending, compare to last month's pending at same point in time
-    // (This is a snapshot, so we just show current count without comparison)
-
-    // ============ LOW STOCK ITEMS ============
     const lowStockCount = await Product.countDocuments({
       current_stock: { $gt: 0, $lte: LOW_STOCK_THRESHOLD },
       is_deleted: { $ne: true }
@@ -175,7 +175,6 @@ exports.getSummaryCards = async (req, res) => {
           label: 'Items to restock'
         }
       },
-      generatedAt: new Date()
     });
 
   } catch (error) {
@@ -196,8 +195,19 @@ exports.getSummaryCards = async (req, res) => {
 exports.getSalesChart = async (req, res) => {
   try {
     const period = req.query.period || '7days';
+    const cachedKey = `dashboard:chart:${period}`
+
+    const cachedChartData = await redis.get(cachedKey)
+    if (cachedChartData) {
+      return res.status(200).json({
+        success: true,
+        data: JSON.parse(cachedChartData),
+        cached: true
+    });
+    }
+
+
     const nowVN = getVietnamDateComponents(new Date());
-    
     let startDate, groupBy, labels = [];
     const validStatuses = ['confirmed', 'shipped', 'delivered'];
 
@@ -349,25 +359,29 @@ exports.getSalesChart = async (req, res) => {
     const totalRevenue = chartData.reduce((sum, d) => sum + d.revenue, 0);
     const totalOrders = chartData.reduce((sum, d) => sum + d.orders, 0);
 
+    const returnData = {
+      period,
+      labels: chartData.map(d => d.label),
+      datasets: {
+        revenue: chartData.map(d => d.revenue),
+        orders: chartData.map(d => d.orders)
+      },
+      totals: {
+        revenue: totalRevenue,
+        orders: totalOrders
+      }
+    }
+
+    //Save to cache
+    await redis.set(cachedKey, JSON.stringify(returnData), { EX: keyList[cachedKey] });
+
     return res.status(200).json({
       success: true,
-      data: {
-        period,
-        labels: chartData.map(d => d.label),
-        datasets: {
-          revenue: chartData.map(d => d.revenue),
-          orders: chartData.map(d => d.orders)
-        },
-        totals: {
-          revenue: totalRevenue,
-          orders: totalOrders
-        }
-      },
-      generatedAt: new Date()
+      data: returnData,
+      cached: false
     });
 
   } catch (error) {
-    console.error('Dashboard chart error:', error);
     return res.status(500).json({
       success: false,
       message: 'Error fetching chart data',
@@ -383,6 +397,19 @@ exports.getSalesChart = async (req, res) => {
 exports.getBestSellers = async (req, res) => {
   try {
     const { current } = getMonthRanges();
+
+    //Retrieve from cache
+    const cachedKey = 'dashboard:bestsellers';
+    const cached = await redis.get(cachedKey)
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        data: JSON.parse(cached),
+        period: 'This month',
+        cached: true
+      }); 
+    }
+
     const limit = parseInt(req.query.limit) || 5;
     const validStatuses = ['confirmed', 'shipped', 'delivered'];
 
@@ -395,11 +422,12 @@ exports.getBestSellers = async (req, res) => {
     const validOrderIds = validOrders.map(o => o._id);
 
     if (validOrderIds.length === 0) {
+      await redis.set(cachedKey, JSON.stringify([]), { EX: keyList[cachedKey] })
       return res.status(200).json({
         success: true,
         data: [],
         period: 'This month',
-        generatedAt: new Date()
+        cached: false
       });
     }
 
@@ -415,10 +443,9 @@ exports.getBestSellers = async (req, res) => {
           _id: '$product_id',
           totalQuantity: { $sum: '$quantity' },
           totalRevenue: { $sum: { $multiply: ['$price', '$quantity'] } },
-          orderCount: { $sum: 1 }
         }
       },
-      { $sort: { totalQuantity: -1 } },
+      { $sort: { totalRevenue: -1 } },
       { $limit: limit },
       {
         $lookup: {
@@ -434,21 +461,21 @@ exports.getBestSellers = async (req, res) => {
           _id: 1,
           totalQuantity: 1,
           totalRevenue: 1,
-          orderCount: 1,
           name: '$product.name',
           sku: '$product.SKU',
           price: '$product.selling_price',
-          image: { $arrayElemAt: ['$product.image_urls', 0] },
-          currentStock: '$product.current_stock'
         }
       }
     ]);
+
+    //Set cache
+    await redis.set(cachedKey, JSON.stringify(bestSellers), { EX: keyList[cachedKey] })
 
     return res.status(200).json({
       success: true,
       data: bestSellers,
       period: 'This month',
-      generatedAt: new Date()
+      cached: false
     });
 
   } catch (error) {
@@ -467,6 +494,7 @@ exports.getBestSellers = async (req, res) => {
  */
 exports.getAllDashboardData = async (req, res) => {
   try {
+    await redis.del(Object.keys(keyList))
     const period = req.query.chartPeriod || '7days';
     const { current, previous } = getMonthRanges();
     const LOW_STOCK_THRESHOLD = 10;

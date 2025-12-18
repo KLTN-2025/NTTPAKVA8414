@@ -43,7 +43,6 @@ async function fetchProducts(baseUrl = '') {
     
     return [];
   } catch (error) {
-    console.error('Error fetching products:', error.message);
     return productCache.data || [];
   }
 }
@@ -142,7 +141,6 @@ Put anything uncertain in "unmatched".`;
   });
   
   if (!result.success) {
-    console.error('GPT matching failed:', result.error);
     return { 
       matches: [], 
       unmatched: ingredients.map(i => i.name) 
@@ -329,7 +327,7 @@ function levenshteinDistance(str1, str2) {
  * Parse user's "I have..." message into ingredient list
  * @param {string} message - User's message about owned ingredients
  * @returns {Array<string>}
- */
+ */parseOwnedIngredients
 function parseOwnedIngredients(message) {
   if (!message) return [];
   

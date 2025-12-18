@@ -39,9 +39,7 @@ async function searchRecipes(query, number = 5) {
       recipes,
       totalResults: response.data.totalResults,
     };
-  } catch (error) {
-    console.error('Spoonacular Search Error:', error.message);
-    
+  } catch (error) {    
     if (error.code === 'ECONNABORTED') {
       return {
         success: false,
@@ -120,7 +118,6 @@ async function getRecipeDetails(recipeId, targetServings = null) {
       },
     };
   } catch (error) {
-    console.error('Spoonacular Recipe Details Error:', error.message);
     
     if (error.response?.status === 404) {
       return {

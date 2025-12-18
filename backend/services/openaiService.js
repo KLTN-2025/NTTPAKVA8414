@@ -58,9 +58,7 @@ async function chat({
       content,
       usage: response.usage,
     };
-  } catch (error) {
-    console.error('OpenAI API Error:', error.message);
-    
+  } catch (error) {    
     // Handle specific error types
     if (error.code === 'insufficient_quota') {
       return {
@@ -160,12 +158,12 @@ Respond in JSON format:
 {
   "intent": "nutrition|recipe|restart|continue|out_of_scope",
   "confidence": 0.0-1.0,
-  "reason": "brief explanation"
 }`;
 
   const result = await chat({
     systemPrompt,
     messages: [{ role: 'user', content: message }],
+    model: 'gpt-4.1-nano',
     temperature: 0.3,
     maxTokens: 150,
     jsonMode: true,
