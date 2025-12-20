@@ -134,7 +134,7 @@ export const useChatStore = defineStore('chat', () => {
       message += `\nCouldn't add: ${failedItems.join(', ')} (cart limit reached).`
     }
     
-    message += '\n\nGlad I could help! Feel free to ask anytime.'
+    message += 'Glad I could help! Feel free to ask anytime.'
     
     addBotMessage(message)
     suggestions.value = ['Nutrition Guidance', 'Build a Recipe']

@@ -68,38 +68,6 @@
           </div>
         </div>
       </div>
-
-      <div class="help-column-right">
-        <div class="card">
-          <div class="card-header">
-            <h4>Contact Support</h4>
-          </div>
-          <div class="card-body">
-            <p class="support-text">
-              Can't find the answer you're looking for? Our support team is here
-              to help.
-            </p>
-            <div class="info-block-new">
-              <i class="fas fa-envelope"></i>
-              <div class="info-text-new">
-                <span>Email Support</span>
-                <strong>admin.support@healthycrave.com</strong>
-              </div>
-            </div>
-            <div class="info-block-new">
-              <i class="fas fa-phone"></i>
-              <div class="info-text-new">
-                <span>Phone Support</span>
-                <strong>(+84) 234 567 890</strong>
-              </div>
-            </div>
-            <button class="btn btn-primary btn-full">
-              <i class="fas fa-life-ring"></i>
-              <span>Open Support Ticket</span>
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>

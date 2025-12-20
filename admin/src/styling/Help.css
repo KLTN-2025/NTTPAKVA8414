@@ -29,7 +29,7 @@
 /* ----- BỐ CỤC CHUNG ----- */
 .help-layout {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Cột trái 66%, Cột phải 33% */
+  grid-template-columns: 1fr; /* Cột trái 66%, Cột phải 33% */
   gap: 1.5rem;
   align-items: flex-start;
 }

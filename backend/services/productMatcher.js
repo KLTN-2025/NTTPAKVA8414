@@ -67,8 +67,6 @@ function simplifyProductsForGPT(products) {
     size: p.size,
     unit: p.unit,
     price: p.price,
-    category: p.category?.name || '',
-    type: p.type?.name || '',
   }));
 }
 

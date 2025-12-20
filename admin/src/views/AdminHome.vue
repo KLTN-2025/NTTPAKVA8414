@@ -112,14 +112,6 @@
           <h1>{{ $route.meta.title || "Dashboard" }}</h1>
         </div>
         <div class="topbar-right">
-          <button class="topbar-icon-btn">
-            <i class="fas fa-bell"></i>
-            <span class="notification-badge"></span>
-          </button>
-          <button class="topbar-icon-btn">
-            <i class="fas fa-comment-dots"></i>
-          </button>
-
           <SignedIn>
             <UserButton />
           </SignedIn>

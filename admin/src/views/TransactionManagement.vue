@@ -16,10 +16,6 @@
             <i class="fas fa-sync-alt" :class="{ 'fa-spin': refreshing }"></i>
           </button>
         </div>
-        <button class="btn btn-primary" @click="openCreateModal">
-          <i class="fas fa-plus"></i>
-          <span>New Transaction</span>
-        </button>
       </div>
     </div>
 

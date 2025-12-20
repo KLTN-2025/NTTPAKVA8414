@@ -25,7 +25,6 @@
             <th style="font-size: 14px; font-weight: 500;" >Method</th>
             <th style="font-size: 14px; font-weight: 500;" >Reference</th>
             <th style="font-size: 14px; font-weight: 500;"  class="text-right">Amount</th>
-            <th style="font-size: 14px; font-weight: 500;" class="action-col">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -58,16 +57,6 @@
             <td class="amount-cell" :class="tx.type">
               {{ formatAmount(tx.amount, tx.type) }}
             </td>
-            <td class="action-cell">
-              <button 
-                v-if="!tx.is_auto_generated"
-                class="action-btn btn-delete"
-                @click="$emit('delete-transaction', tx)"
-                title="Delete transaction"
-              >
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </td>
           </tr>
         </tbody>
       </table>
@@ -76,7 +65,7 @@
     <!-- Pagination -->
     <div v-if="pagination.totalPages > 0" class="pagination-footer">
       <span class="pagination-info">
-        Showing {{ paginationStart }} - {{ paginationEnd }} of {{ pagination.totalItems }}
+        {{ paginationStart }} - {{ paginationEnd }} of {{ pagination.totalItems }}
       </span>
       <div class="page-controls">
         <button 

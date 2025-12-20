@@ -53,14 +53,14 @@
         </div>
 
         <form @submit.prevent="handleSubmit" class="contact-form-panel">
-          <h2>Customer Suupport</h2>
+          <h2>Customer Support</h2>
           <p>
             Have a question or need assistance? Fill out the form below and we will get back to you as soon as possible.
           </p>
           
           <div class="form-row-grid">
             <div class="form-group">
-              <label for="name">Name <span class="required">*</span></label>
+              <label for="name">Name (*)</label>
               <input 
                 type="text" 
                 id="name" 
@@ -71,7 +71,7 @@
               />
             </div>
             <div class="form-group">
-              <label for="phone">Phone Number <span class="required">*</span></label>
+              <label for="phone">Phone Number (*)</label>
               <input 
                 type="tel" 
                 id="phone" 
@@ -86,7 +86,7 @@
 
           <div class="form-row-grid">
             <div class="form-group">
-              <label for="email">Email Address (Optional)</label>
+              <label for="email">Email Address</label>
               <input 
                 type="email" 
                 id="email" 
@@ -95,7 +95,7 @@
               />
             </div>
             <div class="form-group">
-              <label for="problemType">Problem Type <span class="required">*</span></label>
+              <label for="problemType">Problem Type (*)</label>
               <select 
                 id="problemType" 
                 v-model="form.problemType" 
